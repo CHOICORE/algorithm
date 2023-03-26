@@ -7,7 +7,6 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
-/*
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         while (root != null) {
@@ -22,8 +21,8 @@ class Solution {
         return null;
     }
 }
-*/
 
+/*
 class Solution {
     
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
@@ -46,4 +45,4 @@ class Solution {
         }
     }
 }
-
+*/
