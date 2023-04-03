@@ -1,19 +1,18 @@
 class Solution {
     public boolean isHappy(int n) {
         Set<Integer> seen = new HashSet<>();
-        while (!seen.contains(n)) {
-            seen.add(n);
+        do {
             int sum = 0;
-            String str = String.valueOf(n);
-            for (char c : str.toCharArray()) {
-                int digit = Character.getNumericValue(c);
+            while (n > 0) {
+                int digit = n % 10;
                 sum += digit * digit;
+                n /= 10;
             }
             if (sum == 1) {
                 return true;
             }
             n = sum;
-        }
+        } while (!seen.contains(n) && seen.add(n));
         return false;
     }
 }
