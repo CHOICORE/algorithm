@@ -5,7 +5,7 @@ class Solution {
         for (int i = 0; i < n; i++) {
             int row = 0, col = i;
             while (row < m) {
-                if (grid[row][col] == 1 && col < n - 1 && grid[row][col+1] == 1) {
+                if (grid[row][col] == 1 && col + 1 < n && grid[row][col+1] == 1) {
                     col++;
                     row++;
                 } else if (grid[row][col] == -1 && col > 0 && grid[row][col-1] == -1) {
