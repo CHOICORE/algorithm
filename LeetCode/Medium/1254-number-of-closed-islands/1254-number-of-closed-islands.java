@@ -1,57 +1,46 @@
 class Solution {
     public int closedIsland(int[][] grid) {
-        int count = 0;
         int m = grid.length;
         int n = grid[0].length;
-
-        boolean[][] visited = new boolean[m][n];
-
+        boolean[][] visit = new boolean[m][n];
+        int count = 0;
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 0 && !visited[i][j]) {
-                    if (dfs(grid, visited, i, j, m, n)) {
-                        count++;
-                    }
+                if (grid[i][j] == 0 && !visit[i][j] && bfs(i, j, m, n, grid, visit)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean bfs(int x, int y, int m, int n, int[][] grid, boolean[][] visit) {
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{x, y});
+        visit[x][y] = true;
+        boolean isClosed = true;
+
+        int[] dirx = {0, 1, 0, -1};
+        int[] diry = {-1, 0, 1, 0};
+
+        while (!q.isEmpty()) {
+            int[] temp = q.poll();
+            x = temp[0];
+            y = temp[1];
+
+            for (int i = 0; i < 4; i++) {
+                int r = x +dirx[i];
+                int c = y +diry[i];
+                if (r < 0 || r >= m || c < 0 || c >= n) {
+                    // (x, y) is a boundary cell.
+                    isClosed = false;
+                } else if (grid[r][c] == 0 && !visit[r][c]) {
+                    q.offer(new int[]{r, c});
+                    visit[r][c] = true;
                 }
             }
         }
 
-        return count;
+        return isClosed;
     }
-    private boolean dfs(int[][] grid, boolean[][] visited, int i, int j, int m, int n) {
-    visited[i][j] = true;
-    
-    boolean isClosed = true;
-    
-    if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
-        isClosed = false;
-    }
-    
-    if (i > 0 && grid[i-1][j] == 0 && !visited[i-1][j]) {
-        if (!dfs(grid, visited, i-1, j, m, n)) {
-            isClosed = false;
-        }
-    }
-    
-    if (i < m - 1 && grid[i+1][j] == 0 && !visited[i+1][j]) {
-        if (!dfs(grid, visited, i+1, j, m, n)) {
-            isClosed = false;
-        }
-    }
-    
-    if (j > 0 && grid[i][j-1] == 0 && !visited[i][j-1]) {
-        if (!dfs(grid, visited, i, j-1, m, n)) {
-            isClosed = false;
-        }
-    }
-    
-    if (j < n - 1 && grid[i][j+1] == 0 && !visited[i][j+1]) {
-        if (!dfs(grid, visited, i, j+1, m, n)) {
-            isClosed = false;
-        }
-    }
-    
-    return isClosed;
-}
-
 }
