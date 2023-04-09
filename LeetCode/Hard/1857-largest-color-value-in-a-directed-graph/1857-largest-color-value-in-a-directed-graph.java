@@ -1,48 +1,59 @@
 class Solution {
-  public int largestPathValue(String colors, int[][] edges) {
-        int n = colors.length();
-        Map<Integer, List<Integer>> adj = new HashMap<>();
-        int[] indegree = new int[n];
+    
+    static final int[] q = new int[100000];
 
-        for (int[] edge : edges) {
-            adj.computeIfAbsent(edge[0], k->new ArrayList<Integer>()).add(edge[1]);
-            indegree[edge[1]]++;
-        }
-
-        int[][] count = new int[n][26];
-        Queue<Integer> q = new LinkedList<>();
-
-        // Push all the nodes with indegree zero in the queue.
+    public int largestPathValue(String colors, int[][] edges) {
+        final int n = colors.length();
+        final char[] cs = colors.toCharArray();
+        final int[][] best = new int[n][];
+        final int[][] nexts = next(n, edges, 0);
+        final int[][] prevs = next(n, edges, 1);
+        final int[] counts = new int[n];
+        int len = 0;
         for (int i = 0; i < n; i++) {
-            if (indegree[i] == 0) {
-                q.offer(i);
+            if ((counts[i] = nexts[i].length) == 0) {
+                q[len++] = i;
             }
         }
-
-        int answer = 1, nodesSeen = 0;
-        while (!q.isEmpty()) {
-            int node = q.poll();
-            answer = Math.max(answer, ++count[node][colors.charAt(node) - 'a']);
-            nodesSeen++;
-
-            if (!adj.containsKey(node)) {
-                continue;
-            }
-
-            for (int neighbor : adj.get(node)) {
-                for (int i = 0; i < 26; i++) {
-                    // Try to update the frequency of colors for the neighbor to include paths
-                    // that use node->neighbor edge.
-                    count[neighbor][i] = Math.max(count[neighbor][i], count[node][i]);
+        for (int i = 0; i < len; i++) {
+            final int node = q[i];
+            final int[] max = new int[26];
+            for (int next : nexts[node]) {
+                final int[] other = best[next];
+                for (int j = 0; j < 26; j++) {
+                    max[j] = Math.max(max[j], other[j]);
                 }
-
-                indegree[neighbor]--;
-                if (indegree[neighbor] == 0) {
-                    q.offer(neighbor);
+            }
+            max[cs[node] - 'a']++;
+            best[node] = max;
+            for (int prev : prevs[node]) {
+                if (--counts[prev] == 0) {
+                    q[len++] = prev;
                 }
             }
         }
+        if (len < n) return -1;
+        int max = 0;
+        for (int[] b : best) {
+            for (int b1 : b) {
+                max = Math.max(max, b1);
+            }
+        }
+        return max;
+    }
 
-        return nodesSeen < n ? -1 : answer;
+    static final int[] counts = new int[100000];
+
+    static int[][] next(final int n, final int[][] edges, final int idx) {
+        for (int[] e : edges) {
+            counts[e[idx]]++;
+        }
+        final int[][] r = new int[n][];
+        for (int i = 0; i < n; i++) r[i] = new int[counts[i]];
+        for (int[] e : edges) {
+            final int n1 = e[idx];
+            r[n1][--counts[n1]] = e[1 - idx];
+        }
+        return r;
     }
 }
