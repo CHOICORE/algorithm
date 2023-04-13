@@ -14,7 +14,6 @@ class Solution {
         Set<Integer> targets = new HashSet();
         Queue<Point> queue = new ArrayDeque();
 
-
         for (int i = 0; i < N; ++i) {
             for (int j = i + 1; j < N; ++j) {
                 if (intersect(routes[i], routes[j])) {
