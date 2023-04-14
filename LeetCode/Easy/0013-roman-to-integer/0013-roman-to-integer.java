@@ -4,13 +4,13 @@ class Solution {
         int size = s.length();
         for (int i = 0; i < size; i++) {
             int value = getSymbolValue(s.charAt(i));
-            if (i < size - 1 && value < getSymbolValue(s.charAt(i+1))) {
+            if (i < size - 1 && value < getSymbolValue(s.charAt(i + 1))) {
                 result -= value;
             } else {
                 result += value;
             }
         }
-        
+
         return result;
     }
 
