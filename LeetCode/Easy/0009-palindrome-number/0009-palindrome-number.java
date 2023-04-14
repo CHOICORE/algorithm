@@ -5,8 +5,14 @@ class Solution {
         }
         
         String s = String.valueOf(x);
-        String reverse = new StringBuilder(s).reverse().toString();
+        int left = 0, right = s.length() - 1;
         
-        return s.equals(reverse);
+        while (left < right) {
+            if (s.charAt(left++) != s.charAt(right--)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
