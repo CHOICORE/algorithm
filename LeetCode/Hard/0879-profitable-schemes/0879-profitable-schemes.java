@@ -1,26 +1,19 @@
 class Solution {
-    int mod = 1000000007;
-    int[][][] dp = new int[101][101][101];
-
-    public int profitableSchemes(int n, int minProfit, int[] group, int[] profits) {
-        for (int count = 0; count <= n; count++) {
-            dp[group.length][count][minProfit] = 1;
-        }
-
-        for (int index = group.length - 1; index >= 0; index--) {
-            for (int count = 0; count <= n; count++) {
-                for(int profit = 0; profit <= minProfit; profit++) {
-
-                    dp[index][count][profit] = dp[index + 1][count][profit];
-                    if (count + group[index] <= n) {
-
-                        dp[index][count][profit]
-                                = (dp[index][count][profit] + dp[index + 1][count + group[index]][Math.min(minProfit, profit + profits[index])]) % mod;
-                    }
+    public int profitableSchemes(int n, int minProfit, int[] group, int[] profit) {
+        int[][] dp = new int[n+1][minProfit+1];
+        dp[0][0] = 1;
+        int mod = (int)1e9+7;
+        for (int k = 0; k < group.length; k++) {
+            for (int i = n; i >= group[k]; i--) {
+                for (int j = minProfit; j >= 0; j--) {
+                    dp[i][j] = (dp[i][j] + dp[i-group[k]][Math.max(0, j-profit[k])]) % mod;
                 }
             }
         }
-
-        return dp[0][0][0];
+        int ans = 0;
+        for (int i = 0; i <= n; i++) {
+            ans = (ans + dp[i][minProfit]) % mod;
+        }
+        return ans;
     }
 }
