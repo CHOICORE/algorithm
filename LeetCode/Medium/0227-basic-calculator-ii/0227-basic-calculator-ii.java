@@ -1,31 +1,46 @@
 class Solution {
     public int calculate(String s) {
-        Stack<Integer> stack = new Stack<>();
-        char lastOp = '+';
+        char sign = '+';
+        int prevSum = 0;
         int num = 0;
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (Character.isDigit(c)) {
+        int lastNum = 0;
+
+        for (char c : s.toCharArray()) {
+            if (c >= '0' && c <= '9') {
                 num = num * 10 + (c - '0');
-            }
-            if ((!Character.isDigit(c) && c != ' ') || i == s.length() - 1) {
-                if (lastOp == '+') {
-                    stack.push(num);
-                } else if (lastOp == '-') {
-                    stack.push(-num);
-                } else if (lastOp == '*') {
-                    stack.push(stack.pop() * num);
-                } else if (lastOp == '/') {
-                    stack.push(stack.pop() / num);
+            } else if (c == ' ') {
+                // do nothing
+            } else {
+                switch (sign) {
+                    case '+' -> {
+                        prevSum+= lastNum;
+                        lastNum = num;
+                    }
+                    case '-' -> {
+                        prevSum += lastNum;
+                        lastNum = -num;
+                    }
+                    case '*' -> lastNum *= num;
+                    case '/' -> lastNum /= num;
                 }
-                lastOp = c;
                 num = 0;
+                sign = c;
             }
         }
-        int result = 0;
-        for (int numInStack : stack) {
-            result += numInStack;
+
+        switch (sign) {
+            case '+' -> {
+                prevSum+= lastNum;
+                lastNum = num;
+            }
+            case '-' -> {
+                prevSum += lastNum;
+                lastNum = -num;
+            }
+            case '*' -> lastNum *= num;
+            case '/' -> lastNum /= num;
         }
-        return result;
+
+        return prevSum + lastNum;
     }
 }
