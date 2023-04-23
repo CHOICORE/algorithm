@@ -1,21 +1,22 @@
 class Solution {
     public int numberOfArrays(String s, int k) {
-        Integer[] dp = new Integer[s.length()];
-        return dfs(s, k, 0, dp);
-    }
-    
-    int dfs(String s, long k, int i, Integer[] dp) {
-        if (i == s.length()) return 1;
-        if (s.charAt(i) == '0') return 0;
-        if (dp[i] != null) return dp[i];
-        int ans = 0;
-        long num = 0;
-        for (int j = i; j < s.length(); j++) {
-            num = num * 10 + s.charAt(j) - '0';
-            if (num > k) break;
-            ans += dfs(s, k, j + 1, dp);
-            ans %= 1_000_000_007;
+        int sz = s.length();
+        int[] m = new int[sz + 1];
+        m[sz] = 1;
+        for (int i = sz - 1; i >= 0; i--) {
+            if (s.charAt(i) == '0') {
+                m[i] = 0;
+                continue;
+            }
+            long r = 0;
+            for (int j = i; j < sz; j++) {
+                r = r * 10 + (s.charAt(j) - '0');
+                if (r > k) {
+                    break;
+                }
+                m[i] = (m[i] + m[j + 1]) % 1_000_000_007;
+            }
         }
-        return dp[i] = ans;
+        return m[0];
     }
 }
