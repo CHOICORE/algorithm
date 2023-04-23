@@ -1,29 +1,21 @@
 class Solution {
     public int numberOfArrays(String s, int k) {
-        int m = s.length(), n = String.valueOf(k).length();
-        int mod = 1_000_000_007;
-        
-        int[] dp = new int[n + 1];
-        
-        dp[0] = 1;
-        
-        for (int start = 0; start < m; ++start) {
-            if (s.charAt(start) == '0') {
-                dp[start % (n + 1)] = 0;
-                continue;
-            }
-            
-            for (int end = start; end < m; ++end) {
-                String currNumber = s.substring(start, end + 1);
-                
-                if (Long.parseLong(currNumber) > k)
-                    break;
-                
-                dp[(end + 1) % (n + 1)] = (dp[(end + 1) % (n + 1)] + dp[start % (n + 1)]) % mod;
-            }
-
-            dp[start % (n + 1)] = 0;
+        Integer[] dp = new Integer[s.length()];
+        return dfs(s, k, 0, dp);
+    }
+    
+    int dfs(String s, long k, int i, Integer[] dp) {
+        if (i == s.length()) return 1;
+        if (s.charAt(i) == '0') return 0;
+        if (dp[i] != null) return dp[i];
+        int ans = 0;
+        long num = 0;
+        for (int j = i; j < s.length(); j++) {
+            num = num * 10 + s.charAt(j) - '0';
+            if (num > k) break;
+            ans += dfs(s, k, j + 1, dp);
+            ans %= 1_000_000_007;
         }
-        return dp[m % (n + 1)];
+        return dp[i] = ans;
     }
 }
