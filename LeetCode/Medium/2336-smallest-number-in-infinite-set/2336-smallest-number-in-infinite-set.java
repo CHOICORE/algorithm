@@ -1,19 +1,17 @@
 class SmallestInfiniteSet {
-    private HashSet<Integer> isPresent;
-    private PriorityQueue<Integer> addedIntegers;
+    private SortedSet<Integer> addedIntegers;
     private Integer currentInteger;
     
     public SmallestInfiniteSet() {
-        isPresent = new HashSet<>();
-        addedIntegers = new PriorityQueue<>();
+        addedIntegers = new TreeSet<>();
         currentInteger = 1;
     }
     
     public int popSmallest() {
         int answer;
         if (!addedIntegers.isEmpty()) {
-            answer = addedIntegers.poll();
-            isPresent.remove(answer);
+            answer = addedIntegers.first();
+            addedIntegers.remove(answer);
         } 
         else {
             answer = currentInteger;
@@ -23,10 +21,9 @@ class SmallestInfiniteSet {
     }
     
     public void addBack(int num) {
-        if (currentInteger <= num || isPresent.contains(num)) {
+        if (currentInteger <= num || addedIntegers.contains(num)) {
             return;
         }
         addedIntegers.add(num);
-        isPresent.add(num);
     }
 }
