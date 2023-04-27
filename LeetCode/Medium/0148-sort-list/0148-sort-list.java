@@ -10,10 +10,10 @@
  */
 class Solution {
     public ListNode sortList(ListNode head) {
-        return sortList(head, null);
+        return sort(head, null);
     }
 
-    ListNode sortList(ListNode p, ListNode q) {
+    ListNode sort(ListNode p, ListNode q) {
         if (p == null || p == q) {
             return p;
         }
@@ -43,7 +43,7 @@ class Solution {
             }
             curr = next;
         }
-        p.next = sortList(p.next, q);
-        return sortList(head, p);
+        p.next = sort(p.next, q);
+        return sort(head, p);
     }
 }
