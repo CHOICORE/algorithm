@@ -1,25 +1,33 @@
 class Solution {
     public int longestPalindrome(String[] words) {
-        int[][] count = new int[26][26];
-        for (String word : words) {
-            count[word.charAt(0) - 'a'][word.charAt(1) - 'a']++;
+        int[][] dp = new int[26][26];
+        boolean odd = false;
+        int ans = 0;
+
+        for (String s : words) {
+            dp[s.charAt(0) - 'a'][s.charAt(1) - 'a']++;
         }
-        int result = 0;
-        boolean central = false;
+
         for (int i = 0; i < 26; i++) {
-            if (count[i][i] % 2 == 0) {
-                result += count[i][i];
-            } else {
-                result += count[i][i] - 1;
-                central = true;
-            }
-            for (int j = i + 1; j < 26; j++) {
-                result += 2 * Math.min(count[i][j], count[j][i]);
+            for (int j = 0; j < 26; j++) {
+                if (dp[i][j] > 0) {
+                    if (i == j) {
+                        if (dp[i][j] % 2 != 0) {
+                            odd = true;
+                            dp[i][j]--;
+                        }
+                        ans += dp[i][j] * 2;
+                    } else {
+                        int minCount = Math.min(dp[i][j], dp[j][i]);
+                        if (minCount >= 1) {
+                            ans += 4 * minCount;
+                            dp[i][j] -= minCount;
+                            dp[j][i] -= minCount;
+                        }
+                    }
+                }
             }
         }
-        if (central) {
-            result++;
-        }
-        return result * 2;
+        return odd ? ans + 2 : ans;
     }
 }
