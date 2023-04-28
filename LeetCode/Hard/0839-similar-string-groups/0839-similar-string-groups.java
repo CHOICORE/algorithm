@@ -1,13 +1,18 @@
 class Solution {
-    public void dfs(int node, Map<Integer, List<Integer>> adj, boolean[] visit) {
+    public void bfs(int node, Map<Integer, List<Integer>> adj, boolean[] visit) {
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(node);
         visit[node] = true;
-        if (!adj.containsKey(node)) {
-            return;
-        }
-        for (int neighbor : adj.get(node)) {
-            if (!visit[neighbor]) {
-                visit[neighbor] = true;
-                dfs(neighbor, adj, visit);
+        while (!q.isEmpty()) {
+            node = q.poll();
+            if (!adj.containsKey(node)) {
+                continue;
+            }
+            for (int neighbor : adj.get(node)) {
+                if (!visit[neighbor]) {
+                    visit[neighbor] = true;
+                    q.offer(neighbor);
+                }
             }
         }
     }
@@ -40,7 +45,7 @@ class Solution {
         // Count the number of connected components.
         for (int i = 0; i < n; i++) {
             if (!visit[i]) {
-                dfs(i, adj, visit);
+                bfs(i, adj, visit);
                 count++;
             }
         }
