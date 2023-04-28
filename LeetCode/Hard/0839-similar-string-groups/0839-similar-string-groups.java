@@ -1,60 +1,30 @@
 class Solution {
-    public boolean isSimilar(String a, String b) {
-        int diff = 0;
-        for (int i = 0; i < a.length(); i++) {
-            if (a.charAt(i) != b.charAt(i)) {
-                diff++;
-            }
-        }
-        return diff == 0 || diff == 2;
-    }
-
     public int numSimilarGroups(String[] strs) {
-        int n = strs.length;
-        UnionFind dsu = new UnionFind(n);
-        int count = n;
-        // Form the required graph from the given strings array.
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                if (isSimilar(strs[i], strs[j]) && dsu.find(i) != dsu.find(j)) {
-                    count--;
-                    dsu.union_set(i, j);
-                }
-            }
-        }
+        int ans = 0;
+    boolean[] seen = new boolean[strs.length];
 
-        return count;
-    }
-}
+    for (int i = 0; i < strs.length; ++i)
+      if (!seen[i]) {
+        dfs(strs, i, seen);
+        ++ans;
+      }
 
-class UnionFind {
-    int[] parent;
-    int[] rank;
-
-    public UnionFind(int size) {
-        parent = new int[size];
-        for (int i = 0; i < size; i++)
-            parent[i] = i;
-        rank = new int[size];
+    return ans;
+        
     }
 
-    public int find(int x) {
-        if (parent[x] != x)
-            parent[x] = find(parent[x]);
-        return parent[x];
-    }
+    private void dfs(final String[] strs, int i, boolean[] seen) {
+    seen[i] = true;
+    for (int j = 0; j < strs.length; ++j)
+      if (!seen[j] && isSimilar(strs[i], strs[j]))
+        dfs(strs, j, seen);
+  }
 
-    public void union_set(int x, int y) {
-        int xset = find(x), yset = find(y);
-        if (xset == yset) {
-            return;
-        } else if (rank[xset] < rank[yset]) {
-            parent[xset] = yset;
-        } else if (rank[xset] > rank[yset]) {
-            parent[yset] = xset;
-        } else {
-            parent[yset] = xset;
-            rank[xset]++;
-        }
-    }
+  private boolean isSimilar(final String X, final String Y) {
+    int diff = 0;
+    for (int i = 0; i < X.length(); ++i)
+      if (X.charAt(i) != Y.charAt(i) && ++diff > 2)
+        return false;
+    return true;
+  }
 }
