@@ -15,28 +15,21 @@
  */
 class Solution {
     public boolean isBalanced(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
-        
-        int leftHeight = getHeight(root.left);
-        int rightHeight = getHeight(root.right);
-        
-        if (Math.abs(leftHeight - rightHeight) > 1) {
-            // 좌측, 우측 노드의 길이가 다르면 false
-            return false;
-        }
-        
-        // 좌측, 우측 검증
-        return isBalanced(root.left) && isBalanced(root.right);
+        return height(root) != -1;
     }
-    
-    private int getHeight(TreeNode node) {
-        if (node == null) {
-            return 0;
-        }
-        
 
-        return 1 + Math.max(getHeight(node.left), getHeight(node.right));
+    public int height(TreeNode root) {
+        if (root == null) return 0;
+        
+        int left = height(root.left);
+        if (left == -1) return -1;
+        
+        int right = height(root.right);
+        if (right == -1) return -1;
+        
+        if (Math.abs(left - right) > 1) return -1;
+        
+        return Math.max(left, right) + 1;
+
     }
 }
