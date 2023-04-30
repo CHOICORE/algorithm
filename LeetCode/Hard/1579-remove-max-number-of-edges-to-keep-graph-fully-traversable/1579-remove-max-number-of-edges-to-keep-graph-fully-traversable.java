@@ -1,86 +1,74 @@
 class Solution {
-    public int maxNumEdgesToRemove(int n, int[][] edges) {
-        // Different objects for Alice and Bob.
-        UnionFind Alice = new UnionFind(n);
-        UnionFind Bob = new UnionFind(n);
+    static final int
+            TYPE = 0, U = 1, V = 2,
+            ALICE = 1, BOB = 2, BOTH = 3;
 
-        int edgesRequired = 0;
-        // Perform union for edges of type = 3, for both Alice and Bob.
-        for (int[] edge : edges) {
-            if (edge[0] == 3) {
-                edgesRequired += (Alice.performUnion(edge[1], edge[2]) | Bob.performUnion(edge[1], edge[2]));
+    public int maxNumEdgesToRemove(
+            final int n, final int[][] edges) {
+
+        for (int i = 0, j = edges.length - 1; i < j; ) {
+            if (edges[i][TYPE] == BOTH) {
+                ++i;
+                continue;
             }
+            final var temp = edges[i];
+            edges[i] = edges[j];
+            edges[j] = temp;
+            --j;
         }
 
-        // Perform union for Alice if type = 1 and for Bob if type = 2.
-        for (int[] edge : edges) {
-            if (edge[0] == 1) {
-                edgesRequired += Alice.performUnion(edge[1], edge[2]);
-            } else if (edge[0] == 2) {
-                edgesRequired += Bob.performUnion(edge[1], edge[2]);
-            }
+        final UnionFind
+                aliceUf = new UnionFind(n),
+                bobUf = new UnionFind(n);
+        int added = 0;
+
+        for (final var edge : edges) {
+            final int type = edge[TYPE];
+            final int u = edge[U];
+            final int v = edge[V];
+
+            added += switch (type) {
+                case BOTH -> aliceUf.union(u, v) | bobUf.union(u, v);
+                case ALICE -> aliceUf.union(u, v);
+                default -> bobUf.union(u, v);
+            };
+
+            if (aliceUf.isUnited() && bobUf.isUnited())
+                return edges.length - added;
         }
 
-        // Check if the Graphs for Alice and Bob have n - 1 edges or is a single component.
-        if (Alice.isConnected() && Bob.isConnected()) {
-            return edges.length - edgesRequired;
-        }
-        
+        if (aliceUf.isUnited() && bobUf.isUnited())
+            return edges.length - added;
         return -1;
     }
+}
 
-    private class UnionFind {
-        int[] representative;
-        int[] componentSize;
-        // Number of distinct components in the graph.
-        int components;
+class UnionFind {
+    final int[] parent;
+    int groups;
 
-        // Initialize the list representative and componentSize
-        // Each node is representative of itself with size 1.
-        public UnionFind(int n) {
-            components = n;
-            representative = new int[n + 1];
-            componentSize = new int[n + 1];
+    UnionFind(final int n) {
+        parent = new int[n + 1];
+        groups = n;
+    }
 
-            for (int i = 0; i <= n; i++) {
-                representative[i] = i;
-                componentSize[i] = 1;
-            }
-        }
+    int union(final int u, final int v) {
+        final int uParent = find(u);
+        final int vParent = find(v);
+        if (uParent == vParent)
+            return 0;
+        parent[uParent] = vParent;
+        --groups;
+        return 1;
+    }
 
-        // Get the root of a node.
-        int findRepresentative(int x) {
-            if (representative[x] == x) {
-                return x;
-            }
+    int find(final int v) {
+        if (parent[v] != 0)
+            return parent[v] = find(parent[v]);
+        return v;
+    }
 
-            // Path compression.
-            return representative[x] = findRepresentative(representative[x]);
-        }
-        
-        // Perform the union of two components that belongs to node x and node y.
-        int performUnion(int x, int y) {       
-            x = findRepresentative(x); y = findRepresentative(y);
-
-            if (x == y) {
-                return 0;
-            }
-
-            if (componentSize[x] > componentSize[y]) {
-                componentSize[x] += componentSize[y];
-                representative[y] = x;
-            } else {
-                componentSize[y] += componentSize[x];
-                representative[x] = y;
-            }
-
-            components--;
-            return 1;
-        }
-
-        // Returns true if all nodes get merged to one.
-        boolean isConnected() {
-            return components == 1;
-        }
+    boolean isUnited() {
+        return groups == 1;
     }
 }
