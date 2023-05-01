@@ -29,5 +29,6 @@ class Solution {
         root.right = inorder(nums, mid + 1, end);
         return root;
 
+
     }
 }
