@@ -1,16 +1,30 @@
 class Solution {
     public int minimizeSum(int[] nums) {
-        if (nums.length == 3) return 0;
-
-        Arrays.sort(nums);
-
-        int a = nums[nums.length - 1] - nums[2];
-
-        int b = nums[nums.length - 3] - nums[0];
-
-        int c = nums[nums.length - 2] - nums[1];
-
-        return Math.min(a, Math.min(b, c));
-        
+        int min0, min1, min2, max2, max1, max0;
+        min0 = min1 = min2 = Integer.MAX_VALUE;
+        max0 = max1 = max2 = Integer.MIN_VALUE;
+        for (int x : nums) {
+            if (x < min2)
+                if (x < min1) {
+                    min2 = min1;
+                    if (x < min0) {
+                        min1 = min0;
+                        min0 = x;
+                    } else
+                        min1 = x;
+                } else
+                    min2 = x;
+            if (x > max2)
+                if (x > max1) {
+                    max2 = max1;
+                    if (x > max0) {
+                        max1 = max0;
+                        max0 = x;
+                    } else
+                        max1 = x;
+                } else
+                    max2 = x;
+        }
+        return Math.min(max0 - min2, Math.min(max1 - min1, max2 - min0));
     }
 }
