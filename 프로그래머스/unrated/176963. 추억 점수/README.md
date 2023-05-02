@@ -1,6 +1,6 @@
-# [lv1] 추억 점수 - 176963
+# [unrated] 추억 점수 - 176963 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/176963)
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/176963) 
 
 ### 성능 요약
 
@@ -90,5 +90,6 @@ Empty
 <p>입출력 예 #3</p>
 
 <p>설명 생략</p>
+
 
 > 출처: 프로그래머스 코딩 테스트 연습, https://programmers.co.kr/learn/challenges
