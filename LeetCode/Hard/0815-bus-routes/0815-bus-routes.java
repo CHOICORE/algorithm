@@ -1,59 +1,47 @@
-import java.awt.Point;
+import java.util.*;
 
 class Solution {
-    public int numBusesToDestination(int[][] routes, int S, int T) {
-        if (S == T) return 0;
-        int N = routes.length;
 
-        List<List<Integer>> graph = new ArrayList();
-        for (int i = 0; i < N; ++i) {
-            Arrays.sort(routes[i]);
-            graph.add(new ArrayList());
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        if (source == target) return 0;
+        boolean foundS = false, foundT = false;
+        for (int[] route : routes) {
+            for (int i : route) {
+                if (!foundS && i == source) foundS = true;
+                if (!foundT && i == target) foundT = true;
+            }
         }
-        Set<Integer> seen = new HashSet();
-        Set<Integer> targets = new HashSet();
-        Queue<Point> queue = new ArrayDeque();
+        if (foundS == false || foundT == false) return -1;
 
-        for (int i = 0; i < N; ++i) {
-            for (int j = i + 1; j < N; ++j) {
-                if (intersect(routes[i], routes[j])) {
-                    graph.get(i).add(j);
-                    graph.get(j).add(i);
+
+        boolean[] visit = new boolean[routes.length];
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < routes.length; i++) {
+            for (int x : routes[i]) {
+                List<Integer> list = map.getOrDefault(x, new ArrayList<>());
+                list.add(i);
+                map.put(x, list);
+            }
+        }
+        int step = 0;
+        Queue<Integer> q = new LinkedList<>();
+        q.add(source);
+        while (!q.isEmpty()) {
+            step++;
+            int size = q.size();
+            while (size-- > 0) {
+                int cur = q.poll();
+                if (!map.containsKey(cur)) continue;
+                for (int x : map.get(cur)) {
+                    if (visit[x]) continue;
+                    visit[x] = true;
+                    for (int y : routes[x]) {
+                        if (y == target) return step;
+                        q.add(y);
+                    }
                 }
             }
-
         }
-        for (int i = 0; i < N; ++i) {
-            if (Arrays.binarySearch(routes[i], S) >= 0) {
-                seen.add(i);
-                queue.offer(new Point(i, 0));
-            }
-            if (Arrays.binarySearch(routes[i], T) >= 0)
-                targets.add(i);
-        }
-
-        while (!queue.isEmpty()) {
-            Point info = queue.poll();
-            int node = info.x, depth = info.y;
-            if (targets.contains(node)) return depth + 1;
-            for (Integer nei : graph.get(node)) {
-                if (!seen.contains(nei)) {
-                    seen.add(nei);
-                    queue.offer(new Point(nei, depth + 1));
-                }
-            }
-        }
-
         return -1;
-    }
-
-    public boolean intersect(int[] A, int[] B) {
-        int i = 0, j = 0;
-        while (i < A.length && j < B.length) {
-            if (A[i] == B[j]) return true;
-            if (A[i] < B[j]) i++;
-            else j++;
-        }
-        return false;
     }
 }
