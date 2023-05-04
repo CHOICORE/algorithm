@@ -1,25 +1,34 @@
 class Solution {
+    int start = -1;
+    int length = 0;
     public String longestPalindrome(String s) {
-        if (s == null || s.length() < 1) return "";
-        int start = 0, end = 0;
-        for (int i = 0; i < s.length(); i++) {
-            int len1 = expandAroundCenter(s, i, i);
-            int len2 = expandAroundCenter(s, i, i + 1);
-            int len = Math.max(len1, len2);
-            if (len > end - start) {
-                start = i - (len - 1) / 2;
-                end = i + len / 2;
-            }
-        }
-        return s.substring(start, end + 1);
+        this.start = -1;
+        this.length = 0;
+        explore(s, s.length() / 2, 0);
+        return this.start == -1 ? null : s.substring(this.start, this.start + this.length);
     }
 
-    private int expandAroundCenter(String s, int left, int right) {
-        int L = left, R = right;
-        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
-            L--;
-            R++;
+    public void explore(String s, int index, int direction) {
+        int i = index - 1;
+        int j = index + 1;
+        while (i >= 0 && s.charAt(i) == s.charAt(index))
+            i--;
+        while (j < s.length() && s.charAt(j) == s.charAt(index))
+            j++;
+        int l = i;
+        int r = j;
+        while (l >= 0 && r < s.length() && s.charAt(l) == s.charAt(r)) {
+            l--;
+            r++;
         }
-        return R - L - 1;
+        l++;
+        if (r - l > length) {
+            this.length = r - l;
+            this.start = l;
+        }
+        if (direction != 2 && 2 * (i + 1) > this.length)
+            explore(s, i, 1);
+        if (direction != 1 && 2 * (s.length() - j) > this.length)
+            explore(s, j, 2);
     }
 }
