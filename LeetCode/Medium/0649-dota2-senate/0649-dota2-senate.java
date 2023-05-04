@@ -1,11 +1,11 @@
 class Solution {
     public String predictPartyVictory(String senate) {
         int rCount = 0, dCount = 0;
-        boolean[] vote = new boolean[senate.length()];
+        int len = senate.length();
+        boolean[] vote = new boolean[len];
 
-        while (rCount < senate.length() && dCount < senate.length()) {
-            for (int i = 0; i < senate.length() && rCount < senate.length() && dCount < senate.length(); i++) {
-                // this voter has been banned already.
+        while (rCount < len && dCount < len) {
+            for (int i = 0; i < len && rCount < len && dCount < len; i++) {
                 if (vote[i])
                     continue;
 
@@ -19,7 +19,7 @@ class Solution {
             }
         }
 
-        if (rCount == senate.length())
+        if (rCount == len)
             return "Radiant";
         else
             return "Dire";
