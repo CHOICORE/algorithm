@@ -1,27 +1,34 @@
 class Solution {
     public String predictPartyVictory(String senate) {
-        int rCount = 0, dCount = 0;
-        int len = senate.length();
-        boolean[] vote = new boolean[len];
+        
+        boolean r = true;
+        boolean d = true;
+        char[] senates = senate.toCharArray();
+        int flag = 0;
 
-        while (rCount < len && dCount < len) {
-            for (int i = 0; i < len && rCount < len && dCount < len; i++) {
-                if (vote[i])
-                    continue;
+        while (r && d) {
+            r = false;
+            d = false; 
 
-                if (senate.charAt(i) == 'R') {
-                    if (rCount < dCount) vote[i] = true;
-                    rCount++;
-                } else {
-                    if (dCount < rCount) vote[i] = true;
-                    dCount++;
+            for (int i = 0; i < senates.length; i++) {
+                if (senates[i] == 'R') {
+                    if (flag < 0) {
+                        senates[i] = 0;
+                    } else {
+                        r = true;
+                    }
+                    flag++;
+                } else if (senates[i] == 'D') {
+                    if (flag > 0) {
+                        senates[i] = 0;
+                    } else {
+                        d = true;
+                    }
+                    flag--;
                 }
             }
         }
 
-        if (rCount == len)
-            return "Radiant";
-        else
-            return "Dire";
+        return r ? "Radiant" : "Dire";
     }
 }
