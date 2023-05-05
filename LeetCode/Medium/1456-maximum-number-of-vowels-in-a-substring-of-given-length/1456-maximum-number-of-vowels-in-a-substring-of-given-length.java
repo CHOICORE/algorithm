@@ -1,28 +1,25 @@
 class Solution {
-
-    public static int maxVowels(String s, int k) {
-        int length = s.length();
-        int[] totalVowelCountByIndex = new int[length];
-
-        int vowelCount = 0;
-        for (int i = 0; i < length; i++) {
+    public int maxVowels(String s, int k) {
+        
+        int n = s.length();
+        int[] arr = new int[n];
+        int count = 0;
+        for (int i = 0; i < n; i++) {
             char c = s.charAt(i);
             if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
-                vowelCount++;
+                count++;
             }
-            totalVowelCountByIndex[i] = vowelCount;
+            arr[i] = count;
         }
-
-        int maxVowelCount = 0;
-        for (int start = 0; start <= length - k; start++) {
-            int end = start + k - 1;
-            if (start == 0) {
-                maxVowelCount = Math.max(maxVowelCount, totalVowelCountByIndex[end]);
+        int max = 0;
+        for (int i = 0; i <= n - k; i++) {
+            int end = i + k - 1;
+            if (i == 0) {
+                max = Math.max(max, arr[end]);
             } else {
-                maxVowelCount = Math.max(maxVowelCount, totalVowelCountByIndex[end] - totalVowelCountByIndex[start - 1]);
+                max = Math.max(max, arr[end] - arr[i - 1]);
             }
         }
-
-        return maxVowelCount;
+        return max;
     }
 }
