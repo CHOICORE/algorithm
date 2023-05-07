@@ -15,27 +15,19 @@
  */
 class Solution {
     public List<Integer> rightSideView(TreeNode root) {
-        List<Integer> result = new ArrayList<>();
-        if (root == null) {
-            return result;
+        List<Integer> res = new ArrayList<>();
+        visit(root, res, 1);
+        return res;
+    }
+
+    void visit(TreeNode root, List<Integer> res, int level) {
+        if (root == null)
+            return;
+        if (res.size() < level) {
+            res.add(root.val);
         }
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                TreeNode node = queue.poll();
-                if (i == size - 1) {
-                    result.add(node.val);
-                }
-                if (node.left != null) {
-                    queue.offer(node.left);
-                }
-                if (node.right != null) {
-                    queue.offer(node.right);
-                }
-            }
-        }
-        return result;
+        visit(root.right, res, level + 1);
+        visit(root.left, res, level + 1);
+        return;
     }
 }
