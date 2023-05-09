@@ -1,58 +1,33 @@
 class Solution {
     public int[][] merge(int[][] intervals) {
-        int[][] answer;
-        List<int[]> tempAnswer = new ArrayList<>();
-        int[] intervalEdges = new int[10000];
-        int maxStartOfInterval = 0;
-        
-        for (int i = 0; i < intervals.length; i++) {
-            int startOfInterval = intervals[i][0];
-            int endOfInterval = intervals[i][1];
-            intervalEdges[startOfInterval] = Math.max(intervalEdges[startOfInterval], endOfInterval + 1);
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+
+        for (int[] interval : intervals) {
+            min = Math.min(min, interval[0]);
+            max = Math.max(max, interval[0]);
         }
-        int[] tempInterval = new int[]{-1, -1};
-        for (int startOfCurrentInterval = 0; startOfCurrentInterval < intervalEdges.length; startOfCurrentInterval++) {
-            
-            int endOfTempInterval = tempInterval[1];
-            int endOfCurrentInterval = intervalEdges[startOfCurrentInterval];
-            if (endOfCurrentInterval != 0) {
-                
-                if (endOfTempInterval != -1) {
-                    
-                    if (startOfCurrentInterval <= endOfTempInterval) {
-                        
-                        endOfTempInterval = Math.max(endOfTempInterval, endOfCurrentInterval - 1);
-                        tempInterval[1] = endOfTempInterval;
-                        
-                    } else {
-                        
-                        tempAnswer.add(tempInterval);
-                        tempInterval = new int[]{
-                                startOfCurrentInterval,
-                                endOfCurrentInterval - 1
-                                    
-                        };
-                    }
-                } else {
-                    
-                    tempInterval[0] = startOfCurrentInterval;
-                    tempInterval[1] = endOfCurrentInterval - 1;
-                    
-                }
+
+        int[] range = new int[max - min + 1];
+        for (int[] interval : intervals) {
+            range[interval[0] - min] = Math.max(interval[1] - min, range[interval[0] - min]);
+        }
+
+        int start = 0, end = 0;
+        LinkedList<int[]> result = new LinkedList<>();
+        for (int i = 0; i < range.length; i++) {
+            if (range[i] == 0) {
+                continue;
+            }
+            if (i <= end) {
+                end = Math.max(range[i], end);
+            } else {
+                result.add(new int[]{start + min, end + min});
+                start = i;
+                end = range[i];
             }
         }
-        int endOfTempInterval = tempInterval[1];
-        if (endOfTempInterval != -1) {
-            
-            tempAnswer.add(tempInterval);
-            
-        }
-        answer = new int[tempAnswer.size()][];
-        for (int i = 0; i < tempAnswer.size(); i++) {
-            
-            answer[i] = tempAnswer.get(i);
-            
-        }
-        return answer;
+        result.add(new int[]{start + min, end + min});
+        return result.toArray(new int[result.size()][]);
     }
 }
