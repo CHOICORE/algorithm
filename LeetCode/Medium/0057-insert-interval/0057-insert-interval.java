@@ -4,24 +4,11 @@ class Solution {
         if (len == 0)
             return new int[][]{newInterval};
 
-        int insertionPointStart = Arrays
-                .binarySearch(
-                        intervals
-                        , 0
-                        , len
-                        , new int[]{newInterval[0], newInterval[0]}
-                        , Comparator.comparingInt(a -> a[0]));
+        int insertionPointStart = Arrays.binarySearch(intervals, 0, len, new int[]{newInterval[0], newInterval[0]}, Comparator.comparingInt(a -> a[0]));
         insertionPointStart = Math.max(insertionPointStart, -insertionPointStart - 1);
 
-        int insertionPointEnd = Arrays
-                .binarySearch(
-                        intervals
-                        , 0
-                        , len
-                        , new int[]{newInterval[1] + 1, newInterval[1] + 1}
-                        , Comparator.comparingInt(a -> a[0]));
+        int insertionPointEnd = Arrays.binarySearch(intervals, 0, len, new int[]{newInterval[1] + 1, newInterval[1] + 1}, Comparator.comparingInt(a -> a[0]));
         insertionPointEnd = Math.max(insertionPointEnd, -insertionPointEnd - 1);
-
 
         List<int[]> res = new ArrayList<>();
         for (int i = 0; i < len; i++) {
