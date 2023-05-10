@@ -1,21 +1,54 @@
 class Solution {
     public int[][] generateMatrix(int n) {
-        int[][] result = new int[n][n];
-        int cnt = 1;
-        for (int layer = 0; layer < (n + 1) / 2; layer++) {
-            for (int ptr = layer; ptr < n - layer; ptr++) {
-                result[layer][ptr] = cnt++;
+        int s = 1;
+        int e = n * n;
+        boolean rowTurn = true;
+        boolean backward = false;
+        int r = 0;
+        int c = 0;
+        int re = n;
+        int ce = n;
+        int[][] mat = new int[n][n];
+        while (s <= e) {
+            if (rowTurn) {
+                if (!backward) {
+                    for (; c < ce; c++) {
+                        mat[r][c] = s++;
+                    }
+                    r++;
+                    c--;
+                } else {
+                    for (; c >= n - ce; c--) {
+                        mat[r][c] = s++;
+                    }
+                    r--;
+                    c++;
+                    re--;
+                }
+            } else {
+                if (!backward) {
+                    for (; r < re; r++) {
+                        mat[r][c] = s++;
+                    }
+                    c--;
+                    r--;
+
+                } else {
+                    for (; r >= n - re; r--) {
+                        mat[r][c] = s++;
+                    }
+                    r++;
+                    c++;
+                    ce--;
+                }
+
+                backward = !backward;
             }
-            for (int ptr = layer + 1; ptr < n - layer; ptr++) {
-                result[ptr][n - layer - 1] = cnt++;
-            }
-            for (int ptr = layer + 1; ptr < n - layer; ptr++) {
-                result[n - layer - 1][n - ptr - 1] = cnt++;
-            }
-            for (int ptr = layer + 1; ptr < n - layer - 1; ptr++) {
-                result[n - ptr - 1][layer] = cnt++;
-            }
+
+            rowTurn = !rowTurn;
+
         }
-        return result;
+
+        return mat;
     }
 }
