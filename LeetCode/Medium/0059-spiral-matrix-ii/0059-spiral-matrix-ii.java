@@ -1,54 +1,47 @@
 class Solution {
     public int[][] generateMatrix(int n) {
-        int s = 1;
-        int e = n * n;
-        boolean rowTurn = true;
-        boolean backward = false;
-        int r = 0;
-        int c = 0;
-        int re = n;
-        int ce = n;
-        int[][] mat = new int[n][n];
-        while (s <= e) {
-            if (rowTurn) {
-                if (!backward) {
-                    for (; c < ce; c++) {
-                        mat[r][c] = s++;
+        int i = 0, j = 0;
+        int[][] result = new int[n][n];
+        int curr = 1;
+        int dir = 0; // 0: right, 1: down, 2: left, 3: up
+        do {
+            result[i][j] = curr;
+            curr++;
+            switch (dir) {
+                case 0:
+                    if ((j < n - 1) && (result[i][j + 1] == 0)) {
+                        j++;
+                    } else {
+                        dir = (dir + 1) % 4;
+                        i++;
                     }
-                    r++;
-                    c--;
-                } else {
-                    for (; c >= n - ce; c--) {
-                        mat[r][c] = s++;
+                    break;
+                case 1:
+                    if ((i < n - 1) && (result[i + 1][j] == 0)) {
+                        i++;
+                    } else {
+                        dir = (dir + 1) % 4;
+                        j--;
                     }
-                    r--;
-                    c++;
-                    re--;
-                }
-            } else {
-                if (!backward) {
-                    for (; r < re; r++) {
-                        mat[r][c] = s++;
+                    break;
+                case 2:
+                    if ((j > 0) && (result[i][j - 1] == 0)) {
+                        j--;
+                    } else {
+                        dir = (dir + 1) % 4;
+                        i--;
                     }
-                    c--;
-                    r--;
-
-                } else {
-                    for (; r >= n - re; r--) {
-                        mat[r][c] = s++;
+                    break;
+                case 3:
+                    if ((i > 0) && (result[i - 1][j] == 0)) {
+                        i--;
+                    } else {
+                        dir = 0;
+                        j++;
                     }
-                    r++;
-                    c++;
-                    ce--;
-                }
-
-                backward = !backward;
+                    break;
             }
-
-            rowTurn = !rowTurn;
-
-        }
-
-        return mat;
+        } while (curr <= n * n);
+        return result;
     }
 }
