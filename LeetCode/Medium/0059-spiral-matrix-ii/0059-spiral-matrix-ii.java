@@ -1,47 +1,38 @@
+
 class Solution {
     public int[][] generateMatrix(int n) {
-        int i = 0, j = 0;
-        int[][] result = new int[n][n];
-        int curr = 1;
-        int dir = 0; // 0: right, 1: down, 2: left, 3: up
-        do {
-            result[i][j] = curr;
-            curr++;
-            switch (dir) {
-                case 0:
-                    if ((j < n - 1) && (result[i][j + 1] == 0)) {
-                        j++;
-                    } else {
-                        dir = (dir + 1) % 4;
-                        i++;
-                    }
-                    break;
-                case 1:
-                    if ((i < n - 1) && (result[i + 1][j] == 0)) {
-                        i++;
-                    } else {
-                        dir = (dir + 1) % 4;
-                        j--;
-                    }
-                    break;
-                case 2:
-                    if ((j > 0) && (result[i][j - 1] == 0)) {
-                        j--;
-                    } else {
-                        dir = (dir + 1) % 4;
-                        i--;
-                    }
-                    break;
-                case 3:
-                    if ((i > 0) && (result[i - 1][j] == 0)) {
-                        i--;
-                    } else {
-                        dir = 0;
-                        j++;
-                    }
-                    break;
+        int[][] mat = new int[n][n];
+        int top = 0, left = 0, down = mat.length - 1, right = mat[0].length - 1;
+        int count = 1;
+        while (top <= down && left <= right) {
+
+            for (int i = left; i <= right; i++) {
+                mat[top][i] = count;
+                count++;
             }
-        } while (curr <= n * n);
-        return result;
+            top++;
+
+            for (int i = top; i <= down; i++) {
+                mat[i][right] = count;
+                count++;
+            }
+            right--;
+
+            if (top <= down) {
+                for (int i = right; i >= left; i--) {
+                    mat[down][i] = count;
+                    count++;
+                }
+                down--;
+            }
+            if (left <= right) {
+                for (int i = down; i >= top; i--) {
+                    mat[i][left] = count;
+                    count++;
+                }
+                left++;
+            }
+        }
+        return mat;
     }
 }
