@@ -1,39 +1,36 @@
 class Solution {
     public int[] asteroidCollision(int[] asteroids) {
-        int index = 0;
+        Deque<Integer> queue = new ArrayDeque<>();
 
-        for (int i = 0; i < asteroids.length; ++i) {
-            if (asteroids[i] > 0) {
-                asteroids[index++] = asteroids[i];
-            } else {
-                boolean insert = true;
-                while (index > 0) {
-                    if (asteroids[index - 1] < 0) {
-                        break;
-                    }
-                    int diff = asteroids[index - 1] + asteroids[i];
-                    if (diff == 0) {
-                        insert = false;
-                        --index;
-                        break;
-                    } else if (diff > 0) {
-                        insert = false;
-                        break;
-                    } else {
-                        --index;
-                    }
+        for (int val : asteroids) {
+            queue.addLast(val);
+            boolean shouldBreak = false;
+
+            while (queue.size() > 1 && !shouldBreak) {
+                int last = queue.pollLast();
+                int first = queue.pollLast();
+                // collide
+                if (first > 0 && last < 0) {
+                    if (first == Math.abs(last))
+                        shouldBreak = true;
+                    else if (first > Math.abs(last)) {
+                        queue.addLast(first);
+                        shouldBreak = true;
+                    } else
+                        queue.addLast(last);
+                } else {
+                    queue.addLast(first);
+                    queue.addLast(last);
+                    shouldBreak = true;
                 }
-                if (insert) {
-                    asteroids[index++] = asteroids[i];
-                }
-                
             }
         }
-        int[] res = new int[index];
-        for (int i = 0; i < index; ++i) {
-            res[i] = asteroids[i];
-        }
-            
-        return res;
+
+        int[] ans = new int[queue.size()];
+
+        for (int i = 0; i < ans.length; i++)
+            ans[i] = queue.pollFirst();
+
+        return ans;
     }
 }
