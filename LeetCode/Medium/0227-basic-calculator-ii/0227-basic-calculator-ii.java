@@ -1,46 +1,37 @@
 class Solution {
     public int calculate(String s) {
-        char sign = '+';
-        int prevSum = 0;
-        int num = 0;
-        int lastNum = 0;
-
+        int number = 0;
+        int n1 = 0;
+        int n2 = 1;
+        char op1 = '+';
+        char op2 = '*';
         for (char c : s.toCharArray()) {
             if (c >= '0' && c <= '9') {
-                num = num * 10 + (c - '0');
-            } else if (c == ' ') {
-                // do nothing
-            } else {
-                switch (sign) {
-                    case '+' -> {
-                        prevSum+= lastNum;
-                        lastNum = num;
-                    }
-                    case '-' -> {
-                        prevSum += lastNum;
-                        lastNum = -num;
-                    }
-                    case '*' -> lastNum *= num;
-                    case '/' -> lastNum /= num;
-                }
-                num = 0;
-                sign = c;
+                number = number * 10 + (c - '0');
+            } else if (c == '+' || c == '-') {
+                n1 = eval(n1, op1, (eval(n2, op2, number)));
+                op1 = c;
+                n2 = 1;
+                op2 = '*';
+                number = 0;
+            } else if (c == '*' || c == '/') {
+                n2 = eval(n2, op2, number);
+                op2 = c;
+                number = 0;
             }
         }
+        return eval(n1, op1, (eval(n2, op2, number)));
+    }
 
-        switch (sign) {
-            case '+' -> {
-                prevSum+= lastNum;
-                lastNum = num;
-            }
-            case '-' -> {
-                prevSum += lastNum;
-                lastNum = -num;
-            }
-            case '*' -> lastNum *= num;
-            case '/' -> lastNum /= num;
+    private int eval(int n1, char op, int n2) {
+        if (op == '+') {
+            return n1 + n2;
+        } else if (op == '-') {
+            return n1 - n2;
+        } else if (op == '*') {
+            return n1 * n2;
+        } else {
+            return n1 / n2;
         }
-
-        return prevSum + lastNum;
     }
 }
