@@ -3,7 +3,7 @@ class UnionFind {
     int[] rank;
     int comp;
 
-    UnionFind(int n) {
+    public UnionFind(int n) {
         parent = new int[n];
         rank = new int[n];
         for (int i = 0; i < n; i++) {
@@ -13,17 +13,15 @@ class UnionFind {
         comp = n;
     }
 
-    int findParent(int x) {
+    public int findParent(int x) {
         if (x == parent[x])
             return x;
         return parent[x] = findParent(parent[x]);
     }
 
-    boolean union(int a, int b) {
+    public boolean union(int a, int b) {
         a = findParent(a);
         b = findParent(b);
-
-
         if (a == b)
             return false;
         else {
