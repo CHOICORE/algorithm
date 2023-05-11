@@ -1,39 +1,62 @@
+class UnionFind {
+    int[] parent;
+    int[] rank;
+    int comp;
+
+    UnionFind(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+        comp = n;
+    }
+
+    int findParent(int x) {
+        if (x == parent[x])
+            return x;
+        return parent[x] = findParent(parent[x]);
+    }
+
+    boolean union(int a, int b) {
+        a = findParent(a);
+        b = findParent(b);
+
+
+        if (a == b)
+            return false;
+        else {
+            comp--;
+            if (rank[a] < rank[b])
+                parent[a] = b;
+            else if (rank[b] < rank[a])
+                parent[b] = a;
+            else {
+                parent[a] = b;
+                rank[b] += 1;
+            }
+
+            return true;
+        }
+    }
+}
+
 class Solution {
     public int removeStones(int[][] stones) {
         int n = stones.length;
-        int[] parent = new int[n];
-        Arrays.fill(parent, -1);
-        
+        UnionFind uf = new UnionFind(n);
+
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
-                if (stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]) {
-                    union(parent, i, j);
-                }
+                if (stones[i][0] == stones[j][0])
+                    uf.union(i, j);
+                else if (stones[i][1] == stones[j][1])
+                    uf.union(i, j);
             }
         }
         
-        int count = 0;
-        for (int i = 0; i < n; i++) {
-            if (parent[i] == -1) {
-                count++;
-            }
-        }
-        
-        return n - count;
-    }
-    
-    private void union(int[] parent, int i, int j) {
-        int parentI = find(parent, i);
-        int parentJ = find(parent, j);
-        if (parentI != parentJ) {
-            parent[parentI] = parentJ;
-        }
-    }
-    
-    private int find(int[] parent, int i) {
-        if (parent[i] == -1) {
-            return i;
-        }
-        return find(parent, parent[i]);
+        return n - uf.comp;
+
     }
 }
