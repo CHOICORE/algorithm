@@ -1,20 +1,27 @@
 class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        List<List<Integer>> arr = new ArrayList<>();
-        func(candidates, arr, target, 0, new ArrayList<Integer>());
-        return arr;
+        Arrays.sort(candidates);
+        List<List<Integer>> res = new ArrayList<>();
+        combin(res, new ArrayList<>(), 0, candidates.length - 1, target, candidates);
+        return res;
     }
 
-    public void func(int[] candi, List<List<Integer>> arr, int target, int idx, List<Integer> temp) {
-        if (idx == candi.length) {
-            if (target == 0) arr.add(new ArrayList<>(temp));
-            return;
+    public void combin(List<List<Integer>> res, List<Integer> r, int left, int right, int target, int[] candidates) {
+        if (r.stream().mapToInt(Integer::intValue).sum() == target) {
+            List<Integer> temp = new ArrayList<>();
+            temp.addAll(r);
+            res.add(temp);
+
+        } else if (r.stream().mapToInt(Integer::intValue).sum() < target) {
+            for (int i = left; i <= right; i++) {
+                if (r.stream().mapToInt(Integer::intValue).sum() + candidates[i] <= target) {
+                    r.add(candidates[i]);
+                    combin(res, r, i, right, target, candidates);
+                    r.remove(Integer.valueOf(candidates[i]));
+                } else {
+                    return;
+                }
+            }
         }
-        if (candi[idx] <= target) {
-            temp.add(candi[idx]);
-            func(candi, arr, target - candi[idx], idx, temp);
-            temp.remove(temp.size() - 1);
-        }
-        func(candi, arr, target, idx + 1, temp);
     }
 }
