@@ -1,23 +1,17 @@
 class Solution {
-    long dp[];
-    private long dfs(int[][] questions, int i) {
-        if (i >= questions.length) {
-            return 0;
-        }
-        if (dp[i] != 0) {
-            return dp[i];
-        }
-        long points = questions[i][0];
-        int skip = questions[i][1];
-
-        dp[i] = Math.max(points + dfs(questions, i + skip + 1), dfs(questions, i + 1));
-        return dp[i];
-    }
-    
     public long mostPoints(int[][] questions) {
-        int n = questions.length;
-        dp = new long[n];
-        
-        return dfs(questions, 0);
+        long[] dp = new long[questions.length];
+        long ans = 0;
+        for (int i = 0; i < dp.length; i++) {
+            long prev = i == 0 ? 0L : dp[i - 1] - (long) questions[i - 1][0];
+            dp[i] = Math.max(dp[i], prev);
+            dp[i] += (long) questions[i][0];
+            ans = Math.max(ans, dp[i]);
+            int nextIdx = i + 1 + questions[i][1];
+            if (nextIdx < dp.length) {
+                dp[nextIdx] = Math.max(dp[nextIdx], dp[i]);
+            }
+        }
+        return ans;
     }
 }
