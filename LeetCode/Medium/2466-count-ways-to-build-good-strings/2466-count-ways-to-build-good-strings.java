@@ -1,24 +1,19 @@
 class Solution {
     public int countGoodStrings(int low, int high, int zero, int one) {
+        final int kMod = 1_000_000_007;
+        int ans = 0;
         int[] dp = new int[high + 1];
         dp[0] = 1;
-        int mod = 1_000_000_007;
-        
-        for (int end = 1; end <= high; ++end) {
-            if (end >= zero) {
-                dp[end] += dp[end - zero];
-            }
-            if (end >= one) {
-                dp[end] += dp[end - one];
-            }
-            dp[end] %= mod;
+
+        for (int i = 1; i <= high; ++i) {
+            if (i >= zero)
+                dp[i] = (dp[i] + dp[i - zero]) % kMod;
+            if (i >= one)
+                dp[i] = (dp[i] + dp[i - one]) % kMod;
+            if (i >= low)
+                ans = (ans + dp[i]) % kMod;
         }
-        
-        int answer = 0;
-        for (int i = low; i <= high; ++i) {
-            answer += dp[i];
-            answer %= mod;
-        }
-        return answer;
+
+        return ans;
     }
 }
