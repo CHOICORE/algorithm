@@ -1,48 +1,29 @@
 class Solution {
     public int maxScore(int[] nums) {
         int n = nums.length;
-        int bitmask = 0;
+        int[][] gcd = new int[n][n];
         for (int i = 0; i < n; i++) {
-            bitmask = bitmask | (1 << i);
-        }
-        int[] memo = new int[bitmask + 1];
-        return findMaxScore(nums, bitmask, n / 2, memo);
-    }
-
-    private int findMaxScore(int[] nums, int bitmask, int pairsToDelete, int[] memo) {
-        if (memo[bitmask] > 0) {
-            return memo[bitmask];
-        }
-
-        int maxScore = 0;
-        for (int i = 0; i < nums.length - 1; i++) {
-            int first = 1 << i;
-            if ((bitmask & first) == 0) {
-                continue;
+            for (int j = 0; j < n; j++) {
+                gcd[i][j] = gcd(nums[i], nums[j]);
             }
-            bitmask = bitmask ^ first;
-            for (int j = i + 1; j < nums.length; j++) {
-                int score = 0;
-                int second = 1 << j;
-                if ((bitmask & second) == 0) {
-                    continue;
+        }
+
+        int[] dp = new int[1 << n];
+        for (int i = 0; i < (1 << n); i++) {
+            int cnt = Integer.bitCount(i);
+            if (cnt % 2 != 0) continue;
+            for (int x = 0; x < n; x++) {
+                if ((i & (1 << x)) > 0) continue;
+                for (int y = x + 1; y < n; y++) {
+                    if ((i & (1 << y)) > 0) continue;
+                    dp[i | (1 << x) | (1 << y)] = Math.max(dp[i] + gcd[x][y] * (cnt / 2 + 1), dp[i | (1 << x) | (1 << y)]);
                 }
-                bitmask = bitmask ^ second;
-                score += pairsToDelete * findGCD(nums[i], nums[j]);
-                score += findMaxScore(nums, bitmask, pairsToDelete - 1, memo);
-                bitmask = bitmask ^ second;
-                maxScore = Math.max(maxScore, score);
             }
-            bitmask = bitmask ^ first;
         }
-        memo[bitmask] = maxScore;
-        return memo[bitmask];
+        return dp[(1 << n) - 1];
     }
 
-    private int findGCD(int small, int big) {
-        if (big % small == 0) {
-            return small;
-        }
-        return findGCD(big % small, small);
+    private int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
     }
 }
