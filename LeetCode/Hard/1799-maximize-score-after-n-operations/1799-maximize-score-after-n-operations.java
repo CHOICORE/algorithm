@@ -1,46 +1,48 @@
 class Solution {
-    public int backtrack(int[] nums, int mask, int pairsPicked, int[] memo) {
-        if (2 * pairsPicked == nums.length) {
-            return 0;
+    public int maxScore(int[] nums) {
+        int n = nums.length;
+        int bitmask = 0;
+        for (int i = 0; i < n; i++) {
+            bitmask = bitmask | (1 << i);
         }
+        int[] memo = new int[bitmask + 1];
+        return findMaxScore(nums, bitmask, n / 2, memo);
+    }
 
-        if (memo[mask] != -1) {
-            return memo[mask];
+    private int findMaxScore(int[] nums, int bitmask, int pairsToDelete, int[] memo) {
+        if (memo[bitmask] > 0) {
+            return memo[bitmask];
         }
 
         int maxScore = 0;
-
-        for (int firstIndex = 0; firstIndex < nums.length; ++firstIndex) {
-            for (int secondIndex = firstIndex + 1; secondIndex < nums.length; ++secondIndex) {
-    
-                if (((mask >> firstIndex) & 1) == 1 || ((mask >> secondIndex) & 1) == 1) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            int first = 1 << i;
+            if ((bitmask & first) == 0) {
+                continue;
+            }
+            bitmask = bitmask ^ first;
+            for (int j = i + 1; j < nums.length; j++) {
+                int score = 0;
+                int second = 1 << j;
+                if ((bitmask & second) == 0) {
                     continue;
                 }
-
-                int newMask = mask | (1 << firstIndex) | (1 << secondIndex);
-
-                int currScore = (pairsPicked + 1) * gcd(nums[firstIndex], nums[secondIndex]);
-                int remainingScore = backtrack(nums, newMask, pairsPicked + 1, memo);
-
-                maxScore = Math.max(maxScore, currScore + remainingScore);
+                bitmask = bitmask ^ second;
+                score += pairsToDelete * findGCD(nums[i], nums[j]);
+                score += findMaxScore(nums, bitmask, pairsToDelete - 1, memo);
+                bitmask = bitmask ^ second;
+                maxScore = Math.max(maxScore, score);
             }
+            bitmask = bitmask ^ first;
         }
-
-        memo[mask] = maxScore;
-        return maxScore;
+        memo[bitmask] = maxScore;
+        return memo[bitmask];
     }
 
-    public int maxScore(int[] nums) {
-        int memoSize = 1 << nums.length;
-        int[] memo = new int[memoSize];
-        Arrays.fill(memo, -1);
-        return backtrack(nums, 0, 0, memo);
-    }
-
-    public int gcd(int a, int b) {
-        if (b == 0) {
-            return a;
+    private int findGCD(int small, int big) {
+        if (big % small == 0) {
+            return small;
         }
-        return gcd(b, a % b);
+        return findGCD(big % small, small);
     }
 }
