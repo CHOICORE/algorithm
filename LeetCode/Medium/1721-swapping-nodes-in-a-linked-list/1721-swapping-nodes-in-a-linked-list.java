@@ -10,21 +10,43 @@
  */
 class Solution {
     public ListNode swapNodes(ListNode head, int k) {
-        ListNode leftNode = head, rightNode = head;
 
-        for (int i = 1; i < k; i++) {
-            leftNode = leftNode.next;
+        if (head == null || head.next == null) return head;
+
+        ListNode len = head;
+        int length = 0;
+
+        // calculate length
+        while (len != null) {
+            len = len.next;
+            length++;
         }
 
-        ListNode current = leftNode;
-        while (current.next != null) {
-            current = current.next;
-            rightNode = rightNode.next;
+
+        ListNode curr1 = head;
+        ListNode curr2 = head;
+
+        int l = length - k;
+
+        //finding left node
+        while (k-- > 1) {
+            curr1 = curr1.next;
         }
 
-        int temp = leftNode.val;
-        leftNode.val = rightNode.val;
-        rightNode.val = temp;
+        // finding right node
+        while (l-- > 0) {
+            curr2 = curr2.next;
+        }
+
+        // edge cases like k is the middle node then no need to swap
+        if (curr1 == curr2) return head;
+
+
+        // Swapping Values of both indexes
+
+        curr1.val = curr1.val + curr2.val;
+        curr2.val = curr1.val - curr2.val;
+        curr1.val = curr1.val - curr2.val;
 
         return head;
     }
