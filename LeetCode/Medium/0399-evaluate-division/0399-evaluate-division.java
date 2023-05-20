@@ -1,45 +1,74 @@
 class Solution {
-    private Map<String, String> p;
-    private Map<String, Double> w;
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        Map<String, Map<String, Double>> map = new HashMap<>();
 
-    public double[] calcEquation(
-            List<List<String>> equations, double[] values, List<List<String>> queries) {
-        int n = equations.size();
-        p = new HashMap<>();
-        w = new HashMap<>();
-        for (List<String> e : equations) {
-            p.put(e.get(0), e.get(0));
-            p.put(e.get(1), e.get(1));
-            w.put(e.get(0), 1.0);
-            w.put(e.get(1), 1.0);
-        }
-        for (int i = 0; i < n; ++i) {
-            List<String> e = equations.get(i);
-            String a = e.get(0), b = e.get(1);
-            String pa = find(a), pb = find(b);
-            if (Objects.equals(pa, pb)) {
-                continue;
+        for (int i = 0; i < equations.size(); i++) {
+            String num = equations.get(i).get(0);
+            String denom = equations.get(i).get(1);
+            double val = values[i];
+            if (!map.containsKey(num)) {
+                map.put(num, new HashMap<String, Double>());
             }
-            p.put(pa, pb);
-            w.put(pa, w.get(b) * values[i] / w.get(a));
+            map.get(num).put(denom, val);
+
+            if (!map.containsKey(denom)) {
+                map.put(denom, new HashMap<String, Double>());
+            }
+            map.get(denom).put(num, 1 / val);
         }
-        int m = queries.size();
-        double[] ans = new double[m];
-        for (int i = 0; i < m; ++i) {
-            String c = queries.get(i).get(0), d = queries.get(i).get(1);
-            ans[i] = !p.containsKey(c) || !p.containsKey(d) || !Objects.equals(find(c), find(d))
-                    ? -1.0
-                    : w.get(c) / w.get(d);
+
+        double[] ans = new double[queries.size()];
+
+        for (int i = 0; i < queries.size(); i++) {
+            String num = queries.get(i).get(0);
+            String denom = queries.get(i).get(1);
+
+            if (!map.containsKey(num) || !map.containsKey(denom)) {
+                ans[i] = -1.0;
+            } else if (num.equals(denom)) {
+                ans[i] = 1.0;
+            } else {
+                ans[i] = dfs(num, denom, map);
+            }
         }
+
         return ans;
     }
 
-    private String find(String x) {
-        if (!Objects.equals(p.get(x), x)) {
-            String origin = p.get(x);
-            p.put(x, find(p.get(x)));
-            w.put(x, w.get(x) * w.get(origin));
+    public double dfs(String a, String b, Map<String, Map<String, Double>> map) {
+        double ans = 1;
+        Queue<Pair> q = new LinkedList<>();
+        Set<String> seen = new HashSet<>();
+
+        q.offer(new Pair(a, 1));
+        seen.add(a);
+
+        while (!q.isEmpty()) {
+            Pair remove = q.poll();
+            String removedNode = remove.node;
+            double ratio = remove.ratio;
+            if (b.equals(removedNode)) {
+                return ratio;
+            }
+
+            Map<String, Double> neighbors = map.get(removedNode);
+            for (String node : neighbors.keySet()) {
+                if (!seen.contains(node)) {
+                    seen.add(node);
+                    q.offer(new Pair(node, ratio * neighbors.get(node)));
+                }
+            }
         }
-        return p.get(x);
+        return -1;
+    }
+
+    class Pair {
+        String node;
+        double ratio;
+
+        Pair(String node, double ratio) {
+            this.node = node;
+            this.ratio = ratio;
+        }
     }
 }
