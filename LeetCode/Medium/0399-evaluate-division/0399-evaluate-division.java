@@ -1,50 +1,48 @@
 class Solution {
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-        final int n = queries.size();
-        final double[] result = new double[n];
-
-        final Map<String, Map<String, Double>> map = new HashMap<>();
-
-        for (int i = 0; i < values.length; i++) {
-            final List<String> equation = equations.get(i);
-            final String first = equation.get(0);
-            final String second = equation.get(1);
-
-            map.putIfAbsent(first, new HashMap<>());
-            map.putIfAbsent(second, new HashMap<>());
-
-            map.get(first).put(second, values[i]);
-            map.get(second).put(first, 1 / values[i]);
+        var graph = graphBuild(equations, values);
+        int n = queries.size();
+        double[] res = new double[n];
+        for (int i = 0; i < n; i++) {
+            res[i] = bfs(graph, queries.get(i).get(0), queries.get(i).get(1));
         }
-
-        int index = 0;
-        for (List<String> q : queries) {
-            final String from = q.get(0);
-            final String target = q.get(1);
-            if (!map.containsKey(from) || !map.containsKey(target)) {
-                result[index++] = -1;
-                continue;
-            }
-            result[index++] = dfs(map, from, target, new HashSet<>());
-        }
-
-        return result;
+        return res;
     }
 
-    private double dfs(Map<String, Map<String, Double>> map, String from, String target, Set<String> isVisited) {
-        if (from.equals(target)) return 1;
-
-        final Map<String, Double> next = map.get(from);
-        for (Map.Entry<String, Double> e : next.entrySet()) {
-            final String to = e.getKey();
-            if (isVisited.contains(to)) continue;
-            isVisited.add(to);
-            final double value = e.getValue();
-            final double result = dfs(map, to, target, isVisited);
-            if (result >= 0) return value * result;
+    private double bfs(HashMap<String, HashMap<String, Double>> graph, String start, String end) {
+        if (!graph.containsKey(start)) {
+            return -1;
         }
-
+        ArrayDeque<Pair<String, Double>> queue = new ArrayDeque<>();
+        queue.add(new Pair<>(start, 1.0));
+        HashSet<String> visited = new HashSet<>();
+        visited.add(start);
+        while (!queue.isEmpty()) {
+            var poll = queue.poll();
+            String pos = poll.getKey();
+            Double weight = poll.getValue();
+            if (pos.equals(end)) {
+                return weight;
+            }
+            for (String neighbor : graph.get(pos).keySet()) {
+                if (visited.contains(neighbor)) continue;
+                visited.add(neighbor);
+                queue.offer(new Pair<>(neighbor, graph.get(pos).get(neighbor) * weight));
+            }
+        }
         return -1;
     }
 
+    private HashMap<String, HashMap<String, Double>> graphBuild(List<List<String>> equations, double[] values) {
+        HashMap<String, HashMap<String, Double>> graph = new HashMap<>();
+        for (int i = 0; i < equations.size(); i++) {
+            String u = equations.get(i).get(0);
+            String v = equations.get(i).get(1);
+            graph.putIfAbsent(u, new HashMap<>());
+            graph.get(u).put(v, values[i]);
+            graph.putIfAbsent(v, new HashMap<>());
+            graph.get(v).put(u, 1 / values[i]);
+        }
+        return graph;
+    }
 }
