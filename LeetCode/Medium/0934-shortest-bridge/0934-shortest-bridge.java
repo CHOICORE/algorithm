@@ -3,7 +3,6 @@ class Solution {
         int n = grid.length;
         int firstX = -1, firstY = -1;
 
-        // Find any land cell, and we treat it as a cell of island A.
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
@@ -14,14 +13,12 @@ class Solution {
             }
         }
 
-        // bfsQueue for BFS on land cells of island A; secondBfsQueue for BFS on water cells.
         List<int[]> bfsQueue = new ArrayList<>();
         List<int[]> secondBfsQueue = new ArrayList<>();
         bfsQueue.add(new int[]{firstX, firstY});
         secondBfsQueue.add(new int[]{firstX, firstY});
         grid[firstX][firstY] = 2;
 
-        // BFS for all land cells of island A and add them to secondBfsQueue.
         while (!bfsQueue.isEmpty()) {
             List<int[]> newBfs = new ArrayList<>();
             for (int[] cell : bfsQueue) {
@@ -60,9 +57,6 @@ class Solution {
                 }
             }
 
-            // Once we finish one round without finding land cells of island B, we will
-            // start the next round on all water cells that are 1 cell further away from
-            // island A and increment the distance by 1.
             secondBfsQueue = newBfs;
             distance++;
         }
