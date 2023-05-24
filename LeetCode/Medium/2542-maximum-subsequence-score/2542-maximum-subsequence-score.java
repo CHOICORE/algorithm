@@ -1,47 +1,39 @@
 class Solution {
     public long maxScore(int[] nums1, int[] nums2, int k) {
-        Pair[] arr = new Pair[nums1.length];
-        for (int i = 0; i < nums1.length; i++) {
-            arr[i] = new Pair(nums1[i], nums2[i]);
-        }
-        Arrays.sort(arr, new Comparator<Pair>() {
-            public int compare(Pair p1, Pair p2) {
-                return p2.n2 - p1.n2;
+
+        long answer = 0;
+        int length = nums1.length;
+
+        if (k == 1) {
+            for (int i = 0; i < length; i++) {
+                long cur = (long) nums1[i] * nums2[i];
+                answer = Math.max(answer, cur);
             }
-        });
-        long ans = -1;
-        PriorityQueue<Integer> q = new PriorityQueue<>();
-        long s = 0;
-        for (int i = 0; i < k; i++) {
-            q.add(arr[i].n1);
-            s += arr[i].n1;
+            return answer;
         }
-        ans = Math.max(ans, (s * arr[k - 1].n2));
 
-        for (int i = k; i < arr.length; i++) {
-            if (arr[i].n1 > q.peek()) {
-                int r = q.remove();
-                s = s - r;
-                q.add(arr[i].n1);
-                s += arr[i].n1;
+        int[][] arr = new int[length][];
+        for (int i = 0; i < length; i++) {
+            arr[i] = new int[]{nums1[i], nums2[i]};
+        }
+        Arrays.sort(arr, (a, b) -> a[1] - b[1]);
+        Queue<Integer> q = new PriorityQueue<>();
+        long sum = 0;
+        for (int i = length - 1; i >= 0; i--) {
+            int num1 = arr[i][0];
+            if (i <= length - k) {
+                long cur = (sum + num1) * arr[i][1];
+                answer = Math.max(answer, cur);
             }
-            ans = Math.max(ans, (s * arr[i].n2));
-
-
+            if (q.size() < k - 1) {
+                q.add(num1);
+                sum += num1;
+            } else if (num1 > q.peek()) {
+                sum -= q.poll();
+                sum += num1;
+                q.add(num1);
+            }
         }
-        return ans;
-
-
-    }
-}
-
-class Pair {
-    int n1;
-    int n2;
-
-    Pair(int n1, int n2) {
-        this.n1 = n1;
-        this.n2 = n2;
-
+        return answer;
     }
 }
