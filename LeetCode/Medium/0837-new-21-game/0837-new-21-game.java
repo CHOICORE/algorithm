@@ -1,19 +1,20 @@
 class Solution {
     public double new21Game(int n, int k, int maxPts) {
-        double dp[] = new double[n + 1];
-        dp[0] = 1;
-        double s = k > 0 ? 1 : 0;
-        for (int i = 1; i <= n; i++) {
-            dp[i] = s / maxPts;
-            if (i < k) {
-                s += dp[i];
-            }
-            if (i - maxPts >= 0 && i - maxPts < k) {
-                s -= dp[i - maxPts];
-            }
+        if (n >= k + maxPts - 1) {
+            return 1;
         }
-        double ans = 0;
-        for (int i = k; i <= n; i++) {
+        double[] dp = new double[k + maxPts];
+        double p = 1 / (maxPts + 0.0);
+        dp[0] = 1;
+        double prev = 0;
+        for (int i = 1; i <= k; i++) {
+            prev = prev - (i - maxPts - 1 >= 0 ? dp[i - maxPts - 1] : 0) + dp[i - 1];
+            dp[i] = prev * p;
+        }
+        double ans = dp[k];
+        for (int i = k + 1; i <= n; i++) {
+            prev = prev - (i - maxPts - 1 >= 0 ? dp[i - maxPts - 1] : 0);
+            dp[i] = prev * p;
             ans += dp[i];
         }
         return ans;
