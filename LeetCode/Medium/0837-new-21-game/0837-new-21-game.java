@@ -1,8 +1,6 @@
 class Solution {
     public double new21Game(int n, int k, int maxPts) {
-        if (n >= k + maxPts - 1) {
-            return 1;
-        }
+        if (n >= k + maxPts - 1) { return 1; }
         double[] dp = new double[k + maxPts];
         double p = 1 / (maxPts + 0.0);
         dp[0] = 1;
