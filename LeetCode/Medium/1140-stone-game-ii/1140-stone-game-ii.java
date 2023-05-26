@@ -1,34 +1,37 @@
 class Solution {
-    private int f(int[] piles, int[][][] dp, int p, int i, int m) {
-        int length = piles.length;
-        if (i == length) {
-            return 0;
-        }
-        if (dp[p][i][m] != -1) {
-            return dp[p][i][m];
-        }
-        int res = p == 1 ? 1000000 : -1, s = 0;
-        for (int x = 1; x <= Math.min(2 * m, length - i); x++) {
-            s += piles[i + x - 1];
-            if (p == 0) {
-                res = Math.max(res, s + f(piles, dp, 1, i + x, Math.max(m, x)));
-            } else {
-                res = Math.min(res, f(piles, dp, 0, i + x, Math.max(m, x)));
-            }
-        }
-        return dp[p][i][m] = res;
-    }
 
     public int stoneGameII(int[] piles) {
-        int length = piles.length;
-        int[][][] dp = new int[2][length + 1][length + 1];
-        for (int p = 0; p < 2; p++) {
-            for (int i = 0; i <= length; i++) {
-                for (int m = 0; m <= length; m++) {
-                    dp[p][i][m] = -1;
-                }
+        int n = piles.length;
+        int[][][] memo = new int[2][n + 1][n + 1];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j <= n; j++) {
+                Arrays.fill(memo[i][j], -1);
             }
         }
-        return f(piles, dp, 0, 0, 1);
+        return play(piles, 0, 0, 1, memo);
     }
+
+    private int play(int[] piles, int player, int index, int M, int[][][] memo) {
+        if (index == piles.length) {
+            return 0;
+        }
+
+        if (memo[player][index][M] != -1) {
+            return memo[player][index][M];
+        }
+
+        int score = player == 0 ? 0 : Integer.MAX_VALUE;
+        int rocksGained = 0;
+        for (int x = 1; x <= Math.min(piles.length - index, 2 * M); x++) {
+            rocksGained += piles[index + x - 1];
+            if (player == 0) {
+                score = Math.max(score, rocksGained + play(piles, 1 - player, index + x, Math.max(x, M), memo));
+            } else {
+                score = Math.min(score, play(piles, 1 - player, index + x, Math.max(x, M), memo));
+            }
+        }
+        memo[player][index][M] = score;
+        return score;
+    }
+
 }
