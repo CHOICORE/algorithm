@@ -1,24 +1,26 @@
 class Solution {
-    public int minCost(int n, int[] cuts) {
-        int m = cuts.length;
-        int[] newCuts = new int[m + 2];
-        System.arraycopy(cuts, 0, newCuts, 1, m);
-        newCuts[m + 1] = n;
-        Arrays.sort(newCuts);
+    public int minCost(int m, int[] cuts) {
+        int n = cuts.length + 2;
+        Arrays.sort(cuts);
+        int arr[] = new int[n];
+        arr[0] = 0;
+        arr[n - 1] = m;
+        for (int i = 1; i < n - 1; i++) arr[i] = cuts[i - 1];
 
-        int[][] dp = new int[m + 2][m + 2];
+        int dp[][] = new int[n][n];
 
-        for (int diff = 2; diff < m + 2; ++diff) {
-            for (int left = 0; left < m + 2 - diff; ++left) {
-                int right = left + diff;
-                int ans = Integer.MAX_VALUE;
-                for (int mid = left + 1; mid < right; ++mid) {
-                    ans = Math.min(ans, dp[left][mid] + dp[mid][right] + newCuts[right] - newCuts[left]);
+        for (int i = 2; i < n; i++) {
+            for (int left = 0; left < n && i + left < n; left++) {
+                int right = i + left;
+                int min = Integer.MAX_VALUE;
+                for (int k = left + 1; k < right; k++) {
+                    min = Math.min(min, dp[left][k] + dp[k][right]);
                 }
-                dp[left][right] = ans;
+
+                dp[left][right] = min + arr[right] - arr[left];
             }
         }
 
-        return dp[0][m + 1];
+        return dp[0][n - 1];
     }
 }
