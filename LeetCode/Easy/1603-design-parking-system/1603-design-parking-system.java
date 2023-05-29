@@ -1,20 +1,15 @@
 class ParkingSystem {
 
-    int[] limit;
-
-    int[] count;
+    int[] empty;
 
     public ParkingSystem(int big, int medium, int small) {
-
-        this.limit = new int[]{big, medium, small};
-
-        this.count = new int[]{0, 0, 0};
+        this.empty = new int[]{big, medium, small};
     }
 
     public boolean addCar(int carType) {
 
-        if (this.count[carType - 1] < this.limit[carType - 1]) {
-            this.count[carType - 1]++;
+        if (this.empty[carType - 1] > 0) {
+            this.empty[carType - 1]--;
             return true;
         }
 
