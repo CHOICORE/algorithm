@@ -1,47 +1,21 @@
 class ParkingSystem {
 
-    int bigLimit, mediumLimit, smallLimit;
+    int[] limit;
 
-    int[] parkingArray;
+    int[] count;
 
     public ParkingSystem(int big, int medium, int small) {
 
-        this.bigLimit = big;
-        this.mediumLimit = medium;
-        this.smallLimit = small;
+        this.limit = new int[]{big, medium, small};
 
-        this.parkingArray = new int[big + medium + small];
-        for (int i = 0; i < this.parkingArray.length; i++) {
-            this.parkingArray[i] = 0;
-        }
+        this.count = new int[]{0, 0, 0};
     }
 
     public boolean addCar(int carType) {
 
-        int limit = 0;
-        if (carType == 1) {
-            limit = this.bigLimit;
-        } else if (carType == 2) {
-            limit = this.mediumLimit;
-        } else {
-            limit = this.smallLimit;
-        }
-
-        int count = 0;
-        for (int i = 0; i < this.parkingArray.length; i++) {
-
-            if (this.parkingArray[i] == carType) {
-                count++;
-            }
-
-            if (count == limit) {
-                return false;
-            }
-
-            if (this.parkingArray[i] == 0) {
-                this.parkingArray[i] = carType;
-                return true;
-            }
+        if (this.count[carType - 1] < this.limit[carType - 1]) {
+            this.count[carType - 1]++;
+            return true;
         }
 
         return false;
