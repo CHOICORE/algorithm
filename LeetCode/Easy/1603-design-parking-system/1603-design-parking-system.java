@@ -3,17 +3,12 @@ class ParkingSystem {
     int[] empty;
 
     public ParkingSystem(int big, int medium, int small) {
-        this.empty = new int[]{big, medium, small};
+        empty = new int[]{big, medium, small};
     }
 
     public boolean addCar(int carType) {
+        return empty[carType - 1]-- > 0;
 
-        if (this.empty[carType - 1] > 0) {
-            this.empty[carType - 1]--;
-            return true;
-        }
-
-        return false;
     }
 }
 /**
