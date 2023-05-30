@@ -1,29 +1,51 @@
 class MyHashSet {
-    List<Integer> l;
+
+    boolean buckets[][];
+    int bucket = 10000;
+    int bucketItem = 10000;
 
     public MyHashSet() {
-        l = new ArrayList<>();
+        buckets = new boolean[bucket][];
+    }
+
+    public int getBucket(int key) {
+        return key / bucket;
+    }
+
+    public int getBucketItem(int key) {
+        return key % bucketItem;
     }
 
     public void add(int key) {
-        if (!l.contains(key))
-            l.add(key);
+
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
+
+        if (buckets[bucketKey] == null)
+            buckets[bucketKey] = new boolean[bucketItem];
+
+        buckets[bucketKey][bucketItemkey] = true;
+
     }
 
     public void remove(int key) {
-        for (int i = 0; i < l.size(); i++) {
-            if (l.get(i) == key)  l.remove(i);
-        }
+
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
+
+        if (buckets[bucketKey] != null)
+            buckets[bucketKey][bucketItemkey] = false;
     }
 
     public boolean contains(int key) {
-        for (Integer integer : l) {
-            if (integer == key) return true;
-        }
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
+
+        if (buckets[bucketKey] != null)
+            return buckets[bucketKey][bucketItemkey];
         return false;
     }
 }
-
 /**
  * Your MyHashSet object will be instantiated and called as such:
  * MyHashSet obj = new MyHashSet();
