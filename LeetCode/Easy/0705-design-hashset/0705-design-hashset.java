@@ -1,40 +1,51 @@
 class MyHashSet {
-    private int size;
-    private List<List<Integer>> buckets;
+
+    boolean buckets[][];
+    int bucket = 10000;
+    int bucketItem = 10000;
 
     public MyHashSet() {
-        size = 1000;
-        buckets = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            buckets.add(new LinkedList<>());
-        }
+        buckets = new boolean[bucket][];
+    }
+
+    public int getBucket(int key) {
+        return key / bucket;
+    }
+
+    public int getBucketItem(int key) {
+        return key % bucketItem;
     }
 
     public void add(int key) {
-        int index = hash(key);
-        List<Integer> bucket = buckets.get(index);
-        if (!bucket.contains(key)) {
-            bucket.add(key);
-        }
+
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
+
+        if (buckets[bucketKey] == null)
+            buckets[bucketKey] = new boolean[bucketItem];
+
+        buckets[bucketKey][bucketItemkey] = true;
+
     }
 
     public void remove(int key) {
-        int index = hash(key);
-        List<Integer> bucket = buckets.get(index);
-        bucket.remove(Integer.valueOf(key));
+
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
+
+        if (buckets[bucketKey] != null)
+            buckets[bucketKey][bucketItemkey] = false;
     }
 
     public boolean contains(int key) {
-        int index = hash(key);
-        List<Integer> bucket = buckets.get(index);
-        return bucket.contains(key);
-    }
+        int bucketKey = getBucket(key);
+        int bucketItemkey = getBucketItem(key);
 
-    private int hash(int key) {
-        return key % size;
+        if (buckets[bucketKey] != null)
+            return buckets[bucketKey][bucketItemkey];
+        return false;
     }
 }
-
 /**
  * Your MyHashSet object will be instantiated and called as such:
  * MyHashSet obj = new MyHashSet();
