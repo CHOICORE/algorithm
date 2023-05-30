@@ -17,7 +17,10 @@ class MyHashSet {
     }
 
     public boolean contains(int key) {
-       return l.stream().anyMatch(integer -> integer == key);
+        for (Integer integer : l) {
+            if (integer == key) return true;
+        }
+        return false;
     }
 }
 
