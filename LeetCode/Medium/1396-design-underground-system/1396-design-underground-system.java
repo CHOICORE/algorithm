@@ -1,44 +1,55 @@
 class UndergroundSystem {
-    Map<Integer, Map.Entry<String, Integer>> usersOnboard;
-    Map<Map.Entry<String, String>, Map.Entry<Double, Integer>> averageTime;
+    private Map<Integer, Info> activeTrips;
+    private Map<String, Map<String, Detail>> analyticsDetails;
 
     public UndergroundSystem() {
-        this.usersOnboard = new HashMap<>();
-        this.averageTime = new HashMap<>();
+        activeTrips = new HashMap<>();
+        analyticsDetails = new HashMap<>();
     }
-    
+
     public void checkIn(int id, String stationName, int t) {
-        if (usersOnboard.containsKey(id)) {
-            return;
-        }
-
-        usersOnboard.put(id, Map.entry(stationName, t));
+        activeTrips.put(id, new Info(id, stationName, t));
     }
-    
+
     public void checkOut(int id, String stationName, int t) {
-        if (!usersOnboard.containsKey(id)) {
-            return;
-        }
-
-        Map.Entry<String, Integer> previousStop = usersOnboard.remove(id);
-        Map.Entry<String, String> stationPair = Map.entry(previousStop.getKey(), stationName);
-        double time = t - previousStop.getValue();
-
-        if (averageTime.containsKey(stationPair)) {
-            Map.Entry<Double, Integer> curAvg = averageTime.get(stationPair);
-            Map.Entry<Double, Integer> newAvg = Map.entry(curAvg.getKey() + time, curAvg.getValue() + 1);
-            averageTime.put(stationPair, newAvg);
-        }
-        else {
-            averageTime.put(stationPair, Map.entry(time, 1));
-        }
+        Info activeTrip = activeTrips.remove(id);
+        activeTrip.dest = stationName;
+        activeTrip.endTime = t;
+        Map<String, Detail> stationAnalytics = analyticsDetails.getOrDefault(activeTrip.src, new HashMap<>());
+        Detail destinationDetails = stationAnalytics.getOrDefault(stationName, new Detail());
+        destinationDetails.dest = stationName;
+        destinationDetails.totalTime += activeTrip.endTime - activeTrip.startTime;
+        destinationDetails.totalTrips++;
+        stationAnalytics.put(destinationDetails.dest, destinationDetails);
+        analyticsDetails.put(activeTrip.src, stationAnalytics);
     }
-    
+
     public double getAverageTime(String startStation, String endStation) {
-        Map.Entry<String, String> stationPair = Map.entry(startStation, endStation);
-        Map.Entry<Double, Integer> curAvg = averageTime.get(stationPair);
-        return curAvg.getKey() / curAvg. getValue();
+        Detail detail = analyticsDetails.getOrDefault(startStation, new HashMap<>())
+                .getOrDefault(endStation, new Detail());
+        long totalTime = detail.totalTime;
+        long totalTrips = detail.totalTrips;
+        return totalTrips == 0 ? 0 : (1.0 * totalTime) / totalTrips;
     }
+}
+
+class Info {
+    public int userId;
+    public String src, dest;
+    public int startTime, endTime;
+
+    public Info(int userId, String sourceStation, int startTimestamp) {
+        this.userId = userId;
+        this.src = sourceStation;
+        this.startTime = startTimestamp;
+    }
+}
+
+class Detail {
+    public String src, dest;
+    public long totalTrips, totalTime;
+
+    public Detail() {}
 }
 /**
  * Your UndergroundSystem object will be instantiated and called as such:
