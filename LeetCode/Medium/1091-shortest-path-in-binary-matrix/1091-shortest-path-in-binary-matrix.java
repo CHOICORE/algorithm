@@ -1,59 +1,112 @@
 class Solution {
+
+    static final int[][] NEIGHBOURS_OFFSETS = new int[][]{
+            {0, +1},
+            {+1, 0},
+            {+1, +1},
+
+            {0, -1},
+            {-1, 0},
+            {-1, -1},
+
+            {+1, -1},
+            {-1, +1},
+    };
+
+    private static boolean inBounds(int[] coords, int[][] matrix) {
+        return inBounds(coords[0], coords[1], matrix);
+    }
+
+    private static boolean inBounds(int i, int j, int[][] matrix) {
+        return i >= 0 && i < matrix.length && j >= 0 && j < matrix[i].length;
+    }
+
     public int shortestPathBinaryMatrix(int[][] grid) {
-        if (grid[0][0] != 0) return -1;
+        if (grid[0][0] != 0) {
+            return -1;
+        }
+        final int MULTIQ_SIZE = 1;
+        final boolean[][] visited = new boolean[grid.length][grid[0].length];
+        final MultiQueue<int[]> queue = new MultiQueue<>(MULTIQ_SIZE);
+        final AtomicInteger minDistance = new AtomicInteger(-1);
+        queue.add(0 % MULTIQ_SIZE, new int[]{0, 0, 0});
+        final Thread[] threads = new Thread[MULTIQ_SIZE];
+        final CountDownLatch countDownLatch = new CountDownLatch(MULTIQ_SIZE);
+        for (int i = 0; i < threads.length; i++) {
+            final int queueId = i;
+            new Thread(() -> {
+                while (!queue.allQueuesEmpty() && minDistance.get() < 0) {
+                    if (queue.isEmpty(queueId)) {
+                        continue;
+                    }
+                    final int[] node = queue.poll(queueId);
+                    final int x = node[0];
+                    final int y = node[1];
+                    final int distance = node[2];
+                    synchronized (visited) {
+                        if (visited[x][y]) {
+                            continue;
+                        }
+                        visited[x][y] = true;
+                    }
+                    if (x == grid.length - 1 && y == grid[0].length - 1) {
+                        //return distance + 1;
+                        minDistance.set(distance + 1);
+                    } else {
+                        for (final int[] offset : NEIGHBOURS_OFFSETS) {
+                            final int nextX = x + offset[0];
+                            final int nextY = y + offset[1];
+                            synchronized (visited) {
+                                if (inBounds(nextX, nextY, grid) && grid[nextX][nextY] == 0 && !visited[nextX][nextY]) {
+                                    queue.add(
+                                            nextX % MULTIQ_SIZE,
+                                            new int[]{nextX, nextY, distance + 1});
+                                }
+                            }
+                        }
+                    }
+                }
+                countDownLatch.countDown();
+            }).start();
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return minDistance.get();
+    }
 
+    static class MultiQueue<T> {
 
-        int n = grid.length;
-        int m = grid[0].length;
+        final Queue<T>[] queues;
 
-        if (grid[0][0] == grid[n - 1][n - 1] && n == 1) return 1;
-
-        int dist[][] = new int[n][m];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                dist[i][j] = (int) 1e9;
+        public MultiQueue(final int size) {
+            this.queues = new Queue[size];
+            for (int i = 0; i < queues.length; i++) {
+                this.queues[i] = new ConcurrentLinkedQueue<>();
             }
         }
 
-        int delRow[] = {1, -1, 0, 0, 1, 1, -1, -1};
-        int delCol[] = {0, 0, 1, -1, -1, 1, -1, 1};
+        public void add(final int queue, final T item) {
+            this.queues[queue].add(item);
+        }
 
-        dist[0][0] = 0;
+        public T poll(final int queueId) {
+            return this.queues[queueId].poll();
+        }
 
-        Queue<Pair> q = new LinkedList<>();
-        q.add(new Pair(1, 0, 0));
+        public boolean isEmpty(final int queueId) {
+            return this.queues[queueId].isEmpty();
+        }
 
-        while (!q.isEmpty()) {
-            int dis = q.peek().first;
-            int row = q.peek().second;
-            int col = q.peek().third;
-            q.poll();
-
-            for (int i = 0; i < 8; i++) {
-                int nrow = row + delRow[i];
-                int ncol = col + delCol[i];
-
-                if (nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && grid[nrow][ncol] == 0
-                        && dis + 1 < dist[nrow][ncol]) {
-
-                    if (nrow == n - 1 && ncol == n - 1) return dis + 1;
-
-                    q.add(new Pair(dis + 1, nrow, ncol));
-                    dist[nrow][ncol] = dis + 1;
+        public boolean allQueuesEmpty() {
+            for (int i = 0; i < this.queues.length; i++) {
+                if (!this.queues[i].isEmpty()) {
+                    return false;
                 }
             }
+            return true;
         }
-        return -1;
-    }
-}
-class Pair {
-    int first;
-    int second;
-    int third;
-
-    Pair(int fst, int scnd, int thrd) {
-        this.first = fst;
-        this.second = scnd;
-        this.third = thrd;
     }
 }
