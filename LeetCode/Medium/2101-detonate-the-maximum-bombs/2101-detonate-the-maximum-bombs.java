@@ -3,7 +3,6 @@ class Solution {
         Map<Integer, List<Integer>> graph = new HashMap<>();
         int n = bombs.length;
         
-        // Build the graph
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 int xi = bombs[i][0], yi = bombs[i][1], ri = bombs[i][2];
