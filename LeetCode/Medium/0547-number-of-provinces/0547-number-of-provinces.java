@@ -1,47 +1,28 @@
-class UnionFind {
-    int[] parent;
-    int[] rank;
-    public UnionFind(int size) {
-        parent = new int[size];
-        for (int i = 0; i < size; i++)
-            parent[i] = i;
-        rank = new int[size];
-    }
-    public int find(int x) {
-        if (parent[x] != x)
-            parent[x] = find(parent[x]);
-        return parent[x];
-    }
-    public void union_set(int x, int y) {
-        int xset = find(x), yset = find(y);
-        if (xset == yset) {
-            return;
-        } else if (rank[xset] < rank[yset]) {
-            parent[xset] = yset;
-        } else if (rank[xset] > rank[yset]) {
-            parent[yset] = xset;
-        } else {
-            parent[yset] = xset;
-            rank[xset]++;
-        }
-    }
-}
-
 class Solution {
-    public int findCircleNum(int[][] isConnected) {
-        int n = isConnected.length;
-        UnionFind dsu = new UnionFind(n);
-        int numberOfComponents = n;
+    int[][] isConnected;
+    boolean[] visited;
 
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                if (isConnected[i][j] == 1 && dsu.find(i) != dsu.find(j)) {
-                    numberOfComponents--;
-                    dsu.union_set(i, j);
-                }
+    public int findCircleNum(int[][] isConnected) {
+        this.isConnected = isConnected;
+        visited = new boolean[isConnected.length];
+        int provinces = 0;
+        for (int i = 0; i < isConnected.length; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                provinces++;
+                visit(i);
             }
         }
+        return provinces;
+    }
 
-        return numberOfComponents;
+    private void visit(int i) {
+        int[] connections = isConnected[i];
+        for (int j = 0; j < connections.length; j++) {
+            if (connections[j] == 1 && !visited[j]) {
+                visited[j] = true;
+                visit(j);
+            }
+        }
     }
 }
