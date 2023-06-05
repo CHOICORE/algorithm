@@ -1,19 +1,19 @@
 class Solution {
-    int getYDiff(int[] a, int[] b) {
-        return a[1] - b[1];
-    }
-
-    int getXDiff(int[] a, int[] b) {
-        return a[0] - b[0];
-    }
-
     public boolean checkStraightLine(int[][] coordinates) {
-        int deltaY = getYDiff(coordinates[1], coordinates[0]);
-        int deltaX = getXDiff(coordinates[1], coordinates[0]);
+        int len = coordinates.length;
 
-        for (int i = 2; i < coordinates.length; i++) {
-            if (deltaY * getXDiff(coordinates[i], coordinates[0])
-                    != deltaX * getYDiff(coordinates[i], coordinates[0])) {
+        int deltaX = coordinates[0][0];
+        int deltaY = coordinates[0][1];
+
+        for (int i = 1; i < len; i++) {
+            coordinates[i][0] -= deltaX;
+            coordinates[i][1] -= deltaY;
+        }
+
+        int a = -coordinates[1][1];
+        int b = coordinates[1][0];
+        for (int i = 2; i < len; i++) {
+            if (a * coordinates[i][0] + b * coordinates[i][1] != 0) {
                 return false;
             }
         }
