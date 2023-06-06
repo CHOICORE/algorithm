@@ -1,9 +1,42 @@
 class Solution {
     public boolean canMakeArithmeticProgression(int[] arr) {
-        Arrays.sort(arr);
-        if (arr.length <= 2) return true;
-        int sum = arr[1] - arr[0];
-        for (int i = 0; i < arr.length - 1; i++) if (arr[i + 1] - arr[i] != sum) return false;
+
+        int n = arr.length;
+
+        int minNumber = Integer.MAX_VALUE;
+        int maxNumber = Integer.MIN_VALUE;
+
+        for (int num : arr) {
+            if (minNumber > num)
+                minNumber = num;
+            if (maxNumber < num)
+                maxNumber = num;
+        }
+
+        if ((maxNumber - minNumber) % (n - 1) != 0)
+            return false;
+
+        int difference = (maxNumber - minNumber) / (n - 1);
+
+        int i = 0;
+
+        while (i < n) {
+            if (arr[i] == minNumber + difference * i)
+                i++;
+            else if ((arr[i] - minNumber) % difference != 0)
+                return false;
+            else {
+                int pos = (arr[i] - minNumber) / difference;
+
+                if (pos < i || arr[pos] == arr[i])
+                    return false;
+
+                int tmp = arr[pos];
+                arr[pos] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+
         return true;
     }
 }
