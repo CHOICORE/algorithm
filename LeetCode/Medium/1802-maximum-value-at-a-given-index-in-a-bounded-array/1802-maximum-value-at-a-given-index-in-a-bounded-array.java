@@ -17,6 +17,7 @@ class Solution {
         return count - value;
         
     }
+    
     public int maxValue(int n, int index, int maxSum) {
         int left = 1, right = maxSum;
         while (left < right) {
