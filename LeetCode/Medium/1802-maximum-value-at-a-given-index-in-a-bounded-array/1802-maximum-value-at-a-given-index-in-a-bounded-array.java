@@ -1,4 +1,5 @@
 class Solution {
+    
     private long getSum(int index, int value, int n) {
         long count = 0;
         
