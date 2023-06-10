@@ -1,35 +1,25 @@
 class Solution {
 
     public int maxValue(int n, int index, int maxSum) {
-        int left = 1, right = maxSum;
+        int left = 0, right = maxSum - n;
+
         while (left < right) {
-            int mid = (left + right + 1) / 2;
-            if (getSum(index, mid, n) <= maxSum) {
-                left = mid;
-            } else {
-                right = mid - 1;
-            }
+            int middle = (left + right + 1) / 2;
+            if (isPossible(n, index, maxSum - n, middle))
+                left = middle;
+            else
+                right = middle - 1;
         }
-        
-        return left;
-    }    
-    
-    private long getSum(int index, int value, int n) {
-        long count = 0;
-        
-        if (value > index) {
-            count += (long)(value + value - index) * (index + 1) / 2;
-        } else {
-            count += (long)(value + 1) * value / 2 + index - value + 1;
-        };
-   
-        if (value >= n - index) {
-            count += (long)(value + value - n + 1 + index) * (n - index) / 2;
-        } else {
-            count += (long)(value + 1) * value / 2 + n - index - value;
-        }   
-        
-        return count - value;
-        
+        return left + 1;
+    }
+
+    private boolean isPossible(int n, int index, int maxSum, int value) {
+        int leftValue = Math.max(value - index, 0);
+        int rightValue = Math.max(value - ((n - 1) - index), 0);
+
+        long sumBefore = (long) (value + leftValue) * (value - leftValue + 1) / 2;
+        long sumAfter = (long) (value + rightValue) * (value - rightValue + 1) / 2;
+
+        return sumBefore + sumAfter - value <= maxSum;
     }
 }
