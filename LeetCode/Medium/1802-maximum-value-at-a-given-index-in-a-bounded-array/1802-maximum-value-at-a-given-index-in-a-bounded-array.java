@@ -1,4 +1,18 @@
 class Solution {
+
+    public int maxValue(int n, int index, int maxSum) {
+        int left = 1, right = maxSum;
+        while (left < right) {
+            int mid = (left + right + 1) / 2;
+            if (getSum(index, mid, n) <= maxSum) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return left;
+    }    
     
     private long getSum(int index, int value, int n) {
         long count = 0;
@@ -17,19 +31,5 @@ class Solution {
         
         return count - value;
         
-    }
-    
-    public int maxValue(int n, int index, int maxSum) {
-        int left = 1, right = maxSum;
-        while (left < right) {
-            int mid = (left + right + 1) / 2;
-            if (getSum(index, mid, n) <= maxSum) {
-                left = mid;
-            } else {
-                right = mid - 1;
-            }
-        }
-        
-        return left;
     }
 }
