@@ -1,18 +1,47 @@
 class Solution {
     public List<String> summaryRanges(int[] nums) {
-        List<String> res = new ArrayList<>();
-        int n = nums.length;
-        for (int i = 0; i < n; i++) {
-            int begin = nums[i];
-            while (i != n - 1 && nums[i] == nums[i + 1] - 1) {
-                i++;
-            }
-            int end = nums[i];
-            if (begin == end) {
-                res.add(String.valueOf(begin));
-            } else
-                res.add(begin + "->" + end);
+        List<String> list = new ArrayList<>();
+        if (nums.length == 0) {
+            return list;
         }
-        return res;
+        int begin = 0;
+        int end = 0;
+        StringBuilder str = new StringBuilder();
+        int tmp = 0;
+        while (end < nums.length) {
+            if (begin == end) {
+                end++;
+                str.append(nums[begin]);
+                if (end >= nums.length) {
+                    list.add(str.toString());
+                    str.setLength(0);
+                    break;
+                }
+            } else {
+                tmp = nums[end];
+                if (tmp - 1 == nums[end - 1]) {
+                    end++;
+                } else {
+                    if (end - 1 == begin) {
+                        list.add(str.toString());
+                        str.setLength(0);
+                        begin = end;
+                    } else if (end - 1 != begin) {
+                        str.append("->" + nums[end - 1]);
+                        list.add(str.toString());
+                        str.setLength(0);
+                        begin = end;
+                    }
+                }
+            }
+        }
+
+        if (str.length() != 0) {
+            str.append("->").append(nums[end - 1]);
+            list.add(str.toString());
+        }
+
+
+        return list;
     }
 }
