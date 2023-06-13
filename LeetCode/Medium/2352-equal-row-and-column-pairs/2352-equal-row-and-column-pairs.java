@@ -1,22 +1,37 @@
 class Solution {
     public int equalPairs(int[][] grid) {
-        HashMap<Long, Integer> rcs = new HashMap<>();
-        int same = 0;
-        for (int i = 0; i < grid.length; i++) {
-            long row = 0;
-            for (int j = 0; j < grid[0].length; j++) {
-                row = row * 10 + grid[i][j];
+
+        int n = grid.length;
+        long[] rowSums = new long[n];
+        long[] colSums = new long[n];
+
+        for (int i = 0; i < n; i++) {
+            long sum = 0;
+            for (int j = 0; j < n; j++) {
+                sum = sum * 10 + grid[i][j];
             }
-            rcs.put(row, rcs.getOrDefault(row, 0) + 1);
+            rowSums[i] = sum;
         }
 
-        for (int j = 0; j < grid[0].length; j++) {
-            long col = 0;
-            for (int i = 0; i < grid.length; i++) {
-                col = col * 10 + grid[i][j];
+        for (int i = 0; i < n; i++) {
+            long sum = 0;
+            for (int j = 0; j < n; j++) {
+                sum = sum * 10 + grid[j][i];
             }
-            same += rcs.getOrDefault(col, 0);
+            colSums[i] = sum;
         }
-        return same;
+
+        int count = 0;
+
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (rowSums[i] == colSums[j]) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 }
