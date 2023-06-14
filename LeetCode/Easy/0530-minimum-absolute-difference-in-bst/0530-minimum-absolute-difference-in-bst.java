@@ -14,27 +14,24 @@
  * }
  */
 class Solution {
-
     public int getMinimumDifference(TreeNode root) {
-        if (root == null) return -1;
+        int result = Integer.MAX_VALUE;
+        int min = -1;
+        Stack<TreeNode> stack = new Stack<>();
 
-        TreeNode prev = null;
-        int minDiff = Integer.MAX_VALUE;
-
-        Stack<TreeNode> s = new Stack<>();
-        while (!s.isEmpty() || root != null) {
+        while (!stack.isEmpty() || root != null) {
             while (root != null) {
-                s.push(root);
+                stack.push(root);
                 root = root.left;
             }
-            root = s.pop();
-            if (prev != null) {
-                minDiff = Math.min(minDiff, Math.abs(root.val - prev.val));
+
+            root = stack.pop();
+            if (min >= 0) {
+                result = Math.min(result, root.val - min);
             }
-            prev = root;
+            min = root.val;
             root = root.right;
         }
-
-        return minDiff;
+        return result;
     }
 }
