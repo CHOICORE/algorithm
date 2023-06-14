@@ -15,28 +15,26 @@
  */
 class Solution {
 
-    List<Integer> nodeValues = new ArrayList<>();
+    public int getMinimumDifference(TreeNode root) {
+        if (root == null) return -1;
 
-    void dfs(TreeNode node) {
-        if (node == null) {
-            return;
+        TreeNode prev = null;
+        int minDiff = Integer.MAX_VALUE;
+
+        Stack<TreeNode> s = new Stack<>();
+        while (!s.isEmpty() || root != null) {
+            while (root != null) {
+                s.push(root);
+                root = root.left;
+            }
+            root = s.pop();
+            if (prev != null) {
+                minDiff = Math.min(minDiff, Math.abs(root.val - prev.val));
+            }
+            prev = root;
+            root = root.right;
         }
 
-        nodeValues.add(node.val);
-        dfs(node.left);
-        dfs(node.right);
-    }
-
-    int getMinimumDifference(TreeNode root) {
-        dfs(root);
-
-        Collections.sort(nodeValues);
-        int minDifference = Integer.MAX_VALUE;
-
-        for (int i = 1; i < nodeValues.size(); i++) {
-            minDifference = Math.min(minDifference, nodeValues.get(i) - nodeValues.get(i - 1));
-        }
-
-        return minDifference;
+        return minDiff;
     }
 }
