@@ -14,42 +14,33 @@
  * }
  */
 class Solution {
-    static int level;
+    int[] sum = new int[10_001];
+    int levels;
 
     public int maxLevelSum(TreeNode root) {
-        level = 1;
+        levels = 1;
+        visit(root, 1);
         int max = Integer.MIN_VALUE;
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
-        int nodes = 1;
-        getResult(max, nodes, q, 1);
-        return level;
+        int maxLevel = 1;
+        for (int level = 1; level <= levels; level++) {
+            if (sum[level] > max) {
+                max = sum[level];
+                maxLevel = level;
+            }
+        }
+        return maxLevel;
     }
 
-    void getResult(int max, int nodes, Queue<TreeNode> q, int step) {
-        if (q.isEmpty()) {
-            return;
+    private void visit(TreeNode node, int level) {
+        if (level > levels) {
+            levels = level;
         }
-
-        int temp = 0;
-        int child = 0;
-        while (nodes > 0) {
-            TreeNode t = q.poll();
-            if (t.left != null) {
-                q.add(t.left);
-                child++;
-            }
-            if (t.right != null) {
-                q.add(t.right);
-                child++;
-            }
-            temp += t.val;
-            nodes--;
+        sum[level] += node.val;
+        if (node.left != null) {
+            visit(node.left, level + 1);
         }
-        if (temp > max) {
-            level = step;
-            max = temp;
+        if (node.right != null) {
+            visit(node.right, level + 1);
         }
-        getResult(max, child, q, step + 1);
     }
 }
