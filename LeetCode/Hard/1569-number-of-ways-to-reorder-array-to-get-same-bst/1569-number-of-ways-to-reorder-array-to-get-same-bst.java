@@ -1,80 +1,71 @@
+import java.math.BigInteger;
+
 class Solution {
-    public int MOD = 1_000_000_007;
-    public Tree root;
-    public long ans = 1;
-    public long[] f = new long[1001];
+    private static final long MODULUS_LONG = 1_000_000_007;
+    private static final BigInteger MODULUS_BIG = BigInteger.valueOf(MODULUS_LONG);
 
-    public void init() {
-        f[0] = 1;
-        for (int i = 1; i < 1001; i++) {
-            f[i] = (i * f[i - 1]) % MOD;
-        }
-    }
-
-    public void insert(Tree c, int v) {
-        if (c.v < v) {
-            if (c.right == null) {
-                c.right = new Tree(v);
-            } else {
-                insert(c.right, v);
-            }
+    private static int countWays(final Bst bst) {
+        if (bst == null) {
+            return 1;
+        } else if (bst.left == null) {
+            return countWays(bst.right);
+        } else if (bst.right == null) {
+            return countWays(bst.left);
         } else {
-            if (c.left == null) {
-                c.left = new Tree(v);
+            final long a = countWays(bst.left);
+            final long b = countWays(bst.right);
+            final long c = nCr(bst.size - 1, bst.left.size);
+            // we want a * b * c % MODULUS
+            return (int) ((a * b) % MODULUS_LONG * c % MODULUS_LONG);
+        }
+    }
+
+    private static int nCr(final int n, final int r) {
+        if (n < 2 * r) {
+            return nCr(n, n - r);
+        }
+        BigInteger result = BigInteger.ONE;
+        for (int i = 0; i < r; ++i) {
+            result = result.multiply(BigInteger.valueOf(n - i));
+            result = result.divide(BigInteger.valueOf(i + 1));
+        }
+        return result.mod(MODULUS_BIG).intValue();
+    }
+
+    public int numOfWays(final int[] nums) {
+        final Bst bst = new Bst(nums[0]);
+        for (int i = 1; i < nums.length; ++i) {
+            bst.add(nums[i]);
+        }
+        return countWays(bst) - 1;
+    }
+
+    private static final class Bst {
+        private final int rootVal;
+        private Bst left;
+        private Bst right;
+        private int size;
+
+        public Bst(final int val) {
+            this.rootVal = val;
+            this.size = 1;
+        }
+
+        public void add(final int val) {
+            if (val < this.rootVal) {
+                if (this.left == null) {
+                    this.left = new Bst(val);
+                } else {
+                    this.left.add(val);
+                }
             } else {
-                insert(c.left, v);
+                if (this.right == null) {
+                    this.right = new Bst(val);
+                } else {
+                    this.right.add(val);
+                }
             }
-        }
-    }
-
-    public int dfs(Tree c) {
-        int a = 0;
-        int b = 0;
-
-        if (c.left != null) {
-            a = dfs(c.left);
-        }
-
-        if (c.right != null) {
-            b = dfs(c.right);
-        }
-
-        long res = (f[a + b] * modInv(f[a], MOD) % MOD * modInv(f[b], MOD) % MOD) % MOD;
-        ans = (ans * res) % MOD;
-        return a + b + 1;
-    }
-
-    private long modInv(long a, int p) {
-        long res = 1;
-        for (int exp = p - 2; exp > 0; exp >>= 1) {
-            if ((exp & 1) == 1) {
-                res = (res * a) % p;
-            }
-            a = (a * a) % p;
-        }
-        return res;
-    }
-
-    public int numOfWays(int[] nums) {
-        init();
-        root = new Tree(nums[0]);
-
-        for (int i = 1; i < nums.length; i++) {
-            insert(root, nums[i]);
-        }
-
-        dfs(root);
-
-        return (int) ((ans - 1) % MOD);
-    }
-
-    public class Tree {
-        int v;
-        Tree left;
-        Tree right;
-
-        public Tree(int v) {
-            this.v = v;
+            this.size++;
         }
     }
 }
