@@ -1,54 +1,80 @@
-import java.math.BigInteger;
-
 class Solution {
-    static int MOD = 1_000_000_007;
-    static Map<Long, Long> F = new HashMap();
+    public int MOD = 1_000_000_007;
+    public Tree root;
+    public long ans = 1;
+    public long[] f = new long[1001];
 
-    static {
-        F.put(1L, 1L);
-        for (var i = 2L; i < 100_001L; i++) {
-            F.put(i, (F.get(i - 1) * i) % MOD);
+    public void init() {
+        f[0] = 1;
+        for (int i = 1; i < 1001; i++) {
+            f[i] = (i * f[i - 1]) % MOD;
         }
     }
 
-    Map<Integer, Set<Integer>> G = new HashMap();
-
-    static long inv(long n) {
-        return BigInteger.valueOf(F.get(n)).modInverse(BigInteger.valueOf(MOD)).longValue();
-    }
-
-    static long nCk(long n, long k) {
-        return n <= k ? 1 : F.get(n) * inv(k) % MOD * inv(n - k) % MOD;
-    }
-
-    int numOfWays(int[] A) {
-        build(-1, A);
-        return (int) post(A[0])[1] - 1;
-    }
-
-    void build(int p, int[] A) {
-        if (0 < A.length) {
-            var A_i = A[0];
-            if (p != -1) {
-                G.computeIfAbsent(p, __ -> new HashSet()).add(A_i);
+    public void insert(Tree c, int v) {
+        if (c.v < v) {
+            if (c.right == null) {
+                c.right = new Tree(v);
+            } else {
+                insert(c.right, v);
             }
-            build(A_i, Arrays.stream(A).filter(A_j -> A_i > A_j).toArray());
-            build(A_i, Arrays.stream(A).filter(A_j -> A_i < A_j).toArray());
+        } else {
+            if (c.left == null) {
+                c.left = new Tree(v);
+            } else {
+                insert(c.left, v);
+            }
         }
     }
 
-    long[] post(int u) {
-        long[] ustate = {1, 1};
-        for (var v : G.getOrDefault(u, new HashSet<>())) {
-            var vstate = post(v);
-            ustate[0] += vstate[0];
-            ustate[0] %= MOD;
+    public int dfs(Tree c) {
+        int a = 0;
+        int b = 0;
 
-            ustate[1] *= vstate[1];
-            ustate[1] %= MOD;
-            ustate[1] *= nCk(ustate[0] - 1, vstate[0]);
-            ustate[1] %= MOD;
+        if (c.left != null) {
+            a = dfs(c.left);
         }
-        return ustate;
+
+        if (c.right != null) {
+            b = dfs(c.right);
+        }
+
+        long res = (f[a + b] * modInv(f[a], MOD) % MOD * modInv(f[b], MOD) % MOD) % MOD;
+        ans = (ans * res) % MOD;
+        return a + b + 1;
+    }
+
+    private long modInv(long a, int p) {
+        long res = 1;
+        for (int exp = p - 2; exp > 0; exp >>= 1) {
+            if ((exp & 1) == 1) {
+                res = (res * a) % p;
+            }
+            a = (a * a) % p;
+        }
+        return res;
+    }
+
+    public int numOfWays(int[] nums) {
+        init();
+        root = new Tree(nums[0]);
+
+        for (int i = 1; i < nums.length; i++) {
+            insert(root, nums[i]);
+        }
+
+        dfs(root);
+
+        return (int) ((ans - 1) % MOD);
+    }
+
+    public class Tree {
+        int v;
+        Tree left;
+        Tree right;
+
+        public Tree(int v) {
+            this.v = v;
+        }
     }
 }
