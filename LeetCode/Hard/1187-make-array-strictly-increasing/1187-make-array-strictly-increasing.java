@@ -1,68 +1,45 @@
 class Solution {
-    public int makeArrayIncreasing(int[] arr1, int[] arr2) {
-        int INF = 1 << 30;
-        Arrays.sort(arr2);
-        int m = 0;
-        for (int x : arr2) {
-            if (m == 0 || x != arr2[m - 1]) {
-                arr2[m++] = x;
-            }
-        }
-        int n = arr1.length;
+    private int[] a, b, memo;
+    private int m;
 
-        int[] arr11 = new int[n + 2];
-        arr11[0] = -INF;
-        arr11[n + 1] = INF;
-        int e0 = 1;
-        for (int e : arr1) {
-            arr11[e0++] = e;
-        }
-        int[] dp = new int[n + 2];
-        Arrays.fill(dp, INF);
-        dp[0] = 0;
-        for (int i = 1; i < n + 2; i++) {
-            int j = search(arr2, arr11[i], m);
-            for (int k = 1; k <= j && k < i; k++) {
-                if (arr11[i - k - 1] < arr2[j - k])
-                    dp[i] = Math.min(dp[i], dp[i - k - 1] + k);
-            }
-            if (arr11[i] > arr11[i - 1]) {
-                dp[i] = Math.min(dp[i], dp[i - 1]);
-            }
-
-        }
-        return dp[n + 1] >= INF ? -1 : dp[n + 1];
-
-
+    public int makeArrayIncreasing(int[] a, int[] b) {
+        this.a = a;
+        this.b = b;
+        Arrays.sort(b);
+        for (int i = 1; i < b.length; ++i)
+            if (b[m] != b[i])
+                b[++m] = b[i];
+        ++m;
+        int n = a.length;
+        memo = new int[n + 1];
+        int ans = dfs(n);
+        return ans < 0 ? -1 : n + 1 - ans;
     }
 
-    private int search(int[] nums, int x, int n) {
-        int l = 0, r = n;
-        while (l < r) {
-            int mid = (l + r) >> 1;
-            if (nums[mid] >= x) {
-                r = mid;
-            } else {
-                l = mid + 1;
-            }
-        }
-        return l;
+    private int dfs(int i) {
+        if (memo[i] != 0) return memo[i];
+        int x = i < a.length ? a[i] : Integer.MAX_VALUE;
+        int k = lowerBound(b, m, x);
+        int res = k < i ? Integer.MIN_VALUE : 0;
+        if (i > 0 && a[i - 1] < x)
+            res = Math.max(res, dfs(i - 1));
+        for (int j = i - 2; j >= i - k - 1 && j >= 0; --j)
+            if (b[k - (i - j - 1)] > a[j])
+
+                res = Math.max(res, dfs(j));
+        return memo[i] = ++res;
     }
 
-    int binarySearch(int[] arr1, int i, int[] arr22) {
-        int l = 0, r = arr22.length - 1;
-        int p = 0;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (arr22[mid] >= arr1[i]) {
-                p = mid;
-                r = mid - 1;
+    private int lowerBound(int[] nums, int right, int target) {
+        int left = -1;
+        while (left + 1 < right) {
 
-            } else {
-                l = mid + 1;
-
-            }
+            int mid = (left + right) >>> 1;
+            if (nums[mid] < target)
+                left = mid;
+            else
+                right = mid;
         }
-        return p;
+        return right;
     }
 }
