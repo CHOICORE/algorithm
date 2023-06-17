@@ -1,45 +1,42 @@
 class Solution {
-    private int[] a, b, memo;
-    private int m;
+    public int makeArrayIncreasing(int[] arr1, int[] arr2) {
+        Map<Integer, Integer> dp = new HashMap<>();
+        Arrays.sort(arr2);
+        int n = arr2.length;
+        dp.put(-1, 0);
 
-    public int makeArrayIncreasing(int[] a, int[] b) {
-        this.a = a;
-        this.b = b;
-        Arrays.sort(b);
-        for (int i = 1; i < b.length; ++i)
-            if (b[m] != b[i])
-                b[++m] = b[i];
-        ++m;
-        int n = a.length;
-        memo = new int[n + 1];
-        int ans = dfs(n);
-        return ans < 0 ? -1 : n + 1 - ans;
-    }
-
-    private int dfs(int i) {
-        if (memo[i] != 0) return memo[i];
-        int x = i < a.length ? a[i] : Integer.MAX_VALUE;
-        int k = lowerBound(b, m, x);
-        int res = k < i ? Integer.MIN_VALUE : 0;
-        if (i > 0 && a[i - 1] < x)
-            res = Math.max(res, dfs(i - 1));
-        for (int j = i - 2; j >= i - k - 1 && j >= 0; --j)
-            if (b[k - (i - j - 1)] > a[j])
-
-                res = Math.max(res, dfs(j));
-        return memo[i] = ++res;
-    }
-
-    private int lowerBound(int[] nums, int right, int target) {
-        int left = -1;
-        while (left + 1 < right) {
-
-            int mid = (left + right) >>> 1;
-            if (nums[mid] < target)
-                left = mid;
-            else
-                right = mid;
+        for (int i = 0; i < arr1.length; i++) {
+            Map<Integer, Integer> newDp = new HashMap<>();
+            for (int prev : dp.keySet()) {
+                if (arr1[i] > prev) {
+                    newDp.put(arr1[i], Math.min(newDp.getOrDefault(arr1[i], Integer.MAX_VALUE), dp.get(prev)));
+                }
+                int idx = bisectRight(arr2, prev);
+                if (idx < n) {
+                    newDp.put(arr2[idx], Math.min(newDp.getOrDefault(arr2[idx], Integer.MAX_VALUE), 1 + dp.get(prev)));
+                }
+            }
+            dp = newDp;
         }
-        return right;
+        
+        int answer = Integer.MAX_VALUE;
+        for (int value : dp.values()) {
+            answer = Math.min(answer, value);
+        }
+        
+        return answer == Integer.MAX_VALUE ? -1 : answer;
+    }
+    
+    private static int bisectRight(int[] arr, int value) {
+        int left = 0, right = arr.length;
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (arr[mid] <= value) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
     }
 }
