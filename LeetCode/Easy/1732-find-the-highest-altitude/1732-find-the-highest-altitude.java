@@ -1,13 +1,16 @@
 class Solution {
-  public int largestAltitude(int[] gain) {
-    int currentAltitude = 0;
-    int highestPoint = currentAltitude;
+    public int largestAltitude(int[] gain) {
+        int sum = 0;
+        int max = 0;
+        int i = 0;
+        while (i < gain.length) {
+            sum += gain[i];
+            if (sum > max) {
+                max = sum;
+            }
+            i++;
+        }
+        return max;
 
-    for (int altitudeGain : gain) {
-      currentAltitude += altitudeGain;
-      highestPoint = Math.max(highestPoint, currentAltitude);
     }
-
-    return highestPoint;
-  }
 }
