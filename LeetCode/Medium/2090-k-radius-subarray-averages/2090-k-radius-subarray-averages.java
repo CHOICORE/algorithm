@@ -1,34 +1,33 @@
 class Solution {
     public int[] getAverages(int[] nums, int k) {
-        int left = 0;
-        int right = k * 2 + 1;
-        int len = nums.length;
-        int[] ans = new int[len];
-        long cur = 0;
 
-        Arrays.fill(ans, -1);
+        int[] avgs = new int[nums.length];
 
-        if (k == 0) {
-            return nums;
+        Arrays.fill(avgs, -1);
+
+        if (2 * k + 1 > nums.length) {
+            return avgs;
         }
 
-        if ((k * 2 + 1) > len) {
-            return ans;
+        double sum = 0;
+
+        for (int i = 0; i < 2 * k + 1; i++) {
+            sum += nums[i];
         }
 
-        for (int i = 0; i < (k * 2 + 1); i++) {
-            cur += nums[i]; 
+        double avg = sum / (2 * k + 1);
+        avgs[k] = (int) avg;
+
+        for (int i = 2 * k + 1, c = 0; i < nums.length; i++, c++) {
+            sum += nums[i];
+            sum -= nums[c];
+
+            avg = sum / (2 * k + 1);
+            avgs[k + c + 1] = (int) avg;
+
         }
 
-        ans[k] = (int) (cur / (k * 2 + 1));
+        return avgs;
 
-        for (int i = right; i < len; i++) {
-            cur -= nums[i - (k * 2 + 1)];
-            cur += nums[i];
-            ans[i - k] = (int) (cur / (k * 2 + 1));
-        }
-        return ans;
     }
 }
-
-
