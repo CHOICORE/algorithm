@@ -1,37 +1,49 @@
 class Solution {
-    int[] nums;
-    int[] cost;
-
     public long minCost(int[] nums, int[] cost) {
-        this.nums = nums;
-        this.cost = cost;
-        int val = bs(0, 1_000_000);
-        return find(val);
+
+        long minValue = Integer.MAX_VALUE, maxValue = Integer.MIN_VALUE;
+
+        for (int n : nums) {
+            
+            minValue = Math.min(minValue, n);
+            
+            maxValue = Math.max(maxValue, n);
+            
+        }
+
+        long res = find(nums, cost, minValue);
+
+        while (minValue < maxValue) {
+            
+            long mid = minValue + (maxValue - minValue) / 2;
+            
+            long leftCost = find(nums, cost, mid);
+            
+            long rightCost = find(nums, cost, mid + 1);
+            
+            res = Math.min(leftCost, rightCost);
+            
+            if (leftCost < rightCost) {
+                
+                maxValue = mid;
+                
+            } else {
+                
+                minValue = mid + 1;
+                
+            }
+        }
+        
+        return res;
     }
 
-    int bs(int st, int e) {
-
-        int mid = (st + e + 1) / 2;
-        if (st == e) {
-            return st;
-        }
-        long cmid = find(mid);
-        long pmid = find(mid - 1);
-
-
-        if (cmid >= pmid) {
-            return bs(st, mid - 1);
-        }
-
-        return bs(mid, e);
-
-    }
-
-    long find(int val) {
-        long ans = 0;
-        for (int i = 0; i < nums.length; i++) {
-            ans += (long) Math.abs(nums[i] - val) * cost[i];
-        }
-        return ans;
+    public long find(int[] nums, int[] cost, long x) {
+        
+        long res = 0L;
+        
+        for (int i = 0; i < nums.length; i++) res += Math.abs(nums[i] - x) * cost[i];
+        
+        return res;
+        
     }
 }
