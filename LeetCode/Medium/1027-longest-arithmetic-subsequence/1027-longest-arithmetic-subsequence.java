@@ -1,17 +1,30 @@
 class Solution {
-    public int longestArithSeqLength(int[] a) {
-        int i, n = a.length, j, ans = 0;
-        for (i = -50; i <= 50; i++) {
-            int max = 0;
-            HashMap<Integer, Integer> map = new HashMap<>();
-            for (j = 0; j < n; j++) {
-                int val = a[j] - i;
-                map.put(a[j], map.getOrDefault(val, 0) + 1);
-            }
-            for (Integer it : map.keySet())
-                max = Math.max(max, map.get(it));
-            ans = Math.max(ans, max);
+    public int longestArithSeqLength(int[] nums) {
+        int limit = 500;
+
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+
+        for (int num : nums) {
+            max = Math.max(max, num);
+            min = Math.min(min, num);
         }
-        return ans;
+        int numsLength = 0;
+
+        for (int k = 0; k <= max - min; k++) {
+
+            if (k * numsLength > max - min) {
+                break;
+            }
+            int[] first = new int[limit + 1];
+            int[] second = new int[limit + 1];
+
+            for (int num : nums) {
+                first[num] = (num + k <= limit) ? (first[num + k] + 1) : 1;
+                second[num] = (num - k >= 0) ? (second[num - k] + 1) : 1;
+                numsLength = Math.max(numsLength, Math.max(first[num], second[num]));
+            }
+        }
+        return numsLength;
     }
 }
