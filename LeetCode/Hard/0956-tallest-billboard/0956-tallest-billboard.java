@@ -1,27 +1,22 @@
-public class Solution {
+class Solution {
     public int tallestBillboard(int[] rods) {
-        Map<Integer, Integer> dp = new HashMap<>();
-        dp.put(0, 0);
-        
-        for (int r : rods) {
-            Map<Integer, Integer> newDp = new HashMap<>(dp);
-            
-            for (Map.Entry<Integer, Integer> entry : dp.entrySet()) {
-                int diff = entry.getKey();
-                int taller = entry.getValue();
-                int shorter = taller - diff;
-                
-                int newTaller = newDp.getOrDefault(diff + r, 0);
-                newDp.put(diff + r, Math.max(newTaller, taller + r));
-                
-                int newDiff = Math.abs(shorter + r - taller);
-                int newTaller2 = Math.max(shorter + r, taller);
-                newDp.put(newDiff, Math.max(newTaller2, newDp.getOrDefault(newDiff, 0)));
-            }
-            
-            dp = newDp;
+        int sum = 0;
+        for (int rod : rods) {
+            sum += rod;
         }
-        
-        return dp.getOrDefault(0, 0);
+        int[][] dp = new int[rods.length + 1][sum + 1];
+        for (int i = 1; i <= rods.length; i++) {
+            for (int j = 0; j <= sum; j++) {
+                if (dp[i - 1][j] < j) {
+                    continue;
+                }
+                dp[i][j] = Math.max(dp[i][j], dp[i - 1][j]);
+                int k = j + rods[i - 1];
+                dp[i][k] = Math.max(dp[i][k], dp[i - 1][j] + rods[i - 1]);
+                k = Math.abs(j - rods[i - 1]);
+                dp[i][k] = Math.max(dp[i][k], dp[i - 1][j] + rods[i - 1]);
+            }
+        }
+        return dp[rods.length][0] / 2;
     }
 }
