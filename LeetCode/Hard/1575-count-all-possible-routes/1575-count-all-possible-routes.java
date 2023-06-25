@@ -12,7 +12,7 @@ class Solution {
             if (nextCity != currCity) {
                 ans = (ans + solve(locations, nextCity, finish,
                 remainingFuel - Math.abs(locations[currCity] - locations[nextCity]),
-                                   memo)) % 1000000007;
+                                   memo)) % 1_000_000_007;
             }
         }
 
