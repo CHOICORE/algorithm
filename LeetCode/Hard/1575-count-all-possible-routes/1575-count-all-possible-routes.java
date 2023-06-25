@@ -1,4 +1,5 @@
 class Solution {
+    
     private static final int modulo = (int) 1e9 + 7;
 
     public int countRoutes(int[] locations, int start, int finish, int fuel) {
@@ -9,14 +10,8 @@ class Solution {
         Arrays.sort(locations);
 
         for (int i = 0; i < n; ++i) {
-
-            if (startPosition == locations[i]) {
-                start = i;
-            }
-
-            if (finishPosition == locations[i]) {
-                finish = i;
-            }
+            if (startPosition == locations[i]) start = i;
+            if (finishPosition == locations[i]) finish = i;
         }
 
         int[][] dpLeft = new int[n][fuel + 1];
