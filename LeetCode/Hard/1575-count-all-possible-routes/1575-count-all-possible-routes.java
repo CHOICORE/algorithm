@@ -22,17 +22,13 @@ class Solution {
             for (int city = n - 2; city >= 0; --city) {
                 int delta = locations[city + 1] - locations[city];
 
-                if (used >= delta) {
-                    dpLeft[city][used] = ((used == delta ? 0 : dpLeft[city + 1][used - delta]) * 2 % modulo + dpRight[city + 1][used - delta]) % modulo;
-                }
+                if (used >= delta) dpLeft[city][used] = ((used == delta ? 0 : dpLeft[city + 1][used - delta]) * 2 % modulo + dpRight[city + 1][used - delta]) % modulo;
             }
 
             for (int city = 1; city < n; ++city) {
                 int delta = locations[city] - locations[city - 1];
 
-                if (used >= delta) {
-                    dpRight[city][used] = ((used == delta ? 0 : dpRight[city - 1][used - delta]) * 2 % modulo + dpLeft[city - 1][used - delta]) % modulo;
-                }
+                if (used >= delta) dpRight[city][used] = ((used == delta ? 0 : dpRight[city - 1][used - delta]) * 2 % modulo + dpLeft[city - 1][used - delta]) % modulo;
             }
         }
 
