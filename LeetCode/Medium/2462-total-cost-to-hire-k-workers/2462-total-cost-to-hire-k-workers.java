@@ -1,39 +1,35 @@
 class Solution {
     public long totalCost(int[] costs, int k, int candidates) {
-        PriorityQueue<Integer> headWorkers = new PriorityQueue<>();
-        PriorityQueue<Integer> tailWorkers = new PriorityQueue<>();
-        
+        long cost = 0;
+
+        int len = costs.length;
+        if (2 * candidates > len - k || len == k) {
+            Arrays.sort(costs);
+            for (int i = 0; i < k; i++) {
+                cost += costs[i];
+            }
+            return cost;
+        }
+
+        PriorityQueue<Integer> left = new PriorityQueue<>();
+        PriorityQueue<Integer> right = new PriorityQueue<>();
+        int l = 0, r = len - 1;
+
         for (int i = 0; i < candidates; i++) {
-            headWorkers.add(costs[i]);
-        }
-        for (int i = Math.max(candidates, costs.length - candidates); i < costs.length; i++) {
-            tailWorkers.add(costs[i]);
+            left.add(costs[l++]);
+            right.add(costs[r--]);
         }
 
-        long answer = 0;
-        int nextHead = candidates;
-        int nextTail = costs.length - 1 - candidates;
-
-        for (int i = 0; i < k; i++) {
-            if (tailWorkers.isEmpty() || !headWorkers.isEmpty() && headWorkers.peek() <= tailWorkers.peek()) {
-                answer += headWorkers.poll();
-                
-                if (nextHead <= nextTail) {
-                    headWorkers.add(costs[nextHead]);
-                    nextHead++;
-                }
-            } 
-            
-            else {
-                answer += tailWorkers.poll();
-
-                if (nextHead <= nextTail) {
-                    tailWorkers.add(costs[nextTail]);
-                    nextTail--;
-                }
+        while (k-- > 0) {
+            if (left.peek() <= right.peek()) {
+                cost += left.poll();
+                left.add(costs[l++]);
+            } else {
+                cost += right.poll();
+                right.add(costs[r--]);
             }
         }
 
-        return answer;
+        return cost;
     }
 }
