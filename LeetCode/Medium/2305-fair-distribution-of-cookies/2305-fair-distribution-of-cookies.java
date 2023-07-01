@@ -1,34 +1,29 @@
 class Solution {
-    private int dfs(int i, int[] distribute, int[] cookies, int k, int zeroCount) {
-        if (cookies.length - i < zeroCount) {
-            return Integer.MAX_VALUE;   
+    int ans = Integer.MAX_VALUE;
+
+    public int distributeCookies(int[] cookies, int k) {
+
+        int[] freq = new int[k];
+        backtrack(cookies, freq, 0, k);
+
+        return ans;
+    }
+
+    private void backtrack(int[] cookies, int[] freq, int start, int k) {
+        if (start == cookies.length) {
+            int max = 0;
+            for (int f : freq) {
+                max = Math.max(f, max);
+            }
+            ans = Math.min(ans, max);
+            return;
         }
 
-        if (i == cookies.length) {
-            int unfairness = Integer.MIN_VALUE;
-            for (int value : distribute) {
-                unfairness = Math.max(unfairness, value);
-            }
-            return unfairness;
+        for (int i = 0; i < k; i++) {
+            freq[i] += cookies[start];
+            backtrack(cookies, freq, start + 1, k);
+            freq[i] -= cookies[start];
+            if (freq[i] == 0) break;
         }
-        
-        int answer = Integer.MAX_VALUE;
-        for (int j = 0; j < k; ++j) {
-            zeroCount -= distribute[j] == 0 ? 1 : 0;
-            distribute[j] += cookies[i];
-            
-            answer = Math.min(answer, dfs(i + 1, distribute, cookies, k, zeroCount));
-            
-            distribute[j] -= cookies[i];
-            zeroCount += distribute[j] == 0 ? 1 : 0;
-        }
-        
-        return answer;
-    }
-    
-    public int distributeCookies(int[] cookies, int k) {
-        int[] distribute = new int[k];
-        
-        return dfs(0, distribute, cookies, k, k);
     }
 }
