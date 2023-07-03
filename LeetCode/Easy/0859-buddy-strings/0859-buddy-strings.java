@@ -1,40 +1,42 @@
 class Solution {
     public boolean buddyStrings(String s, String goal) {
-        if (s.length() != goal.length()) {
+        if (s == null || goal == null || s.length() != goal.length() || s.length() < 2) {
             return false;
         }
-
         if (s.equals(goal)) {
-            int[] frequency = new int[26];
-            for (char ch : s.toCharArray()) {
-                frequency[ch - 'a'] += 1;
-                if (frequency[ch - 'a'] == 2) {
+            int[] map = new int[26];
+            for (int i = 0; i < s.length(); i++) {
+                if (map[s.charAt(i) - 'a'] == 1) {
                     return true;
+                } else {
+                    map[s.charAt(i) - 'a'] = 1;
                 }
             }
-            return false;
         }
-        
-        int firstIndex = -1;
-        int secondIndex = -1;
+        char[] s1 = s.toCharArray();
+        char[] s2 = goal.toCharArray();
+        char s1_1 = '1', s1_2 = '2', s2_1 = '3', s2_2 = '4';
+        boolean found1stDiff = false;
+        boolean found2ndDiff = false;
 
-        for (int i = 0; i < s.length(); ++i) {
-            if (s.charAt(i) != goal.charAt(i)) {
-                if (firstIndex == -1) {
-                    firstIndex = i;
-                } else if (secondIndex == -1) {
-                    secondIndex = i;
+        for (int i = 0; i < s1.length; i++) {
+            if (s1[i] != s2[i]) {
+                if (!found1stDiff) {
+                    found1stDiff = true;
+                    s1_1 = s1[i];
+                    s2_1 = s2[i];
+                } else if (!found2ndDiff) {
+                    found2ndDiff = true;
+                    s1_2 = s1[i];
+                    s2_2 = s2[i];
+                    if (s1_2 != s2_1 || s1_1 != s2_2) {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
             }
         }
-
-        if (secondIndex == -1) {
-            return false;
-        }
-        
-        return s.charAt(firstIndex) == goal.charAt(secondIndex) && 
-               s.charAt(secondIndex) == goal.charAt(firstIndex);
+        return found1stDiff && found2ndDiff;
     }
 }
