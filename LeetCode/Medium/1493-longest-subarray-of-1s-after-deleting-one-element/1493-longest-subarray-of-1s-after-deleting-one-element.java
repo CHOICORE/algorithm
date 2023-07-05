@@ -1,20 +1,28 @@
 class Solution {
     public int longestSubarray(int[] nums) {
-        int zeroCount = 0;
-        int longestWindow = 0;
-        int start = 0;
+        int prevZeroPos = -1;
+        int currZeroPos = findNextZeroPosition(0, nums);
+        if (currZeroPos == nums.length) return nums.length - 1;
 
-        for (int i = 0; i < nums.length; i++) {
-            zeroCount += (nums[i] == 0 ? 1 : 0);
-
-            while (zeroCount > 1) {
-                zeroCount -= (nums[start] == 0 ? 1 : 0);
-                start++;
+        int longestSeq = 0;
+        while (currZeroPos != nums.length) {
+            int nextZeroPos = findNextZeroPosition(currZeroPos + 1, nums);
+            int seq = (currZeroPos - prevZeroPos - 1) + (nextZeroPos - currZeroPos - 1);
+            if (seq > longestSeq) {
+                longestSeq = seq;
             }
-
-            longestWindow = Math.max(longestWindow, i - start);
+            prevZeroPos = currZeroPos;
+            currZeroPos = nextZeroPos;
         }
+        return longestSeq;
+    }
 
-        return longestWindow;
+    int findNextZeroPosition(int from, int[] arr) {
+        for (int i = from; i < arr.length; i++) {
+            if (arr[i] == 0) {
+                return i;
+            }
+        }
+        return arr.length;
     }
 }
