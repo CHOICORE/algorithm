@@ -1,44 +1,27 @@
 class Solution {
     public int largestVariance(String s) {
-        int[] counter = new int[26];
-        for (char ch : s.toCharArray()) {
-            counter[(int) (ch - 'a')]++;
-        }
-        int globalMax = 0;
-
+        int output = 0;
+        int[][] dif = new int[26][26];
+        int[][] difB = new int[26][26];
+        int length = s.length();
         for (int i = 0; i < 26; i++) {
-            for (int j = 0; j < 26; j++) {
-                if (i == j || counter[i] == 0 || counter[j] == 0) {
-                    continue;
-                }
+            Arrays.fill(difB[i], -length);
+        }
 
-                char major = (char) ('a' + i);
-                char minor = (char) ('a' + j);
-                int majorCount = 0;
-                int minorCount = 0;
+        for (int j = 0; j < length; j++) {
+            int ch = s.charAt(j) - 'a';
+            for (int k = 0; k < 26; k++) {
+                if (k == ch) continue;
+                ++dif[ch][k];
+                ++difB[ch][k];
+                difB[k][ch] = --dif[k][ch];
+                dif[k][ch] = Math.max(dif[k][ch], 0);
+                output = Math.max(output, Math.max(difB[ch][k], difB[k][ch]));
 
-                int restMinor = counter[j];
-
-                for (char ch : s.toCharArray()) {
-                    if (ch == major) {
-                        majorCount++;
-                    }
-                    if (ch == minor) {
-                        minorCount++;
-                        restMinor--;
-                    }
-
-                    if (minorCount > 0)
-                        globalMax = Math.max(globalMax, majorCount - minorCount);
-
-                    if (majorCount < minorCount && restMinor > 0) {
-                        majorCount = 0;
-                        minorCount = 0;
-                    }
-                }
             }
         }
 
-        return globalMax;
+        return output;
+
     }
 }
