@@ -14,21 +14,32 @@
  * }
  */
 class Solution {
-    private int dfs(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        
-        if (root.left == null) {
-            return 1 + dfs(root.right);
-        } else if (root.right == null) {
-            return 1 + dfs(root.left);
-        }
-        
-        return 1 + Math.min(dfs(root.left), dfs(root.right));
-    }
-    
     public int minDepth(TreeNode root) {
-        return dfs(root);
+        if (root == null) return 0;
+        else if (root.left == null && root.right == null) return 1;
+
+        return minDepthAux(root, root);
+    }
+
+    public int minDepthAux(TreeNode root, TreeNode curr) {
+        if (curr == null) {
+            return 0;
+        } else {
+            int left = minDepth(root.left) + 1;
+
+            if (root == curr && left == 2) return 2;
+
+            int right = minDepth(root.right) + 1;
+
+            if (root == curr && right == 2) return 2;
+
+            int t = left;
+
+            if ((left <= 1 || left >= right) && right != 1) {
+                if ((right > 1 && right < left) || left == 1) t = right;
+            }
+
+            return t;
+        }
     }
 }
