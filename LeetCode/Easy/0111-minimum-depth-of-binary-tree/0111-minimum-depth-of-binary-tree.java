@@ -15,37 +15,23 @@
  */
 class Solution {
     public int minDepth(TreeNode root) {
-        if (Objects.isNull(root)) {
-            return 0;
-        }
-
-        Deque<TreeNode> currentRow = new ArrayDeque<>();
-        Deque<TreeNode> nextRow = new ArrayDeque<>();
-        nextRow.offerLast(root);
-        int row = 0;
-
-        while (true) {
-            row++;
-            currentRow = new ArrayDeque<>(nextRow);
-            nextRow = new ArrayDeque<>();
-
-            while (!currentRow.isEmpty()) {
-                TreeNode node = currentRow.pollFirst();
-
-                if (Objects.isNull(node.left) && Objects.isNull(node.right)) {
-                    return row;
-                }
-
-                if (Objects.nonNull(node.left)) {
-                    nextRow.offerLast(node.left);
-                }
-                if (Objects.nonNull(node.right)) {
-                    nextRow.offerLast(node.right);
-                }
-
-
+        if (root == null) return 0;
+        Stack<TreeNode> nodes = new Stack<TreeNode>();
+        nodes.push(root);
+        Stack<TreeNode> next_nodes = new Stack<TreeNode>();
+        int level = 1;
+        while (!nodes.empty()) {
+            while (!nodes.empty()) {
+                TreeNode node = nodes.peek();
+                nodes.pop();
+                if (node.left == null && node.right == null) return level;
+                if (node.left != null) next_nodes.push(node.left);
+                if (node.right != null) next_nodes.push(node.right);
             }
-
+            nodes = next_nodes;
+            next_nodes = new Stack<TreeNode>();
+            level++;
         }
+        return level;
     }
 }
