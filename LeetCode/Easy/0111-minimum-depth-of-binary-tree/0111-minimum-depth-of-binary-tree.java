@@ -26,20 +26,13 @@ class Solution {
             return 0;
         } else {
             int left = minDepth(root.left) + 1;
-
             if (root == curr && left == 2) return 2;
 
             int right = minDepth(root.right) + 1;
-
             if (root == curr && right == 2) return 2;
 
-            int t = left;
-
-            if ((left <= 1 || left >= right) && right != 1) {
-                if ((right > 1 && right < left) || left == 1) t = right;
-            }
-
-            return t;
+            if ((left > 1 && left < right) || right == 1) return left;
+            else return right;
         }
     }
 }
