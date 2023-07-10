@@ -15,24 +15,37 @@
  */
 class Solution {
     public int minDepth(TreeNode root) {
-        if (root == null) return 0;
-        else if (root.left == null && root.right == null) return 1;
-
-        return minDepthAux(root, root);
-    }
-
-    public int minDepthAux(TreeNode root, TreeNode curr) {
-        if (curr == null) {
+        if (Objects.isNull(root)) {
             return 0;
-        } else {
-            int left = minDepth(root.left) + 1;
-            if (root == curr && left == 2) return 2;
+        }
 
-            int right = minDepth(root.right) + 1;
-            if (root == curr && right == 2) return 2;
+        Deque<TreeNode> currentRow = new ArrayDeque<>();
+        Deque<TreeNode> nextRow = new ArrayDeque<>();
+        nextRow.offerLast(root);
+        int row = 0;
 
-            if ((left > 1 && left < right) || right == 1) return left;
-            else return right;
+        while (true) {
+            row++;
+            currentRow = new ArrayDeque<>(nextRow);
+            nextRow = new ArrayDeque<>();
+
+            while (!currentRow.isEmpty()) {
+                TreeNode node = currentRow.pollFirst();
+
+                if (Objects.isNull(node.left) && Objects.isNull(node.right)) {
+                    return row;
+                }
+
+                if (Objects.nonNull(node.left)) {
+                    nextRow.offerLast(node.left);
+                }
+                if (Objects.nonNull(node.right)) {
+                    nextRow.offerLast(node.right);
+                }
+
+
+            }
+
         }
     }
 }
