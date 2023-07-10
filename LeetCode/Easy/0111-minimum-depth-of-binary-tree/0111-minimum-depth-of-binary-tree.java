@@ -15,23 +15,36 @@
  */
 class Solution {
     public int minDepth(TreeNode root) {
-        if (root == null) return 0;
-        Stack<TreeNode> nodes = new Stack<TreeNode>();
-        nodes.push(root);
-        Stack<TreeNode> next_nodes = new Stack<TreeNode>();
-        int level = 1;
-        while (!nodes.empty()) {
-            while (!nodes.empty()) {
-                TreeNode node = nodes.peek();
-                nodes.pop();
-                if (node.left == null && node.right == null) return level;
-                if (node.left != null) next_nodes.push(node.left);
-                if (node.right != null) next_nodes.push(node.right);
-            }
-            nodes = next_nodes;
-            next_nodes = new Stack<TreeNode>();
-            level++;
+        if (root == null) {
+            return 0;
         }
-        return level;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        int depth = 0;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            while (size-- > 0) {
+                TreeNode curr = q.poll();
+
+                if (curr.left == null && curr.right == null) {
+                    return ++depth;
+                }
+
+                if (curr.left != null) {
+                    q.offer(curr.left);
+                }
+
+                if (curr.right != null) {
+                    q.offer(curr.right);
+                }
+            }
+
+            depth++;
+        }
+
+        return depth;
     }
 }
