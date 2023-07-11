@@ -8,52 +8,53 @@
  * }
  */
 class Solution {
-    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
-        Map<Integer, List<Integer>> graph = new HashMap<>();
-        dfsBuild(root, null, graph);
-
-        List<Integer> answer = new ArrayList<>();
-        Set<Integer> visited = new HashSet<>();
-        Queue<int[]> queue = new LinkedList<>();
-
-        queue.add(new int[]{target.val, 0});
-        visited.add(target.val);
-
-        while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-            int node = cur[0], distance = cur[1];
-
-            if (distance == k) {
-                answer.add(node);
-                continue;
-            }
-
-            for (int neighbor : graph.getOrDefault(node, new ArrayList<>())) {
-                if (!visited.contains(neighbor)) {
-                    visited.add(neighbor);
-                    queue.add(new int[]{neighbor, distance + 1});
-                }
-            }
+    public void getAllNodesFromK(TreeNode root, int k, List<Integer> res) {
+        if (root == null) {
+            return;
         }
+        if (k == 0) {
+            res.add(root.val);
+            return;
+        }
+        getAllNodesFromK(root.left, k - 1, res);
+        getAllNodesFromK(root.right, k - 1, res);
 
-        return answer;
+
     }
 
-    private void dfsBuild(TreeNode cur, TreeNode parent, Map<Integer, List<Integer>> graph) {
-        if (cur != null && parent != null) {
-            int curVal = cur.val, parentVal = parent.val;
-            graph.putIfAbsent(curVal, new ArrayList<>());
-            graph.putIfAbsent(parentVal, new ArrayList<>());
-            graph.get(curVal).add(parentVal);
-            graph.get(parentVal).add(curVal);
+    public int solve(TreeNode root, TreeNode target, int k, List<Integer> res) {
+        if (root == null) {
+            return -1;
         }
+        if (root == target) {
+            getAllNodesFromK(root, k, res);
+            return 1;
+        }
+        int left = solve(root.left, target, k, res);
+        int right = solve(root.right, target, k, res);
+        if (left != -1 && left <= k) {
+            if (left == k) {
+                res.add(root.val);
+            } else {
+                getAllNodesFromK(root.right, k - left - 1, res);
+            }
+            return 1 + left;
+        }
+        if (right != -1 && right <= k) {
+            if (right == k) {
+                res.add(root.val);
+            } else {
+                getAllNodesFromK(root.left, k - right - 1, res);
+            }
+            return 1 + right;
+        }
+        return -1;
 
-        if (cur != null && cur.left != null) {
-            dfsBuild(cur.left, cur, graph);
-        }
+    }
 
-        if (cur != null && cur.right != null) {
-            dfsBuild(cur.right, cur, graph);
-        }
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        List<Integer> res = new ArrayList<>();
+        solve(root, target, k, res);
+        return res;
     }
 }
