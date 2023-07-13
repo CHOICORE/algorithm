@@ -1,17 +1,13 @@
 class Solution {
     public boolean dfs(int node, List<List<Integer>> adj, boolean[] visit, boolean[] inStack) {
-        if (inStack[node]) {
-            return true;
-        }
-        if (visit[node]) {
-            return false;
-        }
+        if (inStack[node]) return true;
+        
+        if (visit[node]) return false;
+        
         visit[node] = true;
         inStack[node] = true;
         for (int neighbor : adj.get(node)) {
-            if (dfs(neighbor, adj, visit, inStack)) {
-                return true;
-            }
+            if (dfs(neighbor, adj, visit, inStack)) return true;
         }
         inStack[node] = false;
         return false;
