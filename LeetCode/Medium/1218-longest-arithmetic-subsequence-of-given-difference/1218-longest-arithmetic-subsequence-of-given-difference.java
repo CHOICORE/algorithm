@@ -1,29 +1,25 @@
 class Solution {
     public int longestSubsequence(int[] arr, int difference) {
-        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
-        int i = arr.length - 1;
-        while (i >= 0) {
-            int k = arr[i];
-            if (k < min) min = k;
-            if (k > max) max = k;
-            i--;
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int num : arr) {
+            max = Math.max(max, num);
+            min = Math.min(min, num);
         }
         int[] dp = new int[max - min + 1];
-
-        max = 1;
-        int k = 0;
-        while (k < arr.length) {
-            int j = arr[k];
-            int cur = j - min, pred = cur - difference;
-            if (pred >= 0 && pred < dp.length) {
-                dp[cur] = 1 + dp[pred];
-                if (dp[cur] > max) max = dp[cur];
+        int res = 1;
+        int i = 0;
+        while (i < arr.length) {
+            int curr = arr[i] - min;
+            int prev = curr - difference;
+            if (prev >= 0 && prev < dp.length) {
+                dp[curr] = dp[prev] + 1;
             } else {
-                dp[cur] = 1;
+                dp[curr] = 1;
             }
-
-            k++;
+            res = Math.max(res, dp[curr]);
+            i++;
         }
-        return max;
+        return res;
     }
 }
