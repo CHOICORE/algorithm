@@ -1,32 +1,37 @@
 class Solution {
-    int[][] dp;
-
     public int maxValue(int[][] events, int k) {
-        Arrays.sort(events, (a, b) -> a[0] - b[0]);
-        int n = events.length;
-        dp = new int[k + 1][n];
-        for (int[] row : dp) {
-            Arrays.fill(row, -1);
+        int max = 0;
+        if (k == 1) {
+            for (int[] event : events)
+                max = Math.max(max, event[2]);
+
+            return max;
         }
-        return dfs(0, 0, -1, events, k);
+
+        Arrays.sort(events, Comparator.comparingInt(a -> a[0]));
+        int size = events.length;
+
+        int[][] cache = new int[size + 1][k + 1];
+
+        for (int i = size - 1; i >= 0; i--) {
+            int next = binarySearch(events, events[i][1], i + 1, size);
+
+            for (int j = 1; j <= k; j++) {
+                cache[i][j] = Math.max(cache[i + 1][j], cache[next][j - 1] + events[i][2]);
+            }
+        }
+        return cache[0][k];
     }
 
-    private int dfs(int curIndex, int count, int prevEndingTime, int[][] events, int k) {
-        if (curIndex == events.length || count == k) {
-            return 0;
+    private int binarySearch(int[][] events, int targetEnd, int lo, int hi) {
+        while (lo < hi) {
+            int mid = (hi - lo) / 2 + lo;
+            if (targetEnd >= events[mid][0]) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
         }
-
-        if (prevEndingTime >= events[curIndex][0]) {
-            return dfs(curIndex + 1, count, prevEndingTime, events, k);
-        }
-
-        if (dp[count][curIndex] != -1) {
-            return dp[count][curIndex];
-        }
-
-        int ans = Math.max(dfs(curIndex + 1, count, prevEndingTime, events, k),
-                dfs(curIndex + 1, count + 1, events[curIndex][1], events, k) + events[curIndex][2]);
-        dp[count][curIndex] = ans;
-        return ans;
+        return lo;
     }
 }
