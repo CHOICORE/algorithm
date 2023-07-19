@@ -4,9 +4,13 @@ class Solution {
         int min = max;
 
         int length = intervals.length;
-        for (int i = 1; i < length; i++) {
-            max = Math.max(max, intervals[i][1]);
-            min = Math.min(min, intervals[i][1]);
+        {
+            int i = 1;
+            while (i < length) {
+                max = Math.max(max, intervals[i][1]);
+                min = Math.min(min, intervals[i][1]);
+                i++;
+            }
         }
 
         int shift = 1 - min;
