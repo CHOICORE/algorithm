@@ -1,21 +1,24 @@
-public class Solution {
+class Solution {
     public long maxRunTime(int n, int[] batteries) {
-        Arrays.sort(batteries);
-        long extra = 0;
-        for (int i = 0; i < batteries.length - n; i++) {
-            extra += batteries[i];
+        int bn = batteries.length;
+        if (bn < n) return 0;
+        long l = 0, r = 0;
+        for (int b : batteries) r += b;
+        r /= n;
+        long res = 0;
+        while (l <= r) {
+            long mid = l + (r - l) / 2;
+            if (possible(n, batteries, mid)) {
+                res = mid;
+                l = mid + 1;
+            } else r = mid - 1;
         }
+        return res;
+    }
 
-        int[] live = Arrays.copyOfRange(batteries, batteries.length - n, batteries.length);
-
-        for (int i = 0; i < n - 1; i++) {
-            if (extra < (long)(i + 1) * (live[i + 1] - live[i])) {
-                return live[i] + extra / (long)(i + 1);
-            }
-
-            extra -= (long)(i + 1) * (live[i + 1] - live[i]);
-        }
-
-        return live[n - 1] + extra / n;
+    private boolean possible(int n, int[] batteries, long target) {
+        long totalTarget = target * n;
+        for (int b : batteries) totalTarget -= Math.min(target, b);
+        return totalTarget <= 0;
     }
 }
