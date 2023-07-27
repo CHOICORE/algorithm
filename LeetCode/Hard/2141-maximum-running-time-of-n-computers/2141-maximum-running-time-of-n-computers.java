@@ -1,24 +1,35 @@
 class Solution {
-    public long maxRunTime(int n, int[] batteries) {
-        int bn = batteries.length;
-        if (bn < n) return 0;
-        long l = 0, r = 0;
-        for (int b : batteries) r += b;
-        r /= n;
-        long res = 0;
-        while (l <= r) {
-            long mid = l + (r - l) / 2;
-            if (possible(n, batteries, mid)) {
-                res = mid;
-                l = mid + 1;
-            } else r = mid - 1;
+    public boolean isPossible(int[] batteries, int n, long shift) {
+        long totalWork = n * shift;
+        long currWork = 0;
+        for (int battery : batteries) {
+            if (battery >= shift) {
+                currWork += shift;
+            } else {
+                currWork += battery;
+            }
         }
-        return res;
+        return currWork >= totalWork;
     }
 
-    private boolean possible(int n, int[] batteries, long target) {
-        long totalTarget = target * n;
-        for (int b : batteries) totalTarget -= Math.min(target, b);
-        return totalTarget <= 0;
+    public long maxRunTime(int n, int[] batteries) {
+        long si = 0;
+        long ei = 0;
+        long p_ans = 0;
+        for (int battery : batteries) {
+            si = Math.min(si, battery);
+            ei += battery;
+        }
+        ei = ei / n;
+        while (si <= ei) {
+            long mid = si + (ei - si) / 2;
+            if (isPossible(batteries, n, mid)) {
+                p_ans = mid;
+                si = mid + 1;
+            } else {
+                ei = mid - 1;
+            }
+        }
+        return p_ans;
     }
 }
