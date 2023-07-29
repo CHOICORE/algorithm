@@ -1,32 +1,28 @@
 class Solution {
     public double soupServings(int n) {
-        int m = (int)Math.ceil(n / 25.0);
-        Map<Integer, Map<Integer, Double>> dp = new HashMap<>();
 
-        for (int k = 1; k <= m; k++) {
-            if (calculateDP(k, k, dp) > 1 - 1e-5) {
-                return 1.0;
-            }
-        }
-        return calculateDP(m, m, dp);
-    }
-
-    private double calculateDP(int i, int j, Map<Integer, Map<Integer, Double>> dp) {
-        if (i <= 0 && j <= 0) {
-            return 0.5;
-        }
-        if (i <= 0) {
+        if (n >= 4_800) {
             return 1.0;
         }
-        if (j <= 0) {
+        int N = (n + 24) / 25;
+        double[][] dp = new double[N + 1][N + 1];
+        return helper(dp, N, N);
+    }
+
+    private double helper(double[][] dp, int A, int B) {
+        if (A <= 0 && B <= 0) {
+            return 0.5;
+        }
+        if (A <= 0) {
+            return 1.0;
+        }
+        if (B <= 0) {
             return 0.0;
         }
-        if (dp.containsKey(i) && dp.get(i).containsKey(j)) {
-            return dp.get(i).get(j);
+        if (dp[A][B] > 0) {
+            return dp[A][B];
         }
-        double result = (calculateDP(i - 4, j, dp) + calculateDP(i - 3, j - 1, dp) +
-                calculateDP(i - 2, j - 2, dp) + calculateDP(i - 1, j - 3, dp)) / 4.0;
-        dp.computeIfAbsent(i, k -> new HashMap<>()).put(j, result);
-        return result;
+        dp[A][B] = 0.25 * (helper(dp, A - 4, B) + helper(dp, A - 3, B - 1) + helper(dp, A - 2, B - 2) + helper(dp, A - 1, B - 3));
+        return dp[A][B];
     }
 }
