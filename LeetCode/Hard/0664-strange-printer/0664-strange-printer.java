@@ -1,39 +1,58 @@
 class Solution {
-    int[][] dp;
-
-    private int solve(String s, int n, int left, int right) {
-        if (dp[left][right] != -1) {
-            return dp[left][right];
-        }
-
-        dp[left][right] = n;
-        int j = -1;
-        for (int i = left; i < right; i++) {
-            if (s.charAt(i) != s.charAt(right) && j == -1) {
-                j = i;
-            }
-
-            if (j != -1) {
-                dp[left][right] = Math.min(dp[left][right], 1 + solve(s, n, j, i) + solve(s, n, i + 1, right));
-            }
-        }
-
-        if (j == -1) {
-            dp[left][right] = 0;
-        }
-
-        return dp[left][right];
-    }
+    private int[][] memo;
+    private char[] array;
 
     public int strangePrinter(String s) {
-        int n = s.length();
-        dp = new int[n][n];
-        for (int left = 0; left < n; left++) {
-            for (int right = 0; right < n; right++) {
-                dp[left][right] = -1;
+        if (s.isEmpty()) {
+            return 0;
+        }
+        array = squash(s);
+        int N = array.length;
+        memo = new int[N][];
+
+        for (int i = 0; i < N; i++) {
+            memo[i] = new int[N];
+            memo[i][i] = 1;
+            if (i != N - 1) {
+                int next = i + 1;
+                memo[i][next] = array[i] == array[next] ? 1 : 2;
             }
         }
+        return strangePrinter(0, array.length - 1);
+    }
 
-        return solve(s, n, 0, n - 1) + 1;
+    public int strangePrinter(int i, int j) {
+        if (i > j) {
+            return 0;
+        }
+        if (memo[i][j] == 0) {
+
+            int nextIdx = i + 1;
+            int letter = array[i];
+
+            int answer = 1 + strangePrinter(nextIdx, j);
+
+            for (int k = nextIdx; k <= j; k++) {
+                if (array[k] == letter) {
+
+                    int betterAnswer = strangePrinter(i, k - 1) + strangePrinter(k + 1, j);
+                    answer = Math.min(answer, betterAnswer);
+                }
+            }
+            memo[i][j] = answer;
+        }
+        return memo[i][j];
+    }
+
+    char[] squash(String s) {
+        char[] chars = s.toCharArray();
+        int last = 0;
+        int fullLength = chars.length;
+        for (int i = 1; i < fullLength; i++) {
+            if (chars[i] != chars[last]) {
+                chars[++last] = chars[i];
+            }
+        }
+        return Arrays.copyOf(chars, last + 1);
     }
 }
