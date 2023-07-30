@@ -1,5 +1,5 @@
 class Solution {
-    int dp[][];
+    int[][] dp;
 
     private int solve(String s, int n, int left, int right) {
         if (dp[left][right] != -1) {
@@ -12,16 +12,16 @@ class Solution {
             if (s.charAt(i) != s.charAt(right) && j == -1) {
                 j = i;
             }
-            
+
             if (j != -1) {
                 dp[left][right] = Math.min(dp[left][right], 1 + solve(s, n, j, i) + solve(s, n, i + 1, right));
             }
         }
-        
+
         if (j == -1) {
             dp[left][right] = 0;
         }
-        
+
         return dp[left][right];
     }
 
