@@ -1,34 +1,28 @@
-public class Solution {
-    LinkedHashSet<List<Integer>> al;
-    List<List<Integer>> al1;
-    int n;
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        recursion(0, result, nums);
+        return result;
+    }
 
-    void permutate(List<Integer> a, int index) {
+    void recursion(int index, List<List<Integer>> result, int[] nums) {
+        if (index == nums.length - 1) {
+            List<Integer> temp = new ArrayList<>();
+            for (int x : nums) temp.add(x);
+            result.add(temp);
+            return;
+        }
 
-        for (int i = index; i < n; i++) {
-            List<Integer> b = new ArrayList<Integer>(a);
-            int temp = b.get(index);
-            b.set(index, b.get(i));
-            b.set(i, temp);
-            al.add(b);
-            permutate(b, index + 1);
-
+        for (int i = index; i < nums.length; i++) {
+            swap(i, index, nums);
+            recursion(index + 1, result, nums);
+            swap(i, index, nums);
         }
     }
 
-    public List<List<Integer>> permute(int[] a) {
-        ArrayList<Integer> A = new ArrayList<>();
-        for (int i : a) {
-            A.add(i);
-        }
-        al = new LinkedHashSet<>();
-        n = A.size();
-        permutate(A, 0);
-        al1 = new ArrayList<>();
-        for (List<Integer> integers : al) {
-            List<Integer> l = new ArrayList<>(integers);
-            al1.add(l);
-        }
-        return al1;
+    void swap(int x, int y, int[] nums) {
+        int temp = nums[x];
+        nums[x] = nums[y];
+        nums[y] = temp;
     }
 }
