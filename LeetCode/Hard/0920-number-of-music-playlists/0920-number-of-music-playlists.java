@@ -1,19 +1,20 @@
 class Solution {
     public int numMusicPlaylists(int n, int goal, int k) {
-        int MOD = 1_000_000_007;
+        int modulo = 1_000_000_007;
 
-        long[][] dp = new long[goal + 1][n + 1];
-        dp[0][0] = 1;
+        long[] dp = new long[goal - n + 1];
+        Arrays.fill(dp, 1);
 
-        for (int i = 1; i <= goal; i++) {
-            for (int j = 1; j <= Math.min(i, n); j++) {
-                dp[i][j] = dp[i - 1][j - 1] * (n - j + 1) % MOD;
-                if (j > k) {
-                    dp[i][j] = (dp[i][j] + dp[i - 1][j] * (j - k)) % MOD;
-                }
+        for (int p = 2; p <= n - k; ++p) {
+            for (int i = 1; i <= goal - n; ++i) {
+                dp[i] += dp[i - 1] * p;
+                dp[i] %= modulo;
             }
         }
-
-        return (int) dp[goal][n];
+        long result = dp[goal - n];
+        for (int key = 2; key <= n; ++key) {
+            result = result * key % modulo;
+        }
+        return (int) result;
     }
 }
