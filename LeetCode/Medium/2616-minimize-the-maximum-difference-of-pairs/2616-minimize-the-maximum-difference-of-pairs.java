@@ -10,10 +10,8 @@ class Solution {
                     i++;
                 }
             }
-            if (k >= p)
-                right = mid;
-            else
-                left = mid + 1;
+            if (k >= p) right = mid;
+            else left = mid + 1;
         }
         return left;
     }
