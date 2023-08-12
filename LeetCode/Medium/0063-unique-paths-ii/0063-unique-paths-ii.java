@@ -1,24 +1,21 @@
 class Solution {
+    int[][] dp;
+
+    private int countPaths(int i, int j, int[][] grid) {
+        if (i < 0 || j < 0 || grid[i][j] == 1) return 0;
+        if (i == 0 && j == 0) return 1;
+
+        if (dp[i][j] != -1) return dp[i][j];
+
+        return dp[i][j] = countPaths(i - 1, j, grid) + countPaths(i, j - 1, grid);
+    }
+
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        if (obstacleGrid == null || obstacleGrid.length == 0 || obstacleGrid[0].length == 0 || obstacleGrid[0][0] == 1) {
-            return 0;
-        }
-
-        int m = obstacleGrid.length;
-        int n = obstacleGrid[0].length;
-
-        int[] previous = new int[n];
-        int[] current = new int[n];
-        previous[0] = 1;
-
+        int m = obstacleGrid.length, n = obstacleGrid[0].length;
+        dp = new int[m][n];
         for (int i = 0; i < m; i++) {
-            current[0] = obstacleGrid[i][0] == 1 ? 0 : previous[0];
-            for (int j = 1; j < n; j++) {
-                current[j] = obstacleGrid[i][j] == 1 ? 0 : current[j - 1] + previous[j];
-            }
-            System.arraycopy(current, 0, previous, 0, n);
+            Arrays.fill(dp[i], -1);
         }
-
-        return previous[n - 1];
+        return countPaths(m - 1, n - 1, obstacleGrid);
     }
 }
