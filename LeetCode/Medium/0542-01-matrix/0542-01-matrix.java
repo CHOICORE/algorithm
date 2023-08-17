@@ -1,24 +1,37 @@
 class Solution {
-    public int[][] updateMatrix(int[][] mat) {
-        int m = mat.length, n = mat[0].length, INF = m + n;
-        for (int r = 0; r < m; r++) {
-            for (int c = 0; c < n; c++) {
-                if (mat[r][c] == 0) continue;
-                int top = INF, left = INF;
-                if (r - 1 >= 0) top = mat[r - 1][c];
-                if (c - 1 >= 0) left = mat[r][c - 1];
-                mat[r][c] = Math.min(top, left) + 1;
-            }
+    public int[][] updateMatrix(int[][] matrix) {
+        int rowLast = matrix.length - 1;
+        int colLast = matrix[0].length - 1;
+
+        int[] row = matrix[0];
+        int[] prevRow;
+        if (row[0] == 1)
+            row[0] = rowLast + colLast + 2;
+        for (int c = 1; c <= colLast; c++)
+            if (row[c] == 1)
+                row[c] = row[c - 1] + 1;
+        for (int r = 1; r <= rowLast; r++) {
+            prevRow = row;
+            row = matrix[r];
+            if (row[0] == 1)
+                row[0] = prevRow[0] + 1;
+            for (int c = 1; c <= colLast; c++)
+                if (row[c] == 1)
+                    row[c] = Math.min(row[c - 1], prevRow[c]) + 1;
         }
-        for (int r = m - 1; r >= 0; r--) {
-            for (int c = n - 1; c >= 0; c--) {
-                if (mat[r][c] == 0) continue;
-                int bottom = INF, right = INF;
-                if (r + 1 < m) bottom = mat[r + 1][c];
-                if (c + 1 < n) right = mat[r][c + 1];
-                mat[r][c] = Math.min(mat[r][c], Math.min(bottom, right) + 1);
-            }
+        row = matrix[rowLast];
+        for (int c = colLast - 1; c >= 0; c--)
+            if (row[c] > 1)
+                row[c] = Math.min(row[c], row[c + 1] + 1);
+        for (int r = rowLast - 1; r >= 0; r--) {
+            prevRow = row;
+            row = matrix[r];
+            if (row[colLast] > 1)
+                row[colLast] = Math.min(row[colLast], prevRow[colLast] + 1);
+            for (int c = colLast - 1; c >= 0; c--)
+                if (row[c] > 1)
+                    row[c] = Math.min(row[c], Math.min(row[c + 1], prevRow[c]) + 1);
         }
-        return mat;
+        return matrix;
     }
 }
