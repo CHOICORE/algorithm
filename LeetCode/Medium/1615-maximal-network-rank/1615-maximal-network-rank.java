@@ -1,24 +1,45 @@
 class Solution {
     public int maximalNetworkRank(int n, int[][] roads) {
-        int maxRank = 0;
-        Map<Integer, Set<Integer>> adj = new HashMap<>();
-
+        int[] degrees = new int[n];
         for (int[] road : roads) {
-            adj.computeIfAbsent(road[0], k -> new HashSet<>()).add(road[1]);
-            adj.computeIfAbsent(road[1], k -> new HashSet<>()).add(road[0]);
+            degrees[road[0]]++;
+            degrees[road[1]]++;
         }
 
-        for (int node1 = 0; node1 < n; ++node1) {
-            for (int node2 = node1 + 1; node2 < n; ++node2) {
-                int currentRank = adj.getOrDefault(node1, Collections.emptySet()).size() +
-                        adj.getOrDefault(node2, Collections.emptySet()).size();
-
-                if (adj.getOrDefault(node1, Collections.emptySet()).contains(node2)) {
-                    --currentRank;
-                }
-                maxRank = Math.max(maxRank, currentRank);
+        int firstMax = 0, secondMax = 0;
+        for (int degree : degrees) {
+            if (degree > firstMax) {
+                secondMax = firstMax;
+                firstMax = degree;
+            } else if (degree > secondMax && degree < firstMax) {
+                secondMax = degree;
             }
         }
-        return maxRank;
+
+        int fmCount = 0, smCount = 0;
+        for (int degree : degrees) {
+            if (degree == firstMax) fmCount++;
+            if (degree == secondMax) smCount++;
+        }
+
+        if (fmCount > 1) {
+            int edgeCount = 0;
+            for (int[] road : roads)
+                if (degrees[road[0]] == firstMax && degrees[road[1]] == firstMax) edgeCount++;
+
+            int maxEdgeWithFirstMax = fmCount * (fmCount - 1) / 2;
+
+            return 2 * firstMax - (maxEdgeWithFirstMax == edgeCount ? 1 : 0);
+        }
+
+        else {
+            int edgeCount = 0;
+            for (int[] road : roads) {
+                if (degrees[road[0]] == firstMax && degrees[road[1]] == secondMax) edgeCount++;
+                if (degrees[road[0]] == secondMax && degrees[road[1]] == firstMax) edgeCount++;
+            }
+
+            return firstMax + secondMax - (smCount == edgeCount ? 1 : 0);
+        }
     }
 }
