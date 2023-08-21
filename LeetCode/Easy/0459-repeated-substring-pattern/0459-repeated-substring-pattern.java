@@ -1,8 +1,16 @@
 class Solution {
     public boolean repeatedSubstringPattern(String s) {
-        String t = s + s;
-        if (t.substring(1, t.length() - 1).contains(s))
-            return true;
+        int len = s.length();
+
+        for (int i = len / 2; i > 0; i--) {
+            if (len % i == 0 && s.charAt(i - 1) == s.charAt(len - 1)) {
+                String ss = s.substring(0, i);
+                int repeat = len / i;
+                if (ss.repeat(repeat).equals(s)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }
