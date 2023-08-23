@@ -1,39 +1,43 @@
 class Solution {
     public String reorganizeString(String s) {
-        var charCounts = new int[26];
-        for (char c : s.toCharArray()) {
-            charCounts[c - 'a']++;
+        int[] charCount = new int[26];
+
+
+        for (char each : s.toCharArray()) {
+            charCount[each - 'a']++;
         }
-        int maxCount = 0, letter = 0;
-        for (int i = 0; i < charCounts.length; i++) {
-            if (charCounts[i] > maxCount) {
-                maxCount = charCounts[i];
-                letter = i;
+
+        int max = 0;
+        char maxC = 'a';
+        int total = 0;
+        for (int i = 0; i < charCount.length; i++) {
+            total += charCount[i];
+            if (charCount[i] > max) {
+                max = charCount[i];
+                maxC = (char) (i + 'a');
             }
         }
-        if (maxCount > (s.length() + 1) / 2) {
-            return "";
-        }
-        var ans = new char[s.length()];
-        int index = 0;
 
-        while (charCounts[letter] != 0) {
-            ans[index] = (char) (letter + 'a');
-            index += 2;
-            charCounts[letter]--;
-        }
+        if (total - max < max - 1) return "";
 
-        for (int i = 0; i < charCounts.length; i++) {
-            while (charCounts[i] > 0) {
-                if (index >= s.length()) {
-                    index = 1;
+
+        char[] res = new char[s.length()];
+        int idx = 0;
+        while (charCount[maxC - 'a'] > 0) {
+            res[idx] = maxC;
+            idx += 2;
+            charCount[maxC - 'a']--;
+        }
+        for (int i = 0; i < charCount.length; i++) {
+            while (charCount[i] > 0) {
+                if (idx >= res.length) {
+                    idx = 1;
                 }
-                ans[index] = (char) (i + 'a');
-                index += 2;
-                charCounts[i]--;
+                res[idx] = (char) (i + 'a');
+                idx += 2;
+                charCount[i]--;
             }
         }
-
-        return String.valueOf(ans);
+        return String.valueOf(res);
     }
 }
