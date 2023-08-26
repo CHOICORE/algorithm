@@ -1,26 +1,28 @@
 class Solution {
-    private int longestPairChain(int i, int[][] pairs, int n, int[] memo) {
-        if (memo[i] != 0) {
-            return memo[i];
+    public int findLongestChain(int[][] pairs) {
+        final var N = pairs.length;
+
+        final var P = new long[N];
+        for (int i = 0; i < N; i++) {
+            final long hi = ((long) pairs[i][1]) << 32;
+            final long lo = 0xffff_ffffL & pairs[i][0];
+            P[i] = hi | lo;
         }
-        memo[i] = 1;
-        for (int j = i + 1; j < n; j++) {
-            if (pairs[i][1] < pairs[j][0]) {
-                memo[i] = Math.max(memo[i], 1 + longestPairChain(j, pairs, n, memo));
+
+        Arrays.sort(P);
+
+        var size = 0;
+        var lastEnd = Integer.MIN_VALUE;
+
+        for (final var pair : P) {
+            final var start = (int) pair;
+
+            if (start > lastEnd) {
+                size++;
+                lastEnd = (int) (pair >>> 32);
             }
         }
-        return memo[i];
-    }
 
-    public int findLongestChain(int[][] pairs) {
-        int n = pairs.length;
-        Arrays.sort(pairs, (a, b) -> a[0] - b[0]);
-        int[] memo = new int[n];
-
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            ans = Math.max(ans, longestPairChain(i, pairs, n, memo));
-        }
-        return ans;
+        return size;
     }
 }
