@@ -1,38 +1,43 @@
 class Solution {
-    HashMap<Integer, Integer> mark = new HashMap<>();
-    int dp[][] = new int[2001][2001];
-
-    boolean solve(int[] stones, int n, int index, int prevJump) {
-        if (index == n - 1) {
-            return true;
-        }
-
-        if (dp[index][prevJump] != -1) {
-            return dp[index][prevJump] == 1;
-        }
-
-        boolean ans = false;
-
-        for (int nextJump = prevJump - 1; nextJump <= prevJump + 1; nextJump++) {
-            if (nextJump > 0 && mark.containsKey(stones[index] + nextJump)) {
-                ans = ans || solve(stones, n, mark.get(stones[index] + nextJump), nextJump);
-            }
-        }
-
-        dp[index][prevJump] = (ans ? 1 : 0);
-        return ans;
-    }
+    boolean[][] dp;
 
     public boolean canCross(int[] stones) {
 
-        for (int i = 0; i < stones.length; i++) {
-            mark.put(stones[i], i);
-        }
+        if (stones[1] != 1)
+            return false;
 
-        for (int i = 0; i < 2000; i++) {
-            Arrays.fill(dp[i], -1);
-        }
+        int n = stones.length;
 
-        return solve(stones, stones.length, 0, 0);
+        dp = new boolean[n][n];
+
+        return helper(stones, 0, 1);
+    }
+
+    boolean helper(int[] stones, int lastIndex, int currentIndex) {
+
+        if (currentIndex == stones.length - 1) {
+            return true;
+        }
+        if (dp[lastIndex][currentIndex])
+            return false;
+
+        int lastJump = stones[currentIndex] - stones[lastIndex];
+        int nextIndex = currentIndex + 1;
+
+        while (nextIndex < stones.length && stones[nextIndex] <= stones[currentIndex] + lastJump + 1) {
+            int nextJump = stones[nextIndex] - stones[currentIndex];
+
+            int jump = nextJump - lastJump;
+
+            if (jump >= -1 && jump <= 1) {
+                if (helper(stones, currentIndex, nextIndex)) {
+                    return true;
+                }
+            }
+            nextIndex++;
+        }
+        dp[lastIndex][currentIndex] = true;
+
+        return false;
     }
 }
