@@ -1,30 +1,41 @@
 class MyStack {
-
-    public int top;
-    public int[] arr;
+    int lastItem;
+    Queue<Integer> q1, q2;
 
     public MyStack() {
-        top = -1;
-        arr = new int[100];
+        q1 = new LinkedList<>();
+        q2 = new LinkedList<>();
     }
 
     public void push(int x) {
-        top++;
-        arr[top] = x;
+        q1.add(x);
+        lastItem = x;
     }
 
     public int pop() {
-        int temp = arr[top];
-        top--;
-        return temp;
+        int item = -1;
+        while (!q1.isEmpty()) {
+            item = q1.poll();
+            if (!q1.isEmpty()) {
+                lastItem = item;
+                q2.add(item);
+            } else {
+                break;
+            }
+        }
+        while (!q2.isEmpty()) {
+            q1.add(q2.poll());
+        }
+        return item;
     }
 
     public int top() {
-        return arr[top];
+        return lastItem;
+
     }
 
     public boolean empty() {
-        return top != 0;
+        return q1.isEmpty();
     }
 }
 
