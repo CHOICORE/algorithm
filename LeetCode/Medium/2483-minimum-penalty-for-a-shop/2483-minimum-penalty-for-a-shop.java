@@ -1,30 +1,14 @@
 class Solution {
     public int bestClosingTime(String customers) {
-        int curPenalty = 0;
-        for (int i = 0; i < customers.length(); i++) {
-            if (customers.charAt(i) == 'Y') {
-                curPenalty++;
+        int j = -1, score = 0, maxScore = 0;
+        char[] a = customers.toCharArray();
+        for (int i = 0; i < a.length; i++) {
+            score += a[i] == 'Y' ? 1 : -1;
+            if (score > maxScore) {
+                j = i;
+                maxScore = score;
             }
         }
-
-        int minPenalty = curPenalty;
-        int earliestHour = 0;
-
-        for (int i = 0; i < customers.length(); i++) {
-            char ch = customers.charAt(i);
-            
-            if (ch == 'Y') {
-                curPenalty--;
-            } else {
-                curPenalty++;
-            }
-
-            if (curPenalty < minPenalty) {
-                earliestHour = i + 1;
-                minPenalty = curPenalty;
-            }
-        }
-
-        return earliestHour;
+        return j + 1;
     }
 }
