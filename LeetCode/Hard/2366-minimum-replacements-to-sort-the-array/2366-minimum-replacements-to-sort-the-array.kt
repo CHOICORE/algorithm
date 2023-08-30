@@ -1,20 +1,22 @@
 class Solution {
     fun minimumReplacement(nums: IntArray): Long {
-        var answer = 0L
-        val n = nums.size
-
-        for (i in n - 2 downTo 0) {
-            if (nums[i] <= nums[i + 1]) {
-                continue
+        var last = nums.last()
+        var replace = 0L
+        ((nums.lastIndex - 1) downTo 0).forEach { numsIndex ->
+            val num = nums[numsIndex]
+            if (last > num) {
+                last = num
+                return@forEach
             }
+            val divideCount = num / last
+            if (num % last == 0) {
+                replace += (divideCount.toLong() - 1)
+            } else {
 
-            val numElements = (nums[i] + nums[i + 1] - 1) / nums[i + 1].toLong()
-
-            answer += numElements - 1
-
-            nums[i] /= numElements.toInt()
+                last = num / (divideCount + 1)
+                replace += divideCount.toLong()
+            }
         }
-
-        return answer
+        return replace
     }
 }
