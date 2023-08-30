@@ -1,20 +1,16 @@
 class Solution {
     public long minimumReplacement(int[] nums) {
-        long answer = 0;
-        int n = nums.length;
+        int n = nums.length, prev = nums[n - 1];
 
+        long ans = 0;
         for (int i = n - 2; i >= 0; i--) {
-            if (nums[i] <= nums[i + 1]) {
-                continue;
+            int noOfTime = nums[i] / prev;
+            if ((nums[i]) % prev != 0) {
+                noOfTime++;
+                prev = nums[i] / noOfTime;
             }
-
-            long numElements = (long) (nums[i] + nums[i + 1] - 1) / (long) nums[i + 1];
-
-            answer += numElements - 1;
-
-            nums[i] = nums[i] / (int) numElements;
+            ans += noOfTime - 1;
         }
-
-        return answer;
+        return ans;
     }
 }
