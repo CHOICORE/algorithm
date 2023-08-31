@@ -14,9 +14,7 @@ class Solution {
         int nextEnd = 0;
 
         for (int i = 0; i <= n; i++) {
-            if (i > nextEnd) {
-                return -1;
-            }
+            if (i > nextEnd) return -1;
 
             if (i > currEnd) {
                 taps++;
