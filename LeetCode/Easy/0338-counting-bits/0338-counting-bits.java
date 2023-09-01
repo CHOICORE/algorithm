@@ -1,23 +1,15 @@
 class Solution {
-	public int[] countBits(int n) {
-		int[] res = new int[n + 1];
+    public int[] countBits(int n) {
+        int[] ans = new int[n+1];
+        helper(ans, 1, 1);
+        return ans;
+    }
 
-		for (int i = 0; i <= n; i++) {
-			res[i] = solve(i, res);
-		}
-		return res;
-	}
-
-	public int solve(int n, int[] memo) {
-		if (n == 0) return 0;
-		if (n == 1) return 1;
-		if (memo[n] != 0) return memo[n]; 
-		if (n % 2 == 0) {
-			memo[n] = solve(n / 2, memo);
-			return solve(n / 2, memo);
-		} else {
-			memo[n] = 1 + solve(n / 2, memo);
-			return 1 + solve(n / 2, memo);
-		}
-	}
+    private void helper(int[] ans, int bits, int i){
+        if(i>=ans.length) return;
+        ans[i] = bits;
+        i <<= 1;
+        helper(ans, bits, i);
+        helper(ans, bits+1, i+1);
+    }
 }
