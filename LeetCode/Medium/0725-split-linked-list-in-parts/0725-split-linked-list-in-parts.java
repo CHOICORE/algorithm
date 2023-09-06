@@ -8,27 +8,33 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
-    public ListNode[] splitListToParts(ListNode root, int k) {
-        ListNode cur = root;
-        int N = 0;
-        while (cur != null) {
-            cur = cur.next;
-            N++;
+public class Solution {
+    int x = 0;
+
+    int count(ListNode root) {
+        ListNode temp = root;
+        while (temp != null) {
+            temp = temp.next;
+            x++;
         }
+        return x;
+    }
 
-        int width = N / k, rem = N % k;
-
-        ListNode[] ans = new ListNode[k];
-        cur = root;
-        for (int i = 0; i < k; ++i) {
-            ListNode head = new ListNode(0), write = head;
-            for (int j = 0; j < width + (i < rem ? 1 : 0); ++j) {
-                write = write.next = new ListNode(cur.val);
-                if (cur != null) cur = cur.next;
+    public ListNode[] splitListToParts(ListNode head, int k) {
+        int n = count(head);
+        int x = n / k, y = n % k;
+        ListNode[] v = new ListNode[k];
+        ListNode a = head, b = null;
+        for (int i = 0; i < k; i++) {
+            v[i] = head;
+            for (int j = 0; j < x + (i < y ? 1 : 0); j++) {
+                b = head;
+                head = head.next;
             }
-            ans[i] = head.next;
+            if (b != null) {
+                b.next = null;
+            }
         }
-        return ans;
+        return v;
     }
 }
