@@ -1,16 +1,25 @@
 class Solution {
     public int combinationSum4(int[] nums, int target) {
-        int[] dp = new int[target + 1];
-        dp[0] = 1;
+        Integer[] dp = new Integer[target + 1];
+        return findCombination(dp, nums, target);
+    }
 
-        for (int i = 1; i <= target; i++) {
-            for (int num : nums) {
-                if (i - num >= 0) {
-                    dp[i] += dp[i - num];
-                }
-            }
+    public int findCombination(Integer[] dp, int[] nums, int target) {
+        if (target == 0) {
+            return 1;
+        }
+        if (target < 0) {
+            return 0;
         }
 
+        if (dp[target] != null) return dp[target];
+
+        int ans = 0;
+        for (final int num : nums) {
+            ans += findCombination(dp, nums, target - num);
+        }
+
+        dp[target] = ans;
         return dp[target];
     }
 }
