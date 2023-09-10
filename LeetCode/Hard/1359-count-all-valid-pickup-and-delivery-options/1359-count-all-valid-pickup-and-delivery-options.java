@@ -1,11 +1,10 @@
 class Solution {
-    private static final int MOD = 1_000_000_007;
-
     public int countOrders(int n) {
-        long count = 1;
-        for (int i = 2; i <= n; i++) {
-            count = (count * (2L * i - 1) * i) % MOD;
+        long mod = (long) (1e9 + 7);
+        long res = 1;
+        for (int i = 1; i <= n; i++) {
+            res = (res * i * (2L * i - 1)) % mod;
         }
-        return (int) count;
+        return (int) (res);
     }
 }
