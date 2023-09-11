@@ -1,22 +1,31 @@
 class Solution {
+	boolean[] groupFlag;
+
 	public List<List<Integer>> groupThePeople(int[] groupSizes) {
-		List<List<Integer>> ans = new ArrayList<>();
+		groupFlag = new boolean[groupSizes.length];
+		List<List<Integer>> res = new ArrayList<>();
 
-		Map<Integer, List<Integer>> szToGroup = new HashMap<>();
 		for (int i = 0; i < groupSizes.length; i++) {
-			if (!szToGroup.containsKey(groupSizes[i])) {
-				szToGroup.put(groupSizes[i], new ArrayList<>());
-			}
-
-			List<Integer> group = szToGroup.get(groupSizes[i]);
-			group.add(i);
-
-			if (group.size() == groupSizes[i]) {
-				ans.add(group);
-				szToGroup.remove(groupSizes[i]);
+			if (!groupFlag[i]) {
+				res.add(findNumIndex(groupSizes, groupSizes[i], i));
 			}
 		}
+		return res;
+	}
 
-		return ans;
+	public List<Integer> findNumIndex(int[] a, int x, int index) {
+		List<Integer> res = new ArrayList<>();
+		int k = 0;
+		for (int i = index; i < a.length; i++) {
+			if (k == x) {
+				return res;
+			}
+			if (a[i] == x) {
+				res.add(i);
+				groupFlag[i] = true;
+				k++;
+			}
+		}
+		return res;
 	}
 }
