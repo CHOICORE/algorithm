@@ -1,40 +1,66 @@
 class Solution {
 
-    public static int manhattanDistance(int[] p1, int[] p2) {
-        return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
+    public int minCostConnectPoints(int[][] points) {
+        int dist = 0, pointer = 0;
+        Point[] ps = initPoints(points);
+
+        while (pointer < points.length) {
+            Point point = ps[pointer++];
+
+            dist += point.dist == Integer.MAX_VALUE ? 0 : point.dist;
+
+            int nextPoint = findNextPoint(ps, point, pointer);
+
+            if (nextPoint > -1)
+                swap(ps, nextPoint, pointer);
+        }
+
+        return dist;
     }
 
-    public int minCostConnectPoints(int[][] points) {
-        int n = points.length;
-        boolean[] visited = new boolean[n];
-        HashMap<Integer, Integer> heapDict = new HashMap<>();
-        heapDict.put(0, 0);
+    private Point[] initPoints(int[][] points) {
+        Point[] ps = new Point[points.length];
 
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
-        minHeap.add(new int[]{0, 0});
+        for (int i = 0; i < points.length; i++) {
+            int[] p = points[i];
 
-        int mst_weight = 0;
+            ps[i] = new Point(p[0], p[1], Integer.MAX_VALUE);
+        }
 
-        while (!minHeap.isEmpty()) {
-            int[] top = minHeap.poll();
-            int w = top[0], u = top[1];
+        return ps;
+    }
 
-            if (visited[u] || heapDict.getOrDefault(u, Integer.MAX_VALUE) < w) continue;
+    private int findNextPoint(Point[] ps, Point point, int start) {
+        int idx = -1, min = Integer.MAX_VALUE;
 
-            visited[u] = true;
-            mst_weight += w;
+        for (int i = start; i < ps.length; i++) {
+            int m = Math.abs(point.x - ps[i].x) + Math.abs(point.y - ps[i].y);
 
-            for (int v = 0; v < n; ++v) {
-                if (!visited[v]) {
-                    int new_distance = manhattanDistance(points[u], points[v]);
-                    if (new_distance < heapDict.getOrDefault(v, Integer.MAX_VALUE)) {
-                        heapDict.put(v, new_distance);
-                        minHeap.add(new int[]{new_distance, v});
-                    }
-                }
+            ps[i].dist = Math.min(ps[i].dist, m);
+
+            if (ps[i].dist < min) {
+                min = ps[i].dist;
+                idx = i;
             }
         }
 
-        return mst_weight;
+        return idx;
+    }
+
+    private void swap(Point[] ps, int i, int j) {
+        Point tmp = ps[i];
+
+        ps[i] = ps[j];
+        ps[j] = tmp;
+    }
+
+    private static class Point {
+        int x, y, dist;
+
+        public Point(int x, int y, int dist) {
+            this.x = x;
+            this.y = y;
+            this.dist = dist;
+        }
     }
 }
