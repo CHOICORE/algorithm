@@ -1,38 +1,68 @@
 class Solution {
+
+    private int min;
+
     public int minimumEffortPath(int[][] heights) {
-        int rows = heights.length, cols = heights[0].length;
-        int[][] dist = new int[rows][cols];
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
-        minHeap.add(new int[]{0, 0, 0});
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                dist[i][j] = Integer.MAX_VALUE;
+        int m = heights.length, n = heights[0].length;
+        int lo = 0, hi = 1_000_000;
+        while (lo < hi) {
+            int mi = (hi + lo) / 2;
+            if (underDiff(heights, 0, 0, mi, new boolean[m][n])) {
+                hi = mi;
+            } else {
+                lo = mi + 1;
             }
         }
-        dist[0][0] = 0;
+        return lo;
+    }
 
-        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-
-        while (!minHeap.isEmpty()) {
-            int[] top = minHeap.poll();
-            int effort = top[0], x = top[1], y = top[2];
-
-            if (effort > dist[x][y]) continue;
-
-            if (x == rows - 1 && y == cols - 1) return effort;
-
-            for (int[] dir : directions) {
-                int nx = x + dir[0], ny = y + dir[1];
-                if (nx >= 0 && nx < rows && ny >= 0 && ny < cols) {
-                    int new_effort = Math.max(effort, Math.abs(heights[x][y] - heights[nx][ny]));
-                    if (new_effort < dist[nx][ny]) {
-                        dist[nx][ny] = new_effort;
-                        minHeap.add(new int[]{new_effort, nx, ny});
-                    }
-                }
+    private boolean underDiff(
+            int[][] A,
+            int i,
+            int j,
+            int maxdiff,
+            boolean[][] visited
+    ) {
+        int m = A.length, n = A[0].length;
+        if (i == m - 1 && j == n - 1) {
+            return true;
+        }
+        int height = A[i][j];
+        visited[i][j] = true;
+        if (
+                i + 1 < m &&
+                        !visited[i + 1][j] &&
+                        Math.abs(A[i + 1][j] - height) <= maxdiff
+        ) {
+            if (underDiff(A, i + 1, j, maxdiff, visited)) {
+                return true;
             }
         }
-        return -1;
+        if (
+                j + 1 < n &&
+                        !visited[i][j + 1] &&
+                        Math.abs(A[i][j + 1] - height) <= maxdiff
+        ) {
+            if (underDiff(A, i, j + 1, maxdiff, visited)) {
+                return true;
+            }
+        }
+        if (
+                i - 1 >= 0 &&
+                        !visited[i - 1][j] &&
+                        Math.abs(A[i - 1][j] - height) <= maxdiff
+        ) {
+            if (underDiff(A, i - 1, j, maxdiff, visited)) {
+                return true;
+            }
+        }
+        if (
+                j - 1 >= 0 &&
+                        !visited[i][j - 1] &&
+                        Math.abs(A[i][j - 1] - height) <= maxdiff
+        ) {
+            return underDiff(A, i, j - 1, maxdiff, visited);
+        }
+        return false;
     }
 }
