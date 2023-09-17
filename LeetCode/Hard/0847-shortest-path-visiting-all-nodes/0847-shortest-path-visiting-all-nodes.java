@@ -1,33 +1,62 @@
 class Solution {
     public int shortestPathLength(int[][] graph) {
+        List<List<Integer>> adjacentList = new ArrayList<>();
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a, b) -> adjacentList.get(a).size() -
+                adjacentList.get(b).size());
         int n = graph.length;
-        int allVisited = (1 << n) - 1;
-        Queue<int[]> queue = new LinkedList<>();
-        Set<Integer> visited = new HashSet<>();
 
         for (int i = 0; i < n; i++) {
-            queue.offer(new int[]{1 << i, i, 0});
-            visited.add((1 << i) * 16 + i);
+            List<Integer> list = new ArrayList<>();
+            for (int node : graph[i]) {
+                list.add(node);
+            }
+            adjacentList.add(list);
+            queue.add(i);
         }
-
+        int minLen = Integer.MAX_VALUE;
         while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-
-            if (cur[0] == allVisited) {
-                return cur[2];
-            }
-
-            for (int neighbor : graph[cur[1]]) {
-                int newMask = cur[0] | (1 << neighbor);
-                int hashValue = newMask * 16 + neighbor;
-
-                if (!visited.contains(hashValue)) {
-                    visited.add(hashValue);
-                    queue.offer(new int[]{newMask, neighbor, cur[2] + 1});
-                }
-            }
+            int start = queue.poll();
+            int[] visited = new int[n];
+            getLen(adjacentList, visited, start);
+            if (!isValid(visited)) continue;
+            minLen = Math.min(calLen(visited), minLen);
         }
 
-        return -1;
+        return minLen != Integer.MIN_VALUE ? minLen : -1;
+
+    }
+
+    private int calLen(int[] visited) {
+        int len = 0;
+        for (int curr : visited) {
+            len += curr;
+        }
+        return len - 1;
+    }
+
+    private boolean isValid(int[] visited) {
+        for (int curr : visited) {
+            if (curr == 0) return false;
+        }
+        return true;
+    }
+
+    private void getLen(List<List<Integer>> adjacentList, int[] visited, int index) {
+        visited[index]++;
+        if (isValid(visited)) return;
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a, b) -> adjacentList.get(a).size() -
+                adjacentList.get(b).size());
+        queue.addAll(adjacentList.get(index));
+
+        int len = 0;
+        while (!queue.isEmpty()) {
+            int curr = queue.poll();
+            if (!queue.isEmpty() && visited[curr] > 0) {
+                continue;
+            }
+            if (!isValid(visited) && visited[curr] < adjacentList.get(curr).size()) {
+                getLen(adjacentList, visited, curr);
+            }
+        }
     }
 }
