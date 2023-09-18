@@ -1,23 +1,47 @@
 class Solution {
-    public int[] kWeakestRows(int[][] mat, int k) {
-        int[][] rowStrengths = new int[mat.length][2];
+    static int ceil(int[] row) {
+        int start = 0;
+        int end = row.length - 1;
 
-        for (int i = 0; i < mat.length; ++i) {
-            int strength = 0;
-            for (int val : mat[i]) {
-                strength += val;
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+
+            if (row[mid] < 1) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
             }
-            rowStrengths[i][0] = strength;
-            rowStrengths[i][1] = i;
         }
 
-        Arrays.sort(rowStrengths, (a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        return start;
+    }
 
-        int[] result = new int[k];
-        for (int i = 0; i < k; ++i) {
-            result[i] = rowStrengths[i][1];
+    static int find(int[] arr) {
+        int least = Integer.MAX_VALUE;
+        int index = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] >= 0 && arr[i] < least) {
+                least = arr[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    public int[] kWeakestRows(int[][] mat, int k) {
+        int[] soldiers = new int[mat.length];
+
+        for (int i = 0; i < mat.length; i++) {
+            soldiers[i] = ceil(mat[i]);
         }
 
-        return result;
+        int[] weakOrder = new int[k];
+        for (int i = 0; i < k; i++) {
+            int min = find(soldiers);
+            soldiers[min] = -1;
+            weakOrder[i] = min;
+        }
+        return weakOrder;
+
     }
 }
