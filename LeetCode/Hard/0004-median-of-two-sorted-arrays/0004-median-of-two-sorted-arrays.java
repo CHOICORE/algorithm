@@ -1,33 +1,50 @@
 class Solution {
-    public static int[] sortArray(int[] nums1, int[] nums2) {
-        int i = 0;
-        int j = 0;
-        int[] newArr = new int[nums1.length + nums2.length];
-        int count = 0;
-        while (i < nums1.length && j < nums2.length) {
-            if (nums1[i] > nums2[j]) {
-                newArr[count++] = nums2[j++];
-            } else {
-                newArr[count++] = nums1[i++];
-            }
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+
+        int n1 = nums1.length;
+        int n2 = nums2.length;
+        int n = n1 + n2;
+
+        int k = n / 2;
+
+        if (n % 2 == 1) {
+            return solve(nums1, nums2, k, 0, n1 - 1, 0, n2 - 1);
+        } else {
+            return (double) (solve(nums1, nums2, k, 0, n1 - 1, 0, n2 - 1)
+                    + solve(nums1, nums2, k - 1, 0, n1 - 1, 0, n2 - 1)) / 2;
         }
-        while (i < nums1.length) {
-            newArr[count++] = nums1[i++];
-        }
-        while (j < nums2.length) {
-            newArr[count++] = nums2[j++];
-        }
-        return newArr;
     }
 
-    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        Arrays.sort(nums1);
-        Arrays.sort(nums2);
-        int[] arr = sortArray(nums1, nums2);
-        if (arr.length % 2 == 0) {
-            return (arr[arr.length / 2] + arr[arr.length / 2 - 1]) / 2.0;
+    public int solve(int[] a, int[] b, int k, int aStart, int aEnd, int bStart, int bEnd) {
+
+        if (aStart > aEnd) {
+            return b[k - aStart];
+        }
+
+        if (bStart > bEnd) {
+            return a[k - bStart];
+        }
+
+        int aMid = aStart + (aEnd - aStart) / 2;
+        int bMid = bStart + (bEnd - bStart) / 2;
+
+        int a_value = a[aMid];
+        int b_value = b[bMid];
+
+        if (aMid + bMid < k) {
+            if (a_value < b_value) {
+                return solve(a, b, k, aMid + 1, aEnd, bStart, bEnd);
+            } else {
+                return solve(a, b, k, aStart, aEnd, bMid + 1, bEnd);
+            }
+
         } else {
-            return arr[arr.length / 2];
+            if (a_value < b_value) {
+                return solve(a, b, k, aStart, aEnd, bStart, bMid - 1);
+            } else {
+                return solve(a, b, k, aStart, aMid - 1, bStart, bEnd);
+            }
+
         }
     }
 }
