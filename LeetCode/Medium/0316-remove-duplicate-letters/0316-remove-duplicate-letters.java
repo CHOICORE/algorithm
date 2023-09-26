@@ -1,26 +1,28 @@
 class Solution {
     public String removeDuplicateLetters(String s) {
-        int[] lastIndex = new int[26];
-        for (int i = 0; i < s.length(); i++) {
-            lastIndex[s.charAt(i) - 'a'] = i;
-        }
-
-        boolean[] seen = new boolean[26];
-        Stack<Integer> st = new Stack<>();
-
-        for (int i = 0; i < s.length(); i++) {
-            int curr = s.charAt(i) - 'a';
-            if (seen[curr]) continue;
-            while (!st.isEmpty() && st.peek() > curr && i < lastIndex[st.peek()]) {
-                seen[st.pop()] = false;
-            }
-            st.push(curr);
-            seen[curr] = true;
-        }
-
+        boolean[] vis = new boolean[26];
         StringBuilder sb = new StringBuilder();
-        while (!st.isEmpty())
-            sb.append((char) (st.pop() + 'a'));
-        return sb.reverse().toString();
+        int[] count = new int[26];
+
+        for (char c : s.toCharArray()) {
+            if (c >= 'a' && c <= 'z') {
+                count[c - 'a']++;
+            }
+        }
+
+        for (char c : s.toCharArray()) {
+            if (c >= 'a' && c <= 'z') {
+                count[c - 'a']--;
+                if (vis[c - 'a']) continue;
+
+                while (sb.length() > 0 && c < sb.charAt(sb.length() - 1) && count[sb.charAt(sb.length() - 1) - 'a'] > 0) {
+                    vis[sb.charAt(sb.length() - 1) - 'a'] = false;
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                vis[c - 'a'] = true;
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 }
