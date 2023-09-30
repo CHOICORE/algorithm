@@ -1,4 +1,4 @@
-public class Solution {
+class Solution {
     public boolean find132pattern(int[] nums) {
         if (nums.length < 3) return false;
         
