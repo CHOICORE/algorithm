@@ -1,7 +1,6 @@
 class Solution {
     public boolean find132pattern(int[] nums) {
-        if (nums.length < 3)
-            return false;
+        if (nums.length < 3) return false;
         int[] min = new int[nums.length];
         min[0] = nums[0];
         for (int i = 1; i < nums.length; i++)
