@@ -1,19 +1,26 @@
 class Solution {
     public String reverseWords(String s) {
-        StringBuilder result = new StringBuilder();
-        int lastSpaceIndex = -1;
-        for (int strIndex = 0; strIndex < s.length(); strIndex++) {
-            if ((strIndex == s.length() - 1) || s.charAt(strIndex) == ' ') {
-                int reverseStrIndex = (strIndex == s.length() - 1) ? strIndex : strIndex - 1;
-                for (; reverseStrIndex > lastSpaceIndex; reverseStrIndex--) {
-                    result.append(s.charAt(reverseStrIndex));
-                }
-                if (strIndex != s.length() - 1) {
-                    result.append(' ');
-                }
-                lastSpaceIndex = strIndex;
+        char[] c = s.toCharArray();
+        int start = 0;
+        int end = 0;
+
+        while (start < c.length) {
+            while (end < c.length && c[end] != ' ') {
+                end++;
             }
+
+            reverse(start, end - 1, c);
+            start = end + 1;
+            end = start;
         }
-        return new String(result);
+        return new String(c);
+    }
+
+    public void reverse(int l, int r, char[] c) {
+        while (l < r) {
+            char temp = c[l];
+            c[l++] = c[r];
+            c[r--] = temp;
+        }
     }
 }
