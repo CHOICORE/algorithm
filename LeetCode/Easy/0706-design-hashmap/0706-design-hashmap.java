@@ -19,6 +19,7 @@ class MyHashMap {
         arr[key] = -1;
     }
 }
+
 /**
  * Your MyHashMap object will be instantiated and called as such:
  * MyHashMap obj = new MyHashMap();
