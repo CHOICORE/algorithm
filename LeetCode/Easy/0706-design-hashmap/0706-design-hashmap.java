@@ -1,75 +1,62 @@
 class MyHashMap {
     Node[] nodes;
-    int size = 1_000;
 
     public MyHashMap() {
-        this.nodes = new Node[size];
-    }
-
-    public int hash(int key) {
-        return key % size;
+        nodes = new Node[10_006];
     }
 
     public void put(int key, int value) {
-        Node newNode = new Node(key, value);
-        int index = hash(key);
-        Node current = nodes[index];
 
-        if (current == null) {
-            nodes[index] = newNode;
-            return;
-        }
-
-        if (current.key == key) {
-            current.value = value;
-            return;
-        }
-
-        while (current.next != null) {
-
-            if (current.next.key == key) {
-                current.next.value = value;
-                return;
+        int index = key % nodes.length;
+        if (nodes[index] != null) {
+            Node prev = null;
+            Node cur = nodes[index];
+            while (cur != null && cur.key != key) {
+                prev = cur;
+                cur = cur.next;
             }
 
-            current = current.next;
-
+            if (cur != null) {
+                cur.value = value;
+            } else {
+                prev.next = new Node(key, value);
+            }
+        } else {
+            nodes[index] = new Node(key, value);
         }
-        current.next = newNode;
-
     }
 
     public int get(int key) {
-        int index = hash(key);
-        Node current = nodes[index];
-
-        if (current == null) return -1;
-
-        while (current != null) {
-            if (current.key == key) return current.value;
-            current = current.next;
+        int index = key % nodes.length;
+        if (nodes[index] != null) {
+            Node cur = nodes[index];
+            while (cur != null) {
+                if (cur.key == key) {
+                    return cur.value;
+                }
+                cur = cur.next;
+            }
         }
         return -1;
     }
 
     public void remove(int key) {
-        int index = hash(key);
-        Node current = nodes[index];
-        Node previous = null;
-
-        if (current == null) {
-            return;
-        }
-
-        while (current != null) {
-            if (current.key == key) {
-                if (previous == null) {
-                    nodes[index] = current.next;
-                } else previous.next = current.next;
+        int index = key % nodes.length;
+        if (nodes[index] != null) {
+            Node prev = null;
+            Node cur = nodes[index];
+            while (cur != null && cur.key != key) {
+                prev = cur;
+                cur = cur.next;
             }
-            previous = current;
-            current = current.next;
 
+            if (cur != null) {
+                if (prev != null) {
+                    prev.next = cur.next;
+                } else {
+                    nodes[index] = cur.next;
+                }
+            }
         }
     }
 
@@ -77,12 +64,10 @@ class MyHashMap {
         int key, value;
         Node next;
 
-        public Node(int key, int value) {
-            this.key = key;
-            this.value = value;
-            this.next = null;
+        Node(int _key, int _value) {
+            key = _key;
+            value = _value;
         }
-
     }
 }
 
