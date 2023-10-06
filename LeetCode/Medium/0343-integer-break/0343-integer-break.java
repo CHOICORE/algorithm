@@ -1,27 +1,30 @@
 class Solution {
+    int[] memo;
+
     public int integerBreak(int n) {
-
-        int x = (int) Math.pow(3, n / 3);
-        int y = (int) Math.pow(3, n / 3 - 1);
-
-        if (n <= 5) {
-            if (n == 2) return 1;
-            if (n == 3) return 2;
-            if (n % 2 == 0) return n / 2 * n / 2;
-            else return 6;
-        }
-        if (n > 5) {
-            if (n % 3 == 0) {
-                return x;
-            }
-            if (n % 3 == 1) {
-                return y * 4;
-            }
-            if (n % 3 == 2) {
-                return x * 2;
-            }
+        if (n <= 3) {
+            return n - 1;
         }
 
-        return -1;
+        memo = new int[n + 1];
+        return dp(n);
+    }
+
+    public int dp(int num) {
+        if (num <= 3) {
+            return num;
+        }
+
+        if (memo[num] != 0) {
+            return memo[num];
+        }
+
+        int ans = num;
+        for (int i = 2; i < num; i++) {
+            ans = Math.max(ans, i * dp(num - i));
+        }
+
+        memo[num] = ans;
+        return ans;
     }
 }
