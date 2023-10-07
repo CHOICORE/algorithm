@@ -1,49 +1,29 @@
 class Solution {
-    int[][][] memo;
-    int MOD = (int) 1e9 + 7;
-    int n;
-    int m;
-
     public int numOfArrays(int n, int m, int k) {
-        memo = new int[n][m + 1][k + 1];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j <= m; j++) {
-                Arrays.fill(memo[i][j], -1);
+        long[][][] dp = new long[n][k][m];
+        long mod = 1_000_000_007;
+        Arrays.fill(dp[0][0], 1);
+        for (int i = 1; i < n; i++) {
+            for (int cost = 0; cost < Math.min(i + 1, k); cost++) {
+                for (int max = 0; max < m; max++) {
+                    long sum = 0;
+                    sum += dp[i - 1][cost][max] * (max + 1);
+
+                    if (cost != 0) {
+                        long[] arr = dp[i - 1][cost - 1];
+                        for (int prevMax = 0; prevMax < max; prevMax++) {
+                            sum += arr[prevMax];
+                        }
+                    }
+                    dp[i][cost][max] = sum % mod;
+                }
             }
         }
-
-        this.n = n;
-        this.m = m;
-        return dp(0, 0, k);
-    }
-
-    public int dp(int i, int maxSoFar, int remain) {
-        if (i == n) {
-            if (remain == 0) {
-                return 1;
-            }
-
-            return 0;
+        long ans = 0;
+        for (int max = 0; max < m; max++) {
+            ans += dp[n - 1][k - 1][max];
+            ans %= mod;
         }
-
-        if (remain < 0) {
-            return 0;
-        }
-
-        if (memo[i][maxSoFar][remain] != -1) {
-            return memo[i][maxSoFar][remain];
-        }
-
-        int ans = 0;
-        for (int num = 1; num <= maxSoFar; num++) {
-            ans = (ans + dp(i + 1, maxSoFar, remain)) % MOD;
-        }
-
-        for (int num = maxSoFar + 1; num <= m; num++) {
-            ans = (ans + dp(i + 1, num, remain - 1)) % MOD;
-        }
-
-        memo[i][maxSoFar][remain] = ans;
-        return ans;
+        return (int) ans;
     }
 }
