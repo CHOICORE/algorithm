@@ -23,14 +23,20 @@ class Solution {
             return firstMin * secondMax;
         }
 
-        int[][] dp = new int[nums1.length + 1][nums2.length + 1];
+        int m = nums2.length + 1;
+        int[] dp = new int[m];
+        int[] prev = new int[m];
+
         for (int i = nums1.length - 1; i >= 0; i--) {
+            dp = new int[m];
             for (int j = nums2.length - 1; j >= 0; j--) {
-                int use = nums1[i] * nums2[j] + dp[i + 1][j + 1];
-                dp[i][j] = Math.max(use, Math.max(dp[i + 1][j], dp[i][j + 1]));
+                int use = nums1[i] * nums2[j] + prev[j + 1];
+                dp[j] = Math.max(use, Math.max(prev[j], dp[j + 1]));
             }
+
+            prev = dp;
         }
 
-        return dp[0][0];
+        return dp[0];
     }
 }
