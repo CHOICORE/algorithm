@@ -1,20 +1,26 @@
 class Solution {
     public int minOperations(int[] nums) {
-        int n = nums.length;
+        int len = nums.length;
+        int ans = len;
+        int j = 0;
+
         Arrays.sort(nums);
         int m = 1;
-        for (int i = 1; i < n; ++i) {
+        for (int i = 1; i < len; ++i) {
             if (nums[i] != nums[i - 1]) {
-                nums[m++] = nums[i];
+                nums[m] = nums[i];
+                m++;
             }
         }
-        int ans = n;
-        for (int i = 0, j = 0; i < m; ++i) {
-            while (j < m && nums[j] - nums[i] <= n - 1) {
+
+        for (int i = 0; i < m; ++i) {
+            while (j < m && nums[j] < nums[i] + len) {
                 ++j;
             }
-            ans = Math.min(ans, n - (j - i));
+
+            ans = Math.min(ans, len - j + i);
         }
+
         return ans;
     }
 }
