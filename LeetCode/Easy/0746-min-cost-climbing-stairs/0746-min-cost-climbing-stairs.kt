@@ -1,8 +1,18 @@
 class Solution {
     fun minCostClimbingStairs(cost: IntArray): Int {
-        for (i in 2 until cost.size) {
-            cost[i] += min(cost[i - 1], cost[i - 2])
+        val resultCost = IntArray(cost.size + 1) { 0 }
+
+        for (i in cost.indices) {
+            resultCost[i] = cost[i]
         }
-        return min(cost[cost.size - 1], cost[cost.size - 2])
+        if (cost.size == 1) {
+            return cost[0]
+        }
+
+        for (i in cost.size - 2 downTo 0) {
+            resultCost[i] = (resultCost[i] + resultCost[i + 1]).coerceAtMost(resultCost[i] + resultCost[i + 2])
+        }
+
+        return resultCost[0].coerceAtMost(resultCost[1])
     }
 }
