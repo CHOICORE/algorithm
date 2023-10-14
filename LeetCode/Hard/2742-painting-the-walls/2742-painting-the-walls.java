@@ -1,29 +1,17 @@
 class Solution {
-    int[][] memo;
-    int n;
-
-    public int paintWalls(int[] cost, int[] time) {
-        n = cost.length;
-        memo = new int[n][n + 1];
-        return dp(0, n, cost, time);
-    }
-
-    public int dp(int i, int remain, int[] cost, int[] time) {
-        if (remain <= 0) {
-            return 0;
+    public static int paintWalls(int[] cost, int[] time) {
+        int n = cost.length;
+        int[] min = new int[n + 1];
+        Arrays.fill(min, 1, n + 1, Integer.MAX_VALUE - (int) 1e6);
+        for (int i = 0; i < n; i++) {
+            int c = cost[i];
+            int t = time[i] + 1;
+            int j = n;
+            for (; j > t; j--)
+                min[j] = Math.min(min[j], c + min[j - t]);
+            for (; j > 0; j--)
+                min[j] = Math.min(min[j], c);
         }
-
-        if (i == n) {
-            return (int) 1e9;
-        }
-
-        if (memo[i][remain] != 0) {
-            return memo[i][remain];
-        }
-
-        int paint = cost[i] + dp(i + 1, remain - 1 - time[i], cost, time);
-        int dontPaint = dp(i + 1, remain, cost, time);
-        memo[i][remain] = Math.min(paint, dontPaint);
-        return memo[i][remain];
+        return min[n];
     }
 }
