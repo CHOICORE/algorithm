@@ -1,26 +1,22 @@
 class Solution {
-    public int numWays(int steps, int arrLen) {
-        int MOD = (int) 1e9 + 7;
-        arrLen = Math.min(arrLen, steps);
-        int[][] dp = new int[arrLen][steps + 1];
-        dp[0][0] = 1;
+    int mod = 1_000_000_007;
 
-        for (int remain = 1; remain <= steps; remain++) {
-            for (int curr = arrLen - 1; curr >= 0; curr--) {
-                int ans = dp[curr][remain - 1];
+    public int numWays(int s, int l) {
+        if (l == 1) return 1;
+        l--;
+        if (l > s / 2) l = s / 2;
+        int[] dp = new int[l + 1];
+        int[] tt = new int[l + 1];
+        dp[0] = 1;
 
-                if (curr > 0) {
-                    ans = (ans + dp[curr - 1][remain - 1]) % MOD;
-                }
+        for (int x = 0; x < s; x++) {
+            tt[0] = dp[1];
+            for (int i = 1; i < tt.length - 1; i++) tt[i] = (dp[i - 1] + dp[i + 1]) % mod;
+            tt[tt.length - 1] = dp[tt.length - 2];
 
-                if (curr < arrLen - 1) {
-                    ans = (ans + dp[curr + 1][remain - 1]) % MOD;
-                }
-
-                dp[curr][remain] = ans;
-            }
+            for (int i = 0; i < dp.length; i++) dp[i] = (dp[i] + tt[i]) % mod;
         }
 
-        return dp[0][steps];
+        return dp[0];
     }
 }
