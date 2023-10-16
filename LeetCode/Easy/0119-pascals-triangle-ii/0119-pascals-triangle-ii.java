@@ -4,9 +4,9 @@ class Solution {
         res.add(1);
         long prev = 1;
         for (int k = 1; k <= rowIndex; k++) {
-            long next_val = prev * (rowIndex - k + 1) / k;
-            res.add((int) next_val);
-            prev = next_val;
+            long next = prev * (rowIndex - k + 1) / k;
+            res.add((int) next);
+            prev = next;
         }
         return res;
     }
