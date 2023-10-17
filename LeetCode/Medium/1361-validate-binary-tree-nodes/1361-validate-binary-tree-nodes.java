@@ -1,51 +1,46 @@
 class Solution {
     public boolean validateBinaryTreeNodes(int n, int[] leftChild, int[] rightChild) {
-        int root = findRoot(n, leftChild, rightChild);
-        if (root == -1) {
+
+        int[] inDegree = new int[n];
+        int root = -1;
+
+        for (final int child : leftChild)
+            if (child != -1 && ++inDegree[child] == 2)
+                return false;
+
+        for (final int child : rightChild)
+            if (child != -1 && ++inDegree[child] == 2)
+                return false;
+
+        for (int i = 0; i < n; ++i)
+            if (inDegree[i] == 0)
+                if (root == -1)
+                    root = i;
+                else
+                    return false;
+
+        if (root == -1)
             return false;
-        }
 
-        Set<Integer> seen = new HashSet<>();
-        Stack<Integer> stack = new Stack<>();
-        seen.add(root);
-        stack.push(root);
+        boolean[] visited = new boolean[n];
+        if (!dfs(root, leftChild, rightChild, visited)) return false;
 
-        while (!stack.isEmpty()) {
-            int node = stack.pop();
-            int[] children = {leftChild[node], rightChild[node]};
-
-            for (int child : children) {
-                if (child != -1) {
-                    if (seen.contains(child)) {
-                        return false;
-                    }
-
-                    stack.push(child);
-                    seen.add(child);
-                }
-            }
-
-        }
-
-        return seen.size() == n;
+        for (boolean v : visited) if (!v) return false;
+        return true;
     }
 
-    public int findRoot(int n, int[] left, int[] right) {
-        Set<Integer> children = new HashSet<>();
-        for (int node : left) {
-            children.add(node);
+    private boolean dfs(int source, int[] leftChild, int[] rightChild, boolean[] visited) {
+        visited[source] = true;
+        int left = leftChild[source], right = rightChild[source];
+
+        if (left >= 0) {
+            if (visited[left] || !dfs(left, leftChild, rightChild, visited)) return false;
         }
 
-        for (int node : right) {
-            children.add(node);
+        if (right >= 0) {
+            return !visited[right] && dfs(right, leftChild, rightChild, visited);
         }
 
-        for (int i = 0; i < n; i++) {
-            if (!children.contains(i)) {
-                return i;
-            }
-        }
-
-        return -1;
+        return true;
     }
 }
