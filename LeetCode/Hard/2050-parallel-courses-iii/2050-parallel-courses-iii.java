@@ -1,9 +1,9 @@
 class Solution {
-    private int[] startNodes;
-    private int[][] graph;
-    private int[] time;
-    private boolean[] visited;
-    private int[] ans;
+    int[] startNodes;
+    int[][] graph;
+    int[] time;
+    boolean[] visited;
+    int[] ans;
 
     private void convert(final int[][] edges, final int n) {
         final int[] incoming = new int[n], outgoing = new int[n];
