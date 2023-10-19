@@ -1,13 +1,19 @@
 class Solution {
-    fun backspaceCompare(S: String, T: String): Boolean {
-        return build(S) == build(T)
+    fun backspaceCompare(s: String, t: String): Boolean {
+        return check(s) == check(t)
     }
 
-    fun build(S: String): String {
-        val ans: Stack<Char> = Stack()
-        for (c in S.toCharArray()) {
-            if (c != '#') ans.push(c) else if (!ans.empty()) ans.pop()
+    private fun check(s: String): String {
+        val sb = StringBuilder()
+        s.forEach { it ->
+            if (it != '#') {
+                sb.append(it)
+            } else {
+                sb.let {
+                    it.setLength(if (it.isNotEmpty()) it.length - 1 else 0)
+                }
+            }
         }
-        return java.lang.String.valueOf(ans)
+        return sb.toString()
     }
 }
