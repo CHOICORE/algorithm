@@ -1,27 +1,22 @@
 class Solution {
     public int constrainedSubsetSum(int[] nums, int k) {
-        TreeMap<Integer, Integer> window = new TreeMap();
-        window.put(0, 0);
-
-        int dp[] = new int[nums.length];
-
-        for (int i = 0; i < nums.length; i++) {
-            dp[i] = nums[i] + window.lastKey();
-            window.put(dp[i], window.getOrDefault(dp[i], 0) + 1);
-
-            if (i >= k) {
-                window.put(dp[i - k], window.get(dp[i - k]) - 1);
-                if (window.get(dp[i - k]) == 0) {
-                    window.remove(dp[i - k]);
-                }
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        int max = dp[0];
+        Deque<Integer> q = new ArrayDeque<>();
+        q.offer(nums[0]);
+        for (int i = 1; i < nums.length; i++) {
+            dp[i] = nums[i];
+            if (i > k && q.getFirst() == dp[i - k - 1]) {
+                q.removeFirst();
             }
+            dp[i] = Math.max(dp[i], q.getFirst() + nums[i]);
+            while (!q.isEmpty() && (q.getLast() < dp[i])) {
+                q.removeLast();
+            }
+            q.addLast(dp[i]);
+            max = Math.max(max, dp[i]);
         }
-
-        int ans = Integer.MIN_VALUE;
-        for (int num : dp) {
-            ans = Math.max(ans, num);
-        }
-
-        return ans;
+        return max;
     }
 }
