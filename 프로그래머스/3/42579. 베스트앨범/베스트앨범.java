@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
@@ -11,27 +10,30 @@ class Solution {
         Map<String, List<Integer>> genreIndices = new HashMap<>();
         for (int i = 0; i < genres.length; i++) {
             String genre = genres[i];
-            genreIndices.computeIfAbsent(genre, k -> new ArrayList<>()).add(i);
+            if (!genreIndices.containsKey(genre)) {
+                genreIndices.put(genre, new ArrayList<>());
+            }
+            genreIndices.get(genre).add(i);
         }
 
-        List<Map.Entry<String, List<Integer>>> sortedGenres =
-                genreIndices.entrySet().stream()
-                        .sorted((a, b) ->
-                                Integer.compare(
-                                        b.getValue().stream().mapToInt(index -> plays[index]).sum(),
-                                        a.getValue().stream().mapToInt(index -> plays[index]).sum()
-                                )
-                        ).collect(Collectors.toList());
+        List<Map.Entry<String, List<Integer>>> sortedGenres = new ArrayList<>(genreIndices.entrySet());
+        sortedGenres.sort((a, b) -> {
+            int sumA = a.getValue().stream().mapToInt(index -> plays[index]).sum();
+            int sumB = b.getValue().stream().mapToInt(index -> plays[index]).sum();
+            return Integer.compare(sumB, sumA);
+        });
 
-        sortedGenres.forEach(entry ->
-                entry.getValue().stream()
-                        .sorted((a, b) -> Integer.compare(plays[b], plays[a]))
-                        .limit(2)
-                        .forEach(result::add)
-        );
+        for (Map.Entry<String, List<Integer>> entry : sortedGenres) {
+            List<Integer> indices = entry.getValue();
+            indices.sort((a, b) -> Integer.compare(plays[b], plays[a]));
+            result.addAll(indices.subList(0, Math.min(2, indices.size())));
+        }
 
-        return result.stream()
-                .mapToInt(Integer::intValue)
-                .toArray();
+        int[] answer = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            answer[i] = result.get(i);
+        }
+
+        return answer;
     }
 }
