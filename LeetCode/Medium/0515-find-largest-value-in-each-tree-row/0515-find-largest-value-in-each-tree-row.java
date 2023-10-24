@@ -15,34 +15,34 @@
  */
 class Solution {
     public List<Integer> largestValues(TreeNode root) {
-        if (root == null) {
-            return new ArrayList<Integer>();
+        if (root == null) return new ArrayList<>();
+        List<Integer> largestValues = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int nodesInCurrentLevel = queue.size();
+
+            int largestValue = Integer.MIN_VALUE;
+
+            for (int i = 0; i < nodesInCurrentLevel; i++) {
+                TreeNode node = queue.remove();
+
+                largestValue = Math.max(largestValue, node.val);
+
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+
+            }
+            largestValues.add(largestValue);
+
         }
 
-        List<Integer> ans = new ArrayList<>();
-        Stack<Pair<TreeNode, Integer>> stack = new Stack<>();
-        stack.push(new Pair<>(root, 0));
+        return largestValues;
 
-        while (!stack.isEmpty()) {
-            Pair<TreeNode, Integer> pair = stack.pop();
-            TreeNode node = pair.getKey();
-            int depth = pair.getValue();
-
-            if (depth == ans.size()) {
-                ans.add(node.val);
-            } else {
-                ans.set(depth, Math.max(ans.get(depth), node.val));
-            }
-
-            if (node.left != null) {
-                stack.push(new Pair<>(node.left, depth + 1));
-            }
-
-            if (node.right != null) {
-                stack.push(new Pair<>(node.right, depth + 1));
-            }
-        }
-
-        return ans;
     }
 }
