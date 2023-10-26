@@ -1,18 +1,24 @@
 class Solution {
+    int mod = (int) 1e9 + 7;
+
     public int numFactoredBinaryTrees(int[] arr) {
+
         Arrays.sort(arr);
-        Map<Integer, Long> map = new HashMap<>();
-        long ans = 1;
-        map.put(arr[0], ans);
-        for (int i = 1; i < arr.length; i++) {
-            long sum = 1;
-            for (int j = 0; j < i; j++) {
-                if (arr[i] % arr[j] == 0 && map.containsKey(arr[i] / arr[j]))
-                    sum = sum + (map.get(arr[i] / arr[j]) * map.get(arr[j]));
+        int ans = 0;
+        HashMap<Integer, Long> map = new HashMap<>(arr.length * 4);
+
+        for (int x : arr) {
+            long ways = 1;
+            int max = (int) Math.sqrt(x);
+            for (int j = 0, left = arr[0]; left <= max; left = arr[++j]) {
+                if (x % left != 0) continue;
+                int right = x / left;
+                if (map.containsKey(right))
+                    ways = (ways + map.get(left) * map.get(right) * (left == right ? 1 : 2)) % mod;
             }
-            map.put(arr[i], sum);
-            ans = ans + sum;
+            map.put(x, ways);
+            ans = (int) ((ans + ways) % mod);
         }
-        return (int) (ans % 1_000_000_007);
+        return ans;
     }
 }
