@@ -7,12 +7,9 @@ class Solution {
         Queue<Integer> taken = new LinkedList<>();
 
         for (int i = 0; i < progresses.length; i++) {
-            int progress = progresses[i];
-            int speed = speeds[i];
-            taken.add((complete - progress - 1) / speed + 1);
+            // (((((complete - progresses[i]) - 1) / speeds[i]) + 1))
+            taken.add((complete - progresses[i] - 1) / speeds[i] + 1);
         }
-
-        System.out.println(taken);
 
         List<Integer> deploys = new ArrayList<>();
         while (!taken.isEmpty()) {
