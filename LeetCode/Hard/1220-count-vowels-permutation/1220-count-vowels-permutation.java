@@ -1,45 +1,39 @@
 class Solution {
-    private final int mod = (int) 1e9 + 7;
-    private long[][] dp;
+    int MOD = (int) 1e9 + 7;
 
     public int countVowelPermutation(int n) {
-        dp = new long[6][n + 1];
-        if (n == 1) return 5;
+        long[][] mat = new long[][]{
+                {0, 1, 1, 0, 1},
+                {1, 0, 1, 0, 0},
+                {0, 1, 0, 1, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 1, 0}
+        };
 
-        for (int i = 0; i < 5; i++)
-            dp[i][0] = 1;
+        long[][] ans = new long[][]{{1}, {1}, {1}, {1}, {1}};
+        int x = n - 1;
 
-        helper(n, 'z');
-        return (int) dp[5][n];
+        while (x > 0) {
+            if ((x & 1) == 1) ans = multiply(mat, ans);
+            mat = multiply(mat, mat);
+            x >>= 1;
+        }
+        long sum = 0;
+        for (int i = 0; i < 5; i++) sum += ans[i][0];
+        return (int) (sum % MOD);
     }
 
-    private long helper(int n, char vowel) {
-        long ans = 0;
-        if (n == 0) return 1;
+    private long[][] multiply(long[][] a, long[][] b) {
+        int r = a.length, c = b[0].length, z = b.length;
+        long[][] ans = new long[r][c];
 
-        if (vowel == 'z') {
-            ans = (ans + helper(n - 1, 'a') + helper(n - 1, 'e') + helper(n - 1, 'i') + helper(n - 1, 'o') + helper(n - 1, 'u')) % mod;
-            dp[5][n] = ans;
-        } else if (vowel == 'a') {
-            if (dp[0][n] != 0) return dp[0][n];
-            ans = (ans + helper(n - 1, 'e')) % mod;
-            dp[0][n] = ans;
-        } else if (vowel == 'e') {
-            if (dp[1][n] != 0) return dp[1][n];
-            ans = (ans + helper(n - 1, 'a') + helper(n - 1, 'i')) % mod;
-            dp[1][n] = ans;
-        } else if (vowel == 'i') {
-            if (dp[2][n] != 0) return dp[2][n];
-            ans = (ans + helper(n - 1, 'a') + helper(n - 1, 'e') + helper(n - 1, 'o') + helper(n - 1, 'u')) % mod;
-            dp[2][n] = ans;
-        } else if (vowel == 'o') {
-            if (dp[3][n] != 0) return dp[3][n];
-            ans = (ans + helper(n - 1, 'i') + helper(n - 1, 'u')) % mod;
-            dp[3][n] = ans;
-        } else {
-            if (dp[4][n] != 0) return dp[4][n];
-            ans = (ans + helper(n - 1, 'a')) % mod;
-            dp[4][n] = ans;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                for (int k = 0; k < z; k++) {
+                    ans[i][j] += a[i][k] * b[k][j];
+                    ans[i][j] %= MOD;
+                }
+            }
         }
 
         return ans;
