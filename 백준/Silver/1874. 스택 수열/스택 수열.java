@@ -13,12 +13,12 @@ public class Main {
             list[i] = scanner.nextInt();
         }
 
+
         Stack<Integer> stack = new Stack<>();
 
         StringBuffer sb = new StringBuffer();
         int n = 1;
-        int i = 0;
-        while (i < list.length) {
+        for (int i = 0; i < list.length; i++) {
             int current = list[i];
             if (current >= n) {
                 while (current >= n) {
@@ -34,7 +34,6 @@ public class Main {
                 }
                 sb.append("-\n");
             }
-            i++;
         }
         System.out.println(sb);
     }
