@@ -20,8 +20,8 @@ class Solution {
                     for (int j = 0; j < n; j++) { // 인접을 순회돈다.
                         // i번 컴퓨터와 j번 컴퓨터가 연결되어 있으면 computers[i][j]를 1로 표현합니다.
                         if (!visited[j] && computers[cur][j] == 1) { // 방문하지 않은 노드이며 연결되어 있으면
-                            visited[j] = true;
-                            queue.offer(j);
+                            visited[j] = true; // 마킹하고
+                            queue.offer(j); // 큐에 담는다.
                         }
                     }
                 }
