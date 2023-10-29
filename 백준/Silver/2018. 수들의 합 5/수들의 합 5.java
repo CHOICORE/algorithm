@@ -5,24 +5,22 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        int count = 1;
-        int sum = 1;
-        int start = 1;
-        int end = 1;
+        int count = 0;
 
-        while (end != n) {
-            if (sum == n) {
+        // 연속된 홀수개의 자연수로 표현하는 경우
+        for (int i = 1; i * i <= 2 * n; i += 2) {
+            if (n % i == 0) {
                 count++;
-                end++;
-                sum += end;
-            } else if (sum > n) {
-                sum -= start;
-                start++;
-            } else {
-                end++;
-                sum += end;
             }
         }
+
+        // 연속된 짝수개의 자연수로 표현하는 경우
+        for (int i = 2; i * i <= 2 * n; i += 2) {
+            if (n % i == i / 2) {
+                count++;
+            }
+        }
+
         System.out.println(count);
     }
 }
