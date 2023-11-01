@@ -14,37 +14,54 @@
  * }
  */
 class Solution {
+
+    int max = 0;
+    int count = 0;
+    int temp = -1;
+
     public int[] findMode(TreeNode root) {
-        Map<Integer, Integer> counter = new HashMap();
-        dfs(root, counter);
-        int maxFreq = 0;
 
-        for (int key : counter.keySet()) {
-            maxFreq = Math.max(maxFreq, counter.get(key));
+        List<Integer> list = new ArrayList<>();
+
+        search(root, list);
+
+        int res[] = new int[list.size()];
+        int i = 0;
+
+        for (Integer num : list) {
+            res[i++] = num;
         }
 
-        List<Integer> ans = new ArrayList();
-        for (int key : counter.keySet()) {
-            if (counter.get(key) == maxFreq) {
-                ans.add(key);
-            }
-        }
-
-        int[] result = new int[ans.size()];
-        for (int i = 0; i < ans.size(); i++) {
-            result[i] = ans.get(i);
-        }
-
-        return result;
+        return res;
     }
 
-    public void dfs(TreeNode node, Map<Integer, Integer> counter) {
-        if (node == null) {
+    public void search(TreeNode root, List<Integer> list) {
+        if (root == null) {
             return;
         }
 
-        counter.put(node.val, counter.getOrDefault(node.val, 0) + 1);
-        dfs(node.left, counter);
-        dfs(node.right, counter);
+        search(root.left, list);
+
+        if (count == 0 || root.val == temp) {
+            temp = root.val;
+            count++;
+
+            if (count > max) {
+                max = count;
+                list.clear();
+                list.add(root.val);
+            } else if (count == max) {
+                list.add(root.val);
+            }
+        } else {
+            count = 1;
+            temp = root.val;
+
+            if (count == max) {
+                list.add(root.val);
+            }
+        }
+
+        search(root.right, list);
     }
 }
