@@ -1,42 +1,46 @@
 class Solution {
-    Map<Integer, List<Integer>> graph = new HashMap();
-
     public int[] restoreArray(int[][] adjacentPairs) {
-        for (int[] edge : adjacentPairs) {
-            int x = edge[0];
-            int y = edge[1];
+        Map<Integer, int[]> map = new HashMap<>();
 
-            if (!graph.containsKey(x)) {
-                graph.put(x, new ArrayList());
+        for (int[] out : adjacentPairs) {
+            if (map.containsKey(out[0])) {
+                map.get(out[0])[1] = out[1];
+            } else {
+                map.put(out[0], new int[]{out[1], Integer.MIN_VALUE});
             }
 
-            if (!graph.containsKey(y)) {
-                graph.put(y, new ArrayList());
+            if (map.containsKey(out[1])) {
+                map.get(out[1])[1] = out[0];
+            } else {
+                map.put(out[1], new int[]{out[0], Integer.MIN_VALUE});
             }
-
-            graph.get(x).add(y);
-            graph.get(y).add(x);
         }
 
-        int root = 0;
-        for (int num : graph.keySet()) {
-            if (graph.get(num).size() == 1) {
-                root = num;
+
+        int[] output = new int[adjacentPairs.length + 1];
+        int start = Integer.MIN_VALUE;
+        for (Map.Entry<Integer, int[]> entr : map.entrySet()) {
+            if (entr.getValue()[1] == Integer.MIN_VALUE) {
+                start = entr.getKey();
                 break;
             }
         }
 
-        int[] ans = new int[graph.size()];
-        dfs(root, Integer.MAX_VALUE, ans, 0);
-        return ans;
+        int prev = Integer.MIN_VALUE;
+        output[0] = start;
+        for (int i = 1; i < output.length; i++) {
+
+            int[] out = map.get(start);
+            if (prev == out[0]) {
+                start = out[1];
+            } else {
+                start = out[0];
+            }
+            prev = output[i - 1];
+            output[i] = start;
+        }
+        return output;
+
     }
 
-    private void dfs(int node, int prev, int[] ans, int i) {
-        ans[i] = node;
-        for (int neighbor : graph.get(node)) {
-            if (neighbor != prev) {
-                dfs(neighbor, node, ans, i + 1);
-            }
-        }
-    }
 }
