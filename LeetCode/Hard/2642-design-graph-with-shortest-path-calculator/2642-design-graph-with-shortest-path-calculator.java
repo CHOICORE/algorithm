@@ -1,48 +1,54 @@
 class Graph {
-    private final int[][] adjMatrix;
+    int[][] distance;
+    int n;
+    final int MAX_VALUE = (int) 1e+9;
 
     public Graph(int n, int[][] edges) {
-        adjMatrix = new int[n][n];
-        Arrays.stream(adjMatrix).forEach(row -> Arrays.fill(row, (int) 1e+9));
-        for (int[] e : edges) {
-            adjMatrix[e[0]][e[1]] = e[2];
-        }
-        for (int i = 0; i < n; i++) {
-            adjMatrix[i][i] = 0;
-        }
+        this.n = n;
+        distance = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                for (int k = 0; k < n; k++) {
-                    adjMatrix[j][k] = Math.min(adjMatrix[j][k],
-                            adjMatrix[j][i] +
-                                    adjMatrix[i][k]);
+                distance[i][j] = MAX_VALUE;
+            }
+            distance[i][i] = 0;
+        }
+
+        for (int[] edge : edges) {
+            distance[edge[0]][edge[1]] = edge[2];
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    distance[i][j] = Math.min(
+                            distance[i][j],
+                            distance[i][k] + distance[k][j]
+                    );
                 }
             }
         }
     }
 
     public void addEdge(int[] edge) {
-        int n = adjMatrix.length;
+        if (distance[edge[0]][edge[1]] <= edge[2]) {
+            return;
+        }
+        distance[edge[0]][edge[1]] = edge[2];
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                adjMatrix[i][j] = Math.min(adjMatrix[i][j],
-                        adjMatrix[i][edge[0]] +
-                                adjMatrix[edge[1]][j] +
-                                edge[2]);
+                distance[i][j] = Math.min(
+                        distance[i][j],
+                        distance[i][edge[0]] + edge[2] + distance[edge[1]][j]
+                );
             }
         }
     }
 
-    public int shortestPath(int node1, int node2) {
-        if (adjMatrix[node1][node2] == (int) 1e+9)
+    public int shortestPath(int n1, int n2) {
+        if (distance[n1][n2] == MAX_VALUE) {
             return -1;
-        return adjMatrix[node1][node2];
+        }
+        return distance[n1][n2];
     }
 }
-
-/**
- * Your Graph object will be instantiated and called as such:
- * Graph obj = new Graph(n, edges);
- * obj.addEdge(edge);
- * int param_2 = obj.shortestPath(node1,node2);
- */
