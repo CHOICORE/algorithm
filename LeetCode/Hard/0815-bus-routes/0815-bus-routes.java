@@ -1,47 +1,39 @@
-import java.util.*;
-
 class Solution {
-
     public int numBusesToDestination(int[][] routes, int source, int target) {
-        if (source == target) return 0;
-        boolean foundS = false, foundT = false;
+        if (source == target) {
+            return 0;
+        }
+        int maxStop = -1;
         for (int[] route : routes) {
-            for (int i : route) {
-                if (!foundS && i == source) foundS = true;
-                if (!foundT && i == target) foundT = true;
+            for (int stop : route) {
+                maxStop = Math.max(maxStop, stop);
             }
         }
-        if (foundS == false || foundT == false) return -1;
-
-
-        boolean[] visit = new boolean[routes.length];
-        Map<Integer, List<Integer>> map = new HashMap<>();
-        for (int i = 0; i < routes.length; i++) {
-            for (int x : routes[i]) {
-                List<Integer> list = map.getOrDefault(x, new ArrayList<>());
-                list.add(i);
-                map.put(x, list);
-            }
+        if (maxStop < target) {
+            return -1;
         }
-        int step = 0;
-        Queue<Integer> q = new LinkedList<>();
-        q.add(source);
-        while (!q.isEmpty()) {
-            step++;
-            int size = q.size();
-            while (size-- > 0) {
-                int cur = q.poll();
-                if (!map.containsKey(cur)) continue;
-                for (int x : map.get(cur)) {
-                    if (visit[x]) continue;
-                    visit[x] = true;
-                    for (int y : routes[x]) {
-                        if (y == target) return step;
-                        q.add(y);
+        int n = routes.length;
+        int[] minBusesToReach = new int[maxStop + 1];
+        Arrays.fill(minBusesToReach, n + 1);
+        minBusesToReach[source] = 0;
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+            for (int[] route : routes) {
+                int min = n + 1;
+                for (int stop : route) {
+                    min = Math.min(min, minBusesToReach[stop]);
+                }
+                min++;
+                for (int stop : route) {
+                    if (minBusesToReach[stop] > min) {
+                        minBusesToReach[stop] = min;
+                        flag = true;
                     }
                 }
             }
+
         }
-        return -1;
+        return (minBusesToReach[target] < n + 1 ? minBusesToReach[target] : -1);
     }
 }
