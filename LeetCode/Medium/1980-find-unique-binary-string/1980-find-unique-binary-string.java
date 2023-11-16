@@ -1,28 +1,11 @@
 class Solution {
-    int n;
-    Set<String> numsSet = new HashSet<>();
-
-    private String generate(String curr) {
-        if (curr.length() == n) {
-            if (!numsSet.contains(curr)) {
-                return curr;
-            }
-
-            return "";
-        }
-
-        String addZero = generate(curr + "0");
-        if (!addZero.isEmpty()) {
-            return addZero;
-        }
-
-        return generate(curr + "1");
-    }
-
     public String findDifferentBinaryString(String[] nums) {
-        n = nums.length;
-        Collections.addAll(numsSet, nums);
+        StringBuilder sb = new StringBuilder();
 
-        return generate("");
+        for (int i = 0; i < nums.length; i++) {
+            sb.append(nums[i].charAt(i) == '0' ? "1" : "0");
+        }
+
+        return new String(sb);
     }
 }
