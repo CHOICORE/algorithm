@@ -1,28 +1,29 @@
 class Solution {
-    public int countNicePairs(int[] nums) {
-        int[] arr = new int[nums.length];
-        for (int i = 0; i < nums.length; i++) {
-            arr[i] = nums[i] - rev(nums[i]);
-        }
-
-        Map<Integer, Integer> dic = new HashMap<>();
-        int ans = 0;
-        int MOD = (int) 1e9 + 7;
-        for (int num : arr) {
-            ans = (ans + dic.getOrDefault(num, 0)) % MOD;
-            dic.put(num, dic.getOrDefault(num, 0) + 1);
-        }
-
-        return ans;
-    }
-
-    public int rev(int num) {
-        int result = 0;
+    
+    int reverse(int num) {
+        int rev = 0;
         while (num > 0) {
-            result = result * 10 + num % 10;
+            rev = rev * 10 + num % 10;
             num /= 10;
         }
+        return rev;
+    }
 
-        return result;
+    public int countNicePairs(int[] nums) {
+        final int mod = (int) 1e9 + 7;
+
+        int len = nums.length;
+        for (int i = 0; i < len; i++) nums[i] = nums[i] - reverse(nums[i]);
+        Arrays.sort(nums);
+        long res = 0;
+        for (int i = 0; i < len - 1; i++) {
+            long cont = 1;
+            while (i < len - 1 && nums[i] == nums[i + 1]) {
+                cont++;
+                i++;
+            }
+            res = (res % mod + (cont * (cont - 1)) / 2) % mod;
+        }
+        return (int) res % mod;
     }
 }
