@@ -1,18 +1,13 @@
 class Solution {
     public int maxCoins(int[] piles) {
         Arrays.sort(piles);
-        ArrayDeque<Integer> queue = new ArrayDeque<>();
-        for (int num : piles) {
-            queue.addLast(num);
+        int sum = 0, i = 0, j = piles.length - 1;
+        while (i < j) {
+            sum += piles[j - 1];
+            j = j - 2;
+            i++;
         }
+        return sum;
 
-        int ans = 0;
-        while (!queue.isEmpty()) {
-            queue.removeLast();
-            ans += queue.removeLast();
-            queue.removeFirst();
-        }
-
-        return ans;
     }
 }
