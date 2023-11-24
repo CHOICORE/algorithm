@@ -1,5 +1,3 @@
 class Solution {
-    fun solution(myString: String): String {
-        return myString.toUpperCase()
-    }
+    fun solution(myString: String): String = myString.uppercase()
 }
