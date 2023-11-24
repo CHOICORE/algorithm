@@ -7,7 +7,7 @@ class Solution {
             j = j - 2;
             i++;
         }
+        
         return sum;
-
     }
 }
