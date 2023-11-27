@@ -1,5 +1,3 @@
 class Solution {
-    fun solution(arr: Array<String>): String {
-        return arr.joinToString("")
-    }
+    fun solution(arr: Array<String>): String = arr.joinToString("")
 }
