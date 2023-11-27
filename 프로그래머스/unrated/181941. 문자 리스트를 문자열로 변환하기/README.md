@@ -1,10 +1,10 @@
 # [level unrated] 문자 리스트를 문자열로 변환하기 - 181941 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181941) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181941?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 73 MB, 시간: 0.13 ms
+메모리: 63.7 MB, 시간: 19.27 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 11월 1일 20:45:58
+2023년 11월 1일 20:47:5
 
 ### 문제 설명
 
