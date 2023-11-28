@@ -1,10 +1,10 @@
 # [level unrated] 더 크게 합치기 - 181939 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181939?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181939?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 76.8 MB, 시간: 1.46 ms
+메모리: 61.1 MB, 시간: 3.79 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 11월 2일 21:18:6
+2023년 11월 2일 21:25:3
 
 ### 문제 설명
 
