@@ -1,9 +1,5 @@
+import kotlin.math.max
+
 class Solution {
-    fun solution(a: Int, b: Int): Int {
-        val strA: String = a.toString()
-        val strB: String = b.toString()
-        val sumA: String = strA + strB
-        val sumB: String = strB + strA
-        return sumA.toInt().coerceAtLeast(sumB.toInt())
-    }
+    fun solution(a: Int, b: Int): Int = max("$a$b".toInt(), "$b$a".toInt())
 }
