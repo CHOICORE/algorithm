@@ -1,39 +1,18 @@
 class Solution {
-    private static final int MOD = 1_000_000_007;
-
-    private int count(int index, int seats, String corridor, Map<Pair<Integer, Integer>, Integer> cache) {
-        if (index == corridor.length()) {
-            return seats == 2 ? 1 : 0;
-        }
-
-        if (cache.containsKey(new Pair<>(index, seats))) {
-            return cache.get(new Pair<>(index, seats));
-        }
-
-        int result = 0;
-
-        if (seats == 2) {
-            if (corridor.charAt(index) == 'S') {
-                result = count(index + 1, 1, corridor, cache);
-            } else {
-                result = (count(index + 1, 0, corridor, cache) + count(index + 1, 2, corridor, cache)) % MOD;
-            }
-        } else {
-            if (corridor.charAt(index) == 'S') {
-                result = count(index + 1, seats + 1, corridor, cache);
-            } else {
-                result = count(index + 1, seats, corridor, cache);
-            }
-        }
-
-        cache.put(new Pair<>(index, seats), result);
-        return result;
-    }
-
-
     public int numberOfWays(String corridor) {
-        Map<Pair<Integer, Integer>, Integer> cache = new HashMap<>();
+        final int mod = (int) 1e9 + 7;
+        long ans = 1;
+        int prevSeat = -1;
+        int numSeats = 0;
 
-        return count(0, 0, corridor, cache);
+        for (int i = 0; i < corridor.length(); ++i) {
+            if (corridor.charAt(i) == 'S') {
+                if (++numSeats > 2 && numSeats % 2 == 1)
+                    ans = ans * (i - prevSeat) % mod;
+                prevSeat = i;
+            }
+        }
+
+        return numSeats > 1 && numSeats % 2 == 0 ? (int) ans : 0;
     }
 }
