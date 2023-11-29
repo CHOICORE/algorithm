@@ -1,5 +1,3 @@
 class Solution {
-    fun solution(n_str: String): String {
-        return "${n_str.toInt()}"
-    }
+    fun solution(n_str: String): String = n_str.toInt().toString()
 }
