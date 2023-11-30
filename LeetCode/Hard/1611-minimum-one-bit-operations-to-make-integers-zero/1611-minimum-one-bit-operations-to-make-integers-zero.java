@@ -1,18 +1,23 @@
 class Solution {
     public int minimumOneBitOperations(int n) {
-        int ans = 0;
-        int k = 0;
-        int mask = 1;
+        int[] bits = new int[32];
 
-        while (mask <= n) {
-            if ((n & mask) != 0) {
-                ans = (1 << (k + 1)) - 1 - ans;
-            }
-
-            mask <<= 1;
-            k++;
+        bits[0] = 1;
+        for (int i = 1; i <= 31; i++) {
+            bits[i] = 2 * bits[i - 1] + 1;
         }
 
-        return ans;
+        boolean flag = true;
+        int steps = 0;
+
+        for (int i = 31; i >= 0; i--) {
+            int bitSet = (n >> i) & 1;
+            if (bitSet == 0) continue;
+            if (flag) steps += bits[i];
+            else steps -= bits[i];
+            flag = !flag;
+        }
+
+        return steps;
     }
 }
