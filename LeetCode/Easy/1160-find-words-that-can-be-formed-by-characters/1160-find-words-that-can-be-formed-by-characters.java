@@ -1,4 +1,5 @@
 class Solution {
+    
     public int countCharacters(String[] words, String chars) {
         int[] counts = new int[26];
         for (int i = 0; i < chars.length(); i++) {
@@ -6,20 +7,20 @@ class Solution {
         }
         int res = 0;
         for (String s : words) {
-            boolean result = true;
-            int[] c = new int[26];
-            for (int i = 0; i < s.length(); i++) {
-                int x = s.charAt(i) - 'a';
-                c[x]++;
-                if (c[x] > counts[x]) {
-                    result = false;
-                    break;
-                }
-            }
-            if (result)
+            if (check(s, counts))
                 res += s.length();
         }
         return res;
     }
 
+    boolean check(String word, int[] counts) {
+        int[] c = new int[26];
+        for (int i = 0; i < word.length(); i++) {
+            int x = word.charAt(i) - 'a';
+            c[x]++;
+            if (c[x] > counts[x])
+                return false;
+        }
+        return true;
+    }
 }
