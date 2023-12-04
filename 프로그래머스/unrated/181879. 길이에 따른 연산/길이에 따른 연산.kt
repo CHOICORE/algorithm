@@ -5,7 +5,7 @@ class Solution {
         if (num_list.size > 10) {
             answer = num_list.sum()
         } else {
-            answer = num_list.reduce { a, b -> a * b }
+            answer = num_list.fold(1) { a, b -> a * b }
         }
 
         return answer
