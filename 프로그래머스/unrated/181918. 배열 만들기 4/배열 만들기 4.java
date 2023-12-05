@@ -10,8 +10,7 @@ class Solution {
 
         while (i < arr.length) {
             if (stk.isEmpty() || stk.get(stk.size() - 1) < arr[i]) {
-                stk.add(arr[i]);
-                i++;
+                stk.add(arr[i++]);
             } else if (stk.get(stk.size() - 1) >= arr[i]) {
                 stk.remove(stk.size() - 1);
             }
