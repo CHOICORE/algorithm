@@ -1,10 +1,10 @@
 # [level unrated] n 번째 원소부터 - 181892 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181892?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181892?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 70.9 MB, 시간: 0.02 ms
+메모리: 62.7 MB, 시간: 9.24 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 12월 4일 22:58:38
+2023년 12월 4일 23:1:17
 
 ### 문제 설명
 
