@@ -14,31 +14,25 @@
  * }
  */
 class Solution {
-    private static void convert(TreeNode root, StringBuilder sb) {
-        if (root == null) {
+    public static void dfs(TreeNode t, StringBuilder res) {
+        if (t == null)
             return;
-        }
-
-        sb.append(root.val);
-        if (root.left == null && root.right == null) {
+        res.append(String.valueOf(t.val));
+        if (t.left == null && t.right == null)
             return;
-        }
-
-        sb.append('(');
-        convert(root.left, sb);
-        sb.append(')');
-
-        if (root.right != null) {
-            sb.append('(');
-            convert(root.right, sb);
-            sb.append(')');
+        res.append('(');
+        dfs(t.left, res);
+        res.append(')');
+        if (t.right != null) {
+            res.append('(');
+            dfs(t.right, res);
+            res.append(')');
         }
     }
 
     public String tree2str(TreeNode t) {
-        StringBuilder sb = new StringBuilder();
-        convert(t, sb);
-
-        return sb.toString();
+        StringBuilder res = new StringBuilder();
+        dfs(t, res);
+        return res.toString();
     }
 }
