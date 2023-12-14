@@ -1,28 +1,28 @@
 class Solution {
     public int[][] onesMinusZeros(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length;
-
-        int[] onesRow = new int[m];
-        int[] onesCol = new int[n];
-
-        Arrays.fill(onesRow, 0);
-        Arrays.fill(onesCol, 0);
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                onesRow[i] += grid[i][j];
-                onesCol[j] += grid[i][j];
+        int[] row = new int[grid.length];
+        int[] column = new int[grid[0].length];
+        for (int i = 0; i < row.length; i++) {
+            int one = 0;
+            for (int j = 0; j < column.length; j++) {
+                one += grid[i][j];
             }
+            row[i] = (2 * one) - (row.length);
         }
 
-        int[][] diff = new int[m][n];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                diff[i][j] = 2 * onesRow[i] + 2 * onesCol[j] - n - m;
+        for (int j = 0; j < column.length; j++) {
+            int one = 0;
+            for (int i = 0; i < row.length; i++) {
+                one += grid[i][j];
             }
+            column[j] = (2 * one) - (column.length);
         }
 
-        return diff;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                grid[i][j] = row[i] + column[j];
+            }
+        }
+        return grid;
     }
 }
