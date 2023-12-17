@@ -1,38 +1,50 @@
 class FoodRatings {
-    private final Map<String, Integer> foodRatingMap = new HashMap<>();
-    private final Map<String, String> foodCuisineMap = new HashMap<>();
-    private final Map<String, TreeSet<Pair<Integer, String>>> cuisineFoodMap = new HashMap<>();
-
+    Map<String, PriorityQueue<P>> cuisineToFood = new HashMap<>();
+    Map<String, P> foodMap = new HashMap<>();
     public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
-        for (int i = 0; i < foods.length; ++i) {
-            foodRatingMap.put(foods[i], ratings[i]);
-            foodCuisineMap.put(foods[i], cuisines[i]);
+        for (int i = 0; i < foods.length; i++) {
+            String food = foods[i], cuisine = cuisines[i];
+            int rating = ratings[i];
 
-            cuisineFoodMap
-                    .computeIfAbsent(cuisines[i], k -> new TreeSet<>((a, b) -> {
-                        int compareByRating = Integer.compare(a.getKey(), b.getKey());
-                        if (compareByRating == 0) {
-                            return a.getValue().compareTo(b.getValue());
-                        }
-                        return compareByRating;
-                    }))
-                    .add(new Pair(-ratings[i], foods[i]));
+            if (!cuisineToFood.containsKey(cuisine)) cuisineToFood.put(cuisine, new PriorityQueue<>((p1, p2) -> {
+                if (p1.rating == p2.rating) return p1.food.compareTo(p2.food);
+                return p2.rating - p1.rating;
+            }));
+
+            P p = new P(food, cuisine, rating);
+
+            cuisineToFood.get(cuisine).add(p);
+            foodMap.put(food, p);
         }
     }
 
     public void changeRating(String food, int newRating) {
-        String cuisineName = foodCuisineMap.get(food);
-        TreeSet<Pair<Integer, String>> cuisineSet = cuisineFoodMap.get(cuisineName);
-        Pair<Integer, String> oldElement = new Pair<>(-foodRatingMap.get(food), food);
-        cuisineSet.remove(oldElement);
-
-        foodRatingMap.put(food, newRating);
-        cuisineSet.add(new Pair<>(-newRating, food));
+        P p = foodMap.get(food);
+        P p2 = new P(food, p.cuisine, newRating);
+        p.food = "";
+        foodMap.put(food, p2);
+        cuisineToFood.get(p2.cuisine).add(p2);
     }
 
     public String highestRated(String cuisine) {
-        Pair<Integer, String> highestRated = cuisineFoodMap.get(cuisine).first();
-        return highestRated.getValue();
+        String food = cuisineToFood.get(cuisine).peek().food;
+        while (food.equals("")) {
+            cuisineToFood.get(cuisine).poll();
+            food = cuisineToFood.get(cuisine).peek().food;
+        }
+        return food;
+    }
+
+    static class P {
+        String food;
+        String cuisine;
+        int rating;
+
+        P(String food, String cuisine, int rating) {
+            this.food = food;
+            this.cuisine = cuisine;
+            this.rating = rating;
+        }
     }
 }
 
