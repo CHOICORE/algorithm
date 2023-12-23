@@ -1,37 +1,55 @@
 class Solution {
-    public boolean isPathCrossing(String path) {
-        Set<String> set = new HashSet<>();
-        set.add("0-0");
-        int x = 0;
-        int y = 0;
+    int x = 0;
+    int y = 0;
 
-        for (char c : path.toCharArray()) {
-            switch (c) {
-                case 'N':
-                    y++;
-                    break;
-                case 'S':
-                    y--;
-                    break;
-                case 'W':
-                    x--;
-                    break;
-                case 'E':
-                    x++;
-                    break;
-                default:
-                    break;
-            }
-            String coordinates = getCoordinates(x, y);
-            if (set.contains(coordinates)) {
-                return true;
-            }
-            set.add(coordinates);
-        }
-        return false;
+    public Solution() {
     }
 
-    private String getCoordinates(int x, int y) {
-        return x + "-" + y;
+    Solution(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final Solution solution = (Solution) o;
+
+        if (x != solution.x) return false;
+        return y == solution.y;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
+
+    public boolean isPathCrossing(String path) {
+        int n = 0, m = 0;
+        Map<Solution, Boolean> map = new HashMap<>();
+        Solution s = new Solution(0, 0);
+        map.put(s, true);
+        for (char c : path.toCharArray()) {
+            if (c == 'N') {
+                n++;
+            } else if (c == 'S') {
+                n--;
+            } else if (c == 'E') {
+                m++;
+            } else {
+                m--;
+            }
+            s = new Solution(m, n);
+            if (map.get(s) != null) {
+                return true;
+            }
+            map.put(s, true);
+        }
+
+        return false;
     }
 }
