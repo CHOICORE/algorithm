@@ -14,18 +14,13 @@ class Solution {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         final Solution solution = (Solution) o;
-
-        if (x != solution.x) return false;
-        return y == solution.y;
+        return x == solution.x && y == solution.y;
     }
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
-        return result;
+        return Objects.hash(x, y);
     }
 
     public boolean isPathCrossing(String path) {
