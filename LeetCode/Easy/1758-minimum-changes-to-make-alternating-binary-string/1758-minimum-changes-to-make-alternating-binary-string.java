@@ -1,19 +1,22 @@
 class Solution {
     public int minOperations(String s) {
-        int index = 0;
+        char zeroIndex = s.charAt(0);
+        int count1 = count(s, zeroIndex);
+        int count2 = count(s, zeroIndex == '0' ? '1' : '0') + 1;
+        return Math.min(count1, count2);
+    }
 
-        for (int i = 0; i < s.length(); i++) {
-            if (i % 2 == 0) {
-                if (s.charAt(i) == '1') {
-                    index++;
-                }
+    private int count(String s, char prev) {
+        int count = 0;
+        for (int i = 1; i < s.length(); i++) {
+            char current = s.charAt(i);
+            if (current == prev) {
+                count++;
+                prev = prev == '0' ? '1' : '0';
             } else {
-                if (s.charAt(i) == '0') {
-                    index++;
-                }
+                prev = current;
             }
         }
-
-        return Math.min(index, s.length() - index);
+        return count;
     }
 }
