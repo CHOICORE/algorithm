@@ -1,10 +1,10 @@
 # [level unrated] 조건 문자열 - 181934 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181934) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181934?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 77.2 MB, 시간: 1.17 ms
+메모리: 62.5 MB, 시간: 2.14 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 12월 1일 10:15:42
+2023년 12월 1일 10:18:37
 
 ### 문제 설명
 
