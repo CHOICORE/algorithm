@@ -1,10 +1,10 @@
 # [level unrated] 부분 문자열인지 확인하기 - 181843 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181843?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181843?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 77.1 MB, 시간: 0.02 ms
+메모리: 61.4 MB, 시간: 6.35 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 12월 1일 10:42:24
+2023년 12월 1일 10:43:42
 
 ### 문제 설명
 
