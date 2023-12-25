@@ -1,5 +1,3 @@
 class Solution {
-    fun solution(numList: IntArray, n: Int): Int {
-        return if (numList.contains(n)) 1 else 0
-    }
+    fun solution(numList: IntArray, n: Int): Int = if (numList.contains(n)) 1 else 0
 }
