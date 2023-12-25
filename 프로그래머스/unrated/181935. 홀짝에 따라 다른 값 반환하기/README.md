@@ -1,10 +1,10 @@
 # [level unrated] 홀짝에 따라 다른 값 반환하기 - 181935 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181935?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181935?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 76.6 MB, 시간: 0.02 ms
+메모리: 62.8 MB, 시간: 8.28 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 12월 1일 10:7:38
+2023년 12월 1일 10:10:48
 
 ### 문제 설명
 
