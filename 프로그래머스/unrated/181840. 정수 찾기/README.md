@@ -1,10 +1,10 @@
 # [level unrated] 정수 찾기 - 181840 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181840) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181840?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 73.5 MB, 시간: 1.16 ms
+메모리: 61.7 MB, 시간: 14.45 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2023년 12월 1일 10:24:57
+2023년 12월 1일 10:30:38
 
 ### 문제 설명
 
