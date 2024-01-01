@@ -1,15 +1,13 @@
-import java.util.LinkedList;
-import java.util.List;
-
 class Solution {
     public int[] solution(int[] num_list, int n) {
-        List<Integer> answer = new LinkedList<>();
+        double length = Math.ceil(num_list.length / (n * 1.0));
 
-        for (int i = 0; i < num_list.length; i++) {
-            if (i % n == 0) {
-                answer.add(num_list[i]);
-            }
+        int[] answer = new int[(int) length];
+
+        for (int i = 0; i < length; i++) {
+            answer[i] = num_list[i * n];
         }
-        return answer.stream().mapToInt(Integer::intValue).toArray();
+
+        return answer;
     }
 }
