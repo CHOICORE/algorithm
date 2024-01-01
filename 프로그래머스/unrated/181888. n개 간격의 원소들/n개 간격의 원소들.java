@@ -10,6 +10,6 @@ class Solution {
                 answer.add(num_list[i]);
             }
         }
-        return answer.stream().mapToInt(i -> i).toArray();
+        return answer.stream().mapToInt(Integer::intValue).toArray();
     }
 }
