@@ -1,10 +1,10 @@
 # [level unrated] n개 간격의 원소들 - 181888 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181888?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181888?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 68.3 MB, 시간: 0.23 ms
+메모리: 63.8 MB, 시간: 27.10 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 1월 1일 22:45:38
+2024년 1월 1일 22:47:46
 
 ### 문제 설명
 
