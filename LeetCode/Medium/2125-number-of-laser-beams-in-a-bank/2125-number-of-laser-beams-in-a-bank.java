@@ -13,8 +13,10 @@ class Solution {
     }
 
     private int calculate(String s) {
-        return s.chars()
-                .map(c -> c - '0')
-                .sum();
+        int count = 0;
+        for (char c : s.toCharArray()) {
+            count += c - '0';
+        }
+        return count;
     }
 }
