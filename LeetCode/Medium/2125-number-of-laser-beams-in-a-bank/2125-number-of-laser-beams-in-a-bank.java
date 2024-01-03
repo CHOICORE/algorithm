@@ -1,20 +1,20 @@
 class Solution {
     public int numberOfBeams(String[] bank) {
-        int prev = 0, answer = 0;
+        int prev = 0;
+        int total = 0;
 
         for (String s : bank) {
-            int count = 0;
-            for (int i = 0; i < s.length(); i++)
-                if (s.charAt(i) == '1') {
-                    count++;
-                }
-
-            if (count > 0) {
-                answer += prev * count;
-                prev = count;
-            }
+            int cur = calculate(s);
+            if (cur == 0) continue;
+            total += cur * prev;
+            prev = cur;
         }
+        return total;
+    }
 
-        return answer;
+    private int calculate(String s) {
+        return s.chars()
+                .map(c -> c - '0')
+                .sum();
     }
 }
