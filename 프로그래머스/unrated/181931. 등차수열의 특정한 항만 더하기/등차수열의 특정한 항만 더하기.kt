@@ -1,11 +1,4 @@
 class Solution {
-    fun solution(a: Int, d: Int, included: BooleanArray): Int {
-        var answer = 0
-        for (i in included.indices) {
-            if (included[i]) {
-                answer += a + d * i
-            }
-        }
-        return answer
-    }
+    fun solution(a: Int, d: Int, included: BooleanArray): Int =
+        included.mapIndexed { idx, b -> if (b) a + d * idx else 0 }.sum()
 }
