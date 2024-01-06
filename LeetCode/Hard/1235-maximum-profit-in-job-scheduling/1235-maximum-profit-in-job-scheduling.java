@@ -3,52 +3,59 @@ import java.util.Comparator;
 
 class Solution {
     public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
-        int numJobs = profit.length; // Number of jobs
-        Job[] jobs = new Job[numJobs];
+        int n = startTime.length;
 
-        for (int i = 0; i < numJobs; ++i) {
-            jobs[i] = new Job(endTime[i], startTime[i], profit[i]);
+        Job[] jobs = new Job[n];
+        for (int i = 0; i < n; i++) {
+            jobs[i] = new Job(startTime[i], endTime[i], profit[i]);
         }
 
-        Arrays.sort(jobs, Comparator.comparingInt(job -> job.endTime));
-        int[] dp = new int[numJobs + 1];
+        Arrays.sort(jobs, Comparator.comparingInt(a -> a.endTime));
 
-        for (int i = 0; i < numJobs; ++i) {
-            int endTimeValue = jobs[i].endTime;
-            int startTimeValue = jobs[i].startTime;
-            int profitValue = jobs[i].profit;
+        int[] dp = new int[n];
+        dp[0] = jobs[0].profit;
 
-            int latestNonConflictJobIndex = upperBound(jobs, i, startTimeValue);
-            dp[i + 1] = Math.max(dp[i], dp[latestNonConflictJobIndex] + profitValue);
+        for (int i = 1; i < n; i++) {
+            int prevIndex = searchForIndex(jobs, i);
+            int prevProfit = (prevIndex == -1) ? 0 : dp[prevIndex];
+
+            dp[i] = Math.max(dp[i - 1], jobs[i].profit + prevProfit);
         }
 
-        return dp[numJobs];
+        return dp[n - 1];
     }
 
-    private int upperBound(Job[] jobs, int endIndex, int targetTime) {
-        int low = 0;
-        int high = endIndex;
+    public int searchForIndex(Job[] jobs, int curIndex) {
+        if (jobs[0].endTime > jobs[curIndex].startTime) {
+            return -1;
+        }
 
-        while (low < high) {
-            int mid = (low + high) / 2;
-            if (jobs[mid].endTime <= targetTime) {
-                low = mid + 1;
+        int left = 0;
+        int right = curIndex - 1;
+
+        while (left + 1 < right) {
+            int mid = left + (right - left) / 2;
+            if (jobs[mid].endTime <= jobs[curIndex].startTime) {
+                left = mid;
             } else {
-                high = mid;
+                right = mid;
             }
         }
 
-        return low;
+        if (jobs[right].endTime <= jobs[curIndex].startTime) {
+            return right;
+        }
+        return left;
     }
 
     private static class Job {
-        int endTime;
         int startTime;
+        int endTime;
         int profit;
 
-        public Job(int endTime, int startTime, int profit) {
-            this.endTime = endTime;
+        public Job(int startTime, int endTime, int profit) {
             this.startTime = startTime;
+            this.endTime = endTime;
             this.profit = profit;
         }
     }
