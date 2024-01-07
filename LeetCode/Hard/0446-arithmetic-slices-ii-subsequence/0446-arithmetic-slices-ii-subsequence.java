@@ -2,7 +2,7 @@ class Solution {
     public int numberOfArithmeticSlices(int[] nums) {
         int n = nums.length;
         int[][] dp = new int[n][n];
-        HashMap<Long, ArrayList<Integer>> map = new HashMap<>();
+        Map<Long, ArrayList<Integer>> map = new HashMap<>();
         for (int i = 0; i < n; i++) {
             long temp = nums[i];
             if (!map.containsKey(temp)) {
