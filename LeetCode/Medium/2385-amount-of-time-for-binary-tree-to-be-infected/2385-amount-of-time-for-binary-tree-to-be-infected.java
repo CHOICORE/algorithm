@@ -14,50 +14,27 @@
  * }
  */
 class Solution {
-    public int amountOfTime(TreeNode root, int start) {
-        Map<Integer, Set<Integer>> map = new HashMap<>();
-        convert(root, 0, map);
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(start);
-        int minute = 0;
-        Set<Integer> visited = new HashSet<>();
-        visited.add(start);
+    private int answer;
 
-        while (!queue.isEmpty()) {
-            int levelSize = queue.size();
-            while (levelSize > 0) {
-                int current = Objects.requireNonNull(queue.poll());
-                for (int num : map.get(current)) {
-                    if (!visited.contains(num)) {
-                        visited.add(num);
-                        queue.add(num);
-                    }
-                }
-                levelSize--;
-            }
-            minute++;
-        }
-        return minute - 1;
+    public int amountOfTime(TreeNode root, int start) {
+        dfs(root, start);
+        return answer;
     }
 
-    public void convert(TreeNode current, int parent, Map<Integer, Set<Integer>> map) {
-        if (current == null) {
-            return;
+    public int dfs(TreeNode root, int start) {
+        if (root == null) return 0;
+
+        int left = dfs(root.left, start);
+        int right = dfs(root.right, start);
+
+        if (root.val == start) {
+            answer = Math.max(left, right);
+            return -1;
+        } else if (left >= 0 && right >= 0) {
+            return Math.max(left, right) + 1;
+        } else {
+            answer = Math.max(answer, Math.abs(left - right));
+            return Math.min(left, right) - 1;
         }
-        if (!map.containsKey(current.val)) {
-            map.put(current.val, new HashSet<>());
-        }
-        Set<Integer> adjacentList = map.get(current.val);
-        if (parent != 0) {
-            adjacentList.add(parent);
-        }
-        if (current.left != null) {
-            adjacentList.add(current.left.val);
-        }
-        if (current.right != null) {
-            adjacentList.add(current.right.val);
-        }
-        convert(current.left, current.val, map);
-        convert(current.right, current.val, map);
     }
 }
