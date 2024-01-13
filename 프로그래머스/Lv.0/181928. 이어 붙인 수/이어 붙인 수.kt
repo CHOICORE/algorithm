@@ -1,16 +1,18 @@
 class Solution {
     fun solution(num_list: IntArray): Int {
-        var odd = ""
-        var even = ""
+        var even = 0
+        var odd = 0
 
-        for (i in num_list) {
-            if (i % 2 == 0) {
-                even += "$i"
+        for (num in num_list) {
+            if (num % 2 == 0) {
+                even *= 10
+                even += num
             } else {
-                odd += "$i"
+                odd *= 10
+                odd += num
             }
         }
-        
-        return even.toInt() + odd.toInt()
+
+        return even + odd
     }
 }
