@@ -1,10 +1,10 @@
 # [level Lv.0] 이어 붙인 수 - 181928 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181928?language=kotlin) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181928?language=java) 
 
 ### 성능 요약
 
-메모리: 60.1 MB, 시간: 11.38 ms
+메모리: 76 MB, 시간: 0.03 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 1월 6일 9:57:49
+2024년 1월 6일 9:59:41
 
 ### 문제 설명
 
