@@ -1,10 +1,10 @@
 # [level Lv.0] 마지막 두 원소 - 181927 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181927?language=java) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181927?language=kotlin) 
 
 ### 성능 요약
 
-메모리: 74.1 MB, 시간: 0.02 ms
+메모리: 62.7 MB, 시간: 26.30 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 1월 2일 10:18:1
+2024년 1월 2일 10:20:29
 
 ### 문제 설명
 
