@@ -1,42 +1,41 @@
 class RandomizedSet {
-    private ArrayList<Integer> list;
-    private Map<Integer, Integer> map;
+    private final Random random = new Random();
+    private final Map<Integer, Integer> map = new HashMap<>();
+    private int[] vals = new int[32];
+    private int i = 0;
 
     public RandomizedSet() {
-        list = new ArrayList<>();
-        map = new HashMap<>();
-    }
 
-    public boolean search(int val) {
-        return map.containsKey(val);
     }
 
     public boolean insert(int val) {
-        if (search(val)) return false;
+        Integer added = map.putIfAbsent(val, i);
+        if (added != null) return false;
 
-        list.add(val);
-        map.put(val, list.size() - 1);
+        if (i >= vals.length) {
+            vals = Arrays.copyOf(vals, vals.length * 2);
+        }
+        vals[i++] = val;
         return true;
     }
 
     public boolean remove(int val) {
-        if (!search(val)) return false;
+        Integer removed = map.remove(val);
+        if (removed == null) return false;
 
-        int index = map.get(val);
-        list.set(index, list.get(list.size() - 1));
-        map.put(list.get(index), index);
-        list.remove(list.size() - 1);
-        map.remove(val);
-
+        if (removed < i - 1) {
+            vals[removed] = vals[i - 1];
+            map.put(vals[i - 1], removed);
+        }
+        i--;
         return true;
     }
 
     public int getRandom() {
-        Random rand = new Random();
-        return list.get(rand.nextInt(list.size()));
+        int index = random.nextInt(i);
+        return vals[index];
     }
 }
-
 
 /**
  * Your RandomizedSet object will be instantiated and called as such:
