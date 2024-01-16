@@ -1,6 +1,18 @@
 class Solution {
-    fun solution(num_list: IntArray): IntArray = num_list.toMutableList().apply {
-        if (last() > get(size - 2)) add(last() - get(size - 2))
-        else add(last() * 2)
-    }.toIntArray()
+    fun solution(num_list: IntArray): IntArray {
+        val len = num_list.size
+
+        val answer = num_list.copyOf(len + 1)
+
+        val last = num_list[len - 1]
+        val beforeLast = num_list[len - 2]
+
+        if (last > beforeLast) {
+            answer[len] = last - beforeLast
+        } else {
+            answer[len] = last * 2
+        }
+
+        return answer
+    }
 }
