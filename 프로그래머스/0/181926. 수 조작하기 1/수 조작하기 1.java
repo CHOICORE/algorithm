@@ -1,21 +1,6 @@
 class Solution {
     public int solution(int n, String control) {
-        for (char c : control.toCharArray()) {
-            switch (c) {
-                case 'w':
-                    n += 1;
-                    break;
-                case 's':
-                    n -= 1;
-                    break;
-                case 'd':
-                    n += 10;
-                    break;
-                case 'a':
-                    n -= 10;
-                    break;
-            }
-        }
-        return n;
+        return control.chars()
+                .reduce(n, (acc, c) -> acc + (c == 'w' ? 1 : c == 's' ? -1 : c == 'd' ? 10 : -10));
     }
 }
