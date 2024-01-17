@@ -1,20 +1,20 @@
 class Solution {
     public boolean uniqueOccurrences(int[] arr) {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (final int j : arr) {
-            if (hashMap.containsKey(j)) {
-                hashMap.put(j, hashMap.get(j) + 1);
-            } else {
-                hashMap.put(j, 1);
+        int[] numberOfOccurrences = new int[2_001];
+        boolean[] used = new boolean[1_001];
+
+        for (int i : arr) {
+            numberOfOccurrences[1_000 + i]++;
+        }
+
+        for (int i : arr) {
+            int count = numberOfOccurrences[1_000 + i];
+            numberOfOccurrences[1_000 + i] = 0;
+            if (count > 0) {
+                if (used[count]) return false;
+                else used[count] = true;
             }
         }
-        Set<Integer> hashSet = new HashSet<>();
-        boolean flag = true;
-        for (Map.Entry<Integer, Integer> mapElement : hashMap.entrySet()) {
-            if (!hashSet.add(mapElement.getValue())) {
-                flag = false;
-            }
-        }
-        return flag;
+        return true;
     }
 }
