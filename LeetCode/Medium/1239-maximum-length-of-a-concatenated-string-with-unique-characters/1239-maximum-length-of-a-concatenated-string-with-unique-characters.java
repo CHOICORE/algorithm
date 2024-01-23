@@ -1,22 +1,33 @@
 class Solution {
-	public int maxLength(List<String> arr) {
-		List<Integer> dp = new ArrayList<>();
-		dp.add(0);
-		int answer = 0;
-		for (String s : arr) {
-			int a = 0, dup = 0;
-			for (char c : s.toCharArray()) {
-				dup |= a & (1 << (c - 'a'));
-				a |= 1 << (c - 'a');
-			}
-			if (dup > 0) continue;
-			for (int i = dp.size() - 1; i >= 0; i--) {
-				if ((dp.get(i) & a) > 0) continue;
-				dp.add(dp.get(i) | a);
-				answer = Math.max(answer, Integer.bitCount(dp.get(i) | a));
-			}
+	public int solve(String[] strs, int no, int[] a, int index, int c) {
+		if (index == c)
+			return 0;
+		int x = no & a[index];
+		if (x == 0)
+			return Math.max(strs[index].length() + solve(strs, no ^ a[index], a, index + 1, c), solve(strs, no, a, index + 1, c));
+		else
+			return solve(strs, no, a, index + 1, c);
+	}
 
+	public int maxLength(List<String> arr) {
+		int[] a = new int[arr.size()];
+		int c = 0;
+		String[] tmp = new String[a.length];
+		for (String s : arr) {
+			int x = 0, flag = 0;
+			for (char ch : s.toCharArray()) {
+				int z = x | (1 << (ch - 96));
+				if (x == z) {
+					flag = 1;
+					break;
+				}
+				x = z;
+			}
+			if (flag == 0) {
+				a[c] = x;
+				tmp[c++] = s;
+			}
 		}
-		return answer;
+		return solve(tmp, 0, a, 0, c);
 	}
 }
