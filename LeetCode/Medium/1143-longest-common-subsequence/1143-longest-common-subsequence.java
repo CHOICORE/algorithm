@@ -1,7 +1,6 @@
 class Solution {
     public int longestCommonSubsequence(String text1, String text2) {
-        if (text1.equals(text2))
-            return text1.length();
+        if (text1.equals(text2)) return text1.length();
         char[] tb1 = text1.toCharArray();
         char[] tb2 = text2.toCharArray();
 
