@@ -1,12 +1,12 @@
 class Solution {
     fun gcd(a: Int, b: Int): Int = if (b != 0) gcd(b, a % b) else a
 
-    fun solution(denom1: Int, num1: Int, denom2: Int, num2: Int): IntArray {
+    fun solution(numer1: Int, denom1: Int, numer2: Int, denom2: Int): IntArray {
         var answer: IntArray = intArrayOf()
 
-        val denom = denom1 * num2 + denom2 * num1
-        val num = num1 * num2
+        val number3 = numer1 * denom2 + numer2 * denom1
+        val denon3 = denom1 * denom2
 
-        return intArrayOf(denom / gcd(denom, num), num / gcd(denom, num))
+        return intArrayOf(number3 / gcd(number3, denon3), denon3 / gcd(number3, denon3))
     }
 }
