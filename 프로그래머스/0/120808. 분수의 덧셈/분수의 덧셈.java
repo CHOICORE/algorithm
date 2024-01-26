@@ -1,18 +1,18 @@
 class Solution {
-    public int[] solution(int denum1, int num1, int denum2, int num2) {
+    public int[] solution(int numer1, int denom1, int numer2, int denom2) {
         int[] answer = new int[2];
 
-        int num3 = num1 * num2;
-        int denum3 = denum1 * num2 + denum2 * num1;
+        int numer3 = denom1 * denom2;
+        int denom3 = numer1 * denom2 + numer2 * denom1;
         int max = 1;
 
-        for (int i = 1; i <= num3 && i <= denum3; i++) {
-            if (num3 % i == 0 && denum3 % i == 0) {
+        for (int i = 1; i <= numer3 && i <= denom3; i++) {
+            if (numer3 % i == 0 && denom3 % i == 0) {
                 max = i;
             }
         }
-        answer[0] = denum3 / max;
-        answer[1] = num3 / max;
+        answer[0] = denom3 / max;
+        answer[1] = numer3 / max;
 
         return answer;
     }
