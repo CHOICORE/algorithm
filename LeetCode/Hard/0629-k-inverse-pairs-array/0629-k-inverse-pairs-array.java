@@ -1,21 +1,19 @@
 class Solution {
-
-    static final int MOD = (int) (1e9 + 7);
-
     public int kInversePairs(int n, int k) {
-        int[][] dp = new int[1001][1001];
+        int[][] dp = new int[n + 1][k + 1];
         dp[0][0] = 1;
+        int mod = (int) (1e9 + 7);
 
         for (int i = 1; i <= n; i++) {
+            int val = 0;
             for (int j = 0; j <= k; j++) {
-                for (int x = 0; x <= Math.min(j, i - 1); x++) {
-                    if (j - x >= 0) {
-                        dp[i][j] = (dp[i][j] + dp[i - 1][j - x]) % MOD;
-                    }
-                }
+                val += dp[i - 1][j];
+                if (j >= i) val -= dp[i - 1][j - i];
+                if (val < 0) val += mod;
+                val = (val % mod);
+                dp[i][j] = val;
             }
         }
-
         return dp[n][k];
     }
 }
