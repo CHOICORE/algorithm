@@ -1,4 +1,5 @@
 class Solution {
+    
     public int kInversePairs(int n, int k) {
         int[][] dp = new int[n + 1][k + 1];
         dp[0][0] = 1;
@@ -14,6 +15,8 @@ class Solution {
                 dp[i][j] = val;
             }
         }
+        
         return dp[n][k];
     }
+    
 }
