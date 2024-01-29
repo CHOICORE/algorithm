@@ -1,6 +1,6 @@
-class MyQueue {
-    private val s1 = Stack<Int>()
-    private val s2 = Stack<Int>()
+class MyQueue() {
+    val s1 = Stack<Int>()
+    val s2 = Stack<Int>()
 
     fun push(x: Int) {
         s1.push(x)
@@ -8,16 +8,18 @@ class MyQueue {
 
     fun pop(): Int {
         if (s2.isEmpty()) {
-            while (!s1.isEmpty()) s2.push(s1.pop())
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop())
+            }
         }
         return s2.pop()
     }
 
     fun peek(): Int {
-        if (!s2.isEmpty()) {
-            return s2.peek()
-        } else {
-            while (!s1.isEmpty()) s2.push(s1.pop())
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop())
+            }
         }
         return s2.peek()
     }
@@ -25,6 +27,7 @@ class MyQueue {
     fun empty(): Boolean {
         return s1.isEmpty() && s2.isEmpty()
     }
+
 }
 
 /**
