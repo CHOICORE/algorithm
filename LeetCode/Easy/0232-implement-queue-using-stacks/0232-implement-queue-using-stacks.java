@@ -1,45 +1,38 @@
 class MyQueue {
-    int[] arr;
-    int front = 0;
-    int rear = 0;
-    int size = 200;
+    private Stack<Integer> s1 = new Stack<>();
+    private Stack<Integer> s2 = new Stack<>();
 
     public MyQueue() {
-        arr = new int[size];
+
     }
 
     public void push(int x) {
-        if (rear == 200) {
-            return;
-        }
-        arr[rear] = x;
-        rear++;
+        s1.push(x);
     }
 
     public int pop() {
-        int x;
-        if (!empty()) {
-            x = arr[front];
-            front++;
-            return x;
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty())
+                s2.push(s1.pop());
         }
-        return 0;
+        return s2.pop();
     }
 
     public int peek() {
-        if (empty()) ;
-        return arr[front];
+        if (!s2.isEmpty()) {
+            return s2.peek();
+        } else {
+            while (!s1.isEmpty())
+                s2.push(s1.pop());
+        }
+        return s2.peek();
     }
 
     public boolean empty() {
-        if (front == rear) {
-            front = 0;
-            rear = 0;
-            return true;
-        }
-        return false;
+        return s1.isEmpty() && s2.isEmpty();
     }
 }
+
 /**
  * Your MyQueue object will be instantiated and called as such:
  * MyQueue obj = new MyQueue();
