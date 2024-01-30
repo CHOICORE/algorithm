@@ -1,28 +1,31 @@
 class Solution {
+    int pos;
+
     public int evalRPN(String[] tokens) {
-        int[] stack = new int[tokens.length];
-        int top = 0;
-        for (String s : tokens) {
-            char c = s.charAt(0);
-            if (c == '+') {
-                int b = stack[--top];
-                int a = stack[--top];
-                stack[top++] = a + b;
-            } else if (c == '-' && s.length() == 1) {
-                int b = stack[--top];
-                int a = stack[--top];
-                stack[top++] = a - b;
-            } else if (c == '*') {
-                int b = stack[--top];
-                int a = stack[--top];
-                stack[top++] = a * b;
-            } else if (c == '/') {
-                int b = stack[--top];
-                int a = stack[--top];
-                stack[top++] = a / b;
-            } else
-                stack[top++] = Integer.parseInt(s);
+        this.pos = tokens.length - 1;
+        return evaluate(tokens);
+    }
+
+    public int evaluate(String[] t) {
+        String token = t[pos];
+        pos--;
+        switch (token) {
+            case "+" -> {
+                return evaluate(t) + evaluate(t);
+            }
+            case "*" -> {
+                return evaluate(t) * evaluate(t);
+            }
+            case "-" -> {
+                return -evaluate(t) + evaluate(t);
+            }
+            case "/" -> {
+                int right = evaluate(t);
+                return evaluate(t) / right;
+            }
+            default -> {
+                return Integer.parseInt(token);
+            }
         }
-        return stack[0];
     }
 }
