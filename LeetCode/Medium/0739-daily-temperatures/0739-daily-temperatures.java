@@ -1,26 +1,28 @@
 class Solution {
+    
     public int[] dailyTemperatures(int[] temperatures) {
-        Deque<Integer> deque = new ArrayDeque<>();
+        int n = temperatures.length;
 
-        int[] answer = new int[temperatures.length];
+        int hottest = 0;
 
-        for (int i = temperatures.length - 1; i >= 0; --i) {
-            if (deque.isEmpty()) {
-                deque.offerFirst(i);
-                answer[i] = 0;
-            } else {
-                while (!deque.isEmpty() && temperatures[i] >= temperatures[deque.peekFirst()]) {
-                    deque.pollFirst();
-                }
+        int[] answer = new int[n];
 
-                if (deque.isEmpty()) {
-                    answer[i] = 0;
-                } else {
-                    answer[i] = deque.peekFirst() - i;
-                }
+        for (int currDay = n - 1; currDay >= 0; currDay--) {
 
-                deque.offerFirst(i);
+            int currentTemp = temperatures[currDay];
+
+            if (currentTemp >= hottest) {
+                hottest = currentTemp;
+                continue;
             }
+
+            int days = 1;
+
+            while (temperatures[currDay + days] <= currentTemp) {
+                days += answer[currDay + days];
+            }
+
+            answer[currDay] = days;
         }
 
         return answer;
