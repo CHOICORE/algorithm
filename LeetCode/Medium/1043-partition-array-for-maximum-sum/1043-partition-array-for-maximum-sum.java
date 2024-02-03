@@ -1,4 +1,5 @@
 class Solution {
+    
     int sum(int[] arr, int i, int n) {
         int sum = Integer.MIN_VALUE;
         int j = i;
@@ -8,6 +9,13 @@ class Solution {
         return sum * (n - j + 1);
     }
 
+    int maxSumAfterPartitioning(int[] arr, int k) {
+        int[] t = new int[arr.length];
+        Arrays.fill(t, -1);
+
+        return maxSum(arr, k, arr.length - 1, t);
+    }
+    
     public int maxSum(int[] arr, int k, int n, int[] t) {
         if (t[n] != -1)
             return t[n];
@@ -32,10 +40,5 @@ class Solution {
 
     }
 
-    int maxSumAfterPartitioning(int[] arr, int k) {
-        int[] t = new int[arr.length];
-        Arrays.fill(t, -1);
 
-        return maxSum(arr, k, arr.length - 1, t);
-    }
 }
