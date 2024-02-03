@@ -32,12 +32,9 @@ class Solution {
             max = Math.max(max, arr[n - i]);
             answer = Math.max(answer, (i + 1) * max + maxSum(arr, k, n - i - 1, t));
             t[n] = answer;
-
         }
         return answer;
 
-
     }
-
 
 }
