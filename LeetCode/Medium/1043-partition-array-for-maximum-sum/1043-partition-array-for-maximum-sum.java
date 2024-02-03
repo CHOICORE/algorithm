@@ -28,8 +28,7 @@ class Solution {
         
         int answer = Integer.MIN_VALUE;
         for (int i = 0; i < k; i++) {
-            if (n < k)
-                break;
+            if (n < k) break;
             max = Math.max(max, arr[n - i]);
             answer = Math.max(answer, (i + 1) * max + maxSum(arr, k, n - i - 1, t));
             t[n] = answer;
