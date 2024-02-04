@@ -1,33 +1,21 @@
 class Solution {
     public String minWindow(String s, String t) {
-        if (t.length() > s.length()) return "";
+        int[] map = new int[123];
+        int left = 0, right = 0, count = t.length(), tmp = Integer.MAX_VALUE, start = 0;
 
-        int[] tCounts = new int[128];
-        for (char c : t.toCharArray()) tCounts[c]++;
+        for (char c : t.toCharArray())
+            map[c]++;
 
+        char[] ch = s.toCharArray();
+        while (right < s.length()) {
+            if (map[ch[right++]]-- > 0) count--;
 
-        char[] sc = s.toCharArray();
-        int scLen = sc.length;
-        int neededCount = t.length();
-        int minWindowLen = Integer.MAX_VALUE;
-        int minWindowLeft = 0;
-        int minWindowPast = 0;
-        int leftIdx = 0;
-        while (leftIdx < scLen && tCounts[sc[leftIdx]] == 0) leftIdx++;
-        int pastIdx = leftIdx;
-        while (pastIdx < scLen || neededCount == 0) {
-            if (neededCount == 0) {
-                if (++tCounts[sc[leftIdx++]] > 0) neededCount++;
-            } else {
-                if (--tCounts[sc[pastIdx++]] >= 0) neededCount--;
-            }
-            if (neededCount == 0 && pastIdx - leftIdx < minWindowLen) {
-                minWindowLen = pastIdx - leftIdx;
-                minWindowLeft = leftIdx;
-                minWindowPast = pastIdx;
+            while (count == 0) {
+                if ((right - left) < tmp) tmp = right - (start = left);
+                if (map[ch[left++]]++ == 0) count++;
             }
         }
 
-        return s.substring(minWindowLeft, minWindowPast);
+        return tmp == Integer.MAX_VALUE ? "" : s.substring(start, start + tmp);
     }
 }
