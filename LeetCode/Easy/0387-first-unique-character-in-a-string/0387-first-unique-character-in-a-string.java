@@ -1,17 +1,12 @@
 class Solution {
     public int firstUniqChar(String s) {
-        Map<Character, Integer> countMap = new HashMap<>();
-
-        for (char a : s.toCharArray()) {
-            countMap.put(a, countMap.getOrDefault(a, 0) + 1);
-        }
-
-        for (int i = 0; i < s.length(); i++) {
-            if (countMap.get(s.charAt(i)) == 1) {
-                return i;
+        int answer = Integer.MAX_VALUE;
+        for (char c = 'a'; c <= 'z'; c++) {
+            int index = s.indexOf(c);
+            if (index != -1 && index == s.lastIndexOf(c)) {
+                answer = Math.min(answer, index);
             }
         }
-
-        return -1;
+        return answer == Integer.MAX_VALUE ? -1 : answer;
     }
 }
