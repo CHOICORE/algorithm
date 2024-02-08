@@ -1,16 +1,16 @@
 class Solution {
     fun numSquares(n: Int): Int {
-        val dp = IntArray(n + 1)
-        Arrays.fill(dp, Int.MAX_VALUE)
-        dp[0] = 0
-        for (i in 1..n) {
-            var min = Int.MAX_VALUE
+        val dp = IntArray(n + 1) { 0 }
+        dp[1] = 1
+
+        for (i in 2..n) {
+            var min = i
             var j = 1
             while (j * j <= i) {
-                min = min(min.toDouble(), (dp[i - j * j] + 1).toDouble()).toInt()
-                ++j
+                min = min(min, dp[i - j * j])
+                j++
             }
-            dp[i] = min
+            dp[i] = min + 1
         }
         return dp[n]
     }
