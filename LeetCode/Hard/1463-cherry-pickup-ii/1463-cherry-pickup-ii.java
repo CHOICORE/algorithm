@@ -1,27 +1,23 @@
 class Solution {
-    Integer[][][] dp;
-    Integer n;
-    Integer m;
-    int[][] grid;
-
     public int cherryPickup(int[][] grid) {
-        this.grid = grid;
-        n = grid.length;
-        m = grid[0].length;
-        dp = new Integer[n][m][m];
-        return helper(0, 0, m - 1);
-    }
-
-    private int helper(int r, int c1, int c2) {
-        if (r == n || c1 < 0 || c2 >= m) return 0;
-        if (dp[r][c1][c2] != null) return dp[r][c1][c2];
-
-        int maxCherry = 0;
-        for (int i = -1; i < 2; ++i)
-            for (int j = -1; j < 2; ++j)
-                if (c1 + i <= c2 + j)
-                    maxCherry = Math.max(maxCherry, helper(r + 1, c1 + i, c2 + j));
-
-        return dp[r][c1][c2] = maxCherry + grid[r][c1] + (c1 != c2 ? grid[r][c2] : 0);
+        int C = grid[0].length;
+        int[][] dp = new int[C][C], old = new int[C][C];
+        for (int r = grid.length - 1; r >= 0; r--) {
+            for (int c1 = Math.min(r, C - 1); c1 >= 0; c1--) {
+                for (int c2 = Math.max(c1, C - 1 - r); c2 < C; c2++) {
+                    int max = 0;
+                    for (int i = c1 - 1; i <= c1 + 1; i++) {
+                        for (int j = c2 - 1; j <= c2 + 1; j++) {
+                            if (i >= 0 && j >= 0 && j < C && i <= j) max = Math.max(max, old[i][j]);
+                        }
+                    }
+                    dp[c1][c2] = max + grid[r][c1] + (c1 == c2 ? 0 : grid[r][c2]);
+                }
+            }
+            int[][] temp = dp;
+            dp = old;
+            old = temp;
+        }
+        return old[0][C - 1];
     }
 }
