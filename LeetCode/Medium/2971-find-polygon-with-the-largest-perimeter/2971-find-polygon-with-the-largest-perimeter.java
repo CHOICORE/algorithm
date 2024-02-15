@@ -18,8 +18,7 @@ class Solution {
             int temp = nums[maxIndex];
             nums[maxIndex] = nums[end - 1];
             nums[end - 1] = temp;
-            if (end < 3)
-                return -1;
+            if (end < 3) return -1;
             return helper(nums, end - 1);
         }
 
