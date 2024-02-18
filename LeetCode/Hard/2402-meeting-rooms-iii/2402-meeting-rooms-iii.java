@@ -2,7 +2,9 @@ class Solution {
     public int mostBooked(int n, int[][] mt) {
         int[] counts = new int[n];
         long[] temp = new long[n];
+        
         Arrays.sort(mt, Comparator.comparingInt(a -> a[0]));
+        
         for (int[] m : mt) {
             int st = m[0], ed = m[1];
             boolean f = false;
@@ -25,6 +27,7 @@ class Solution {
                 counts[idx]++;
             }
         }
+        
         int max = 0, answer = 0;
         for (int i = 0; i < n; i++) {
             if (counts[i] > max) {
@@ -32,6 +35,7 @@ class Solution {
                 answer = i;
             }
         }
+        
         return answer;
     }
 }
