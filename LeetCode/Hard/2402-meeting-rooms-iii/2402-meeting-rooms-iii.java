@@ -1,43 +1,37 @@
 class Solution {
-    public int mostBooked(int n, int[][] meetings) {
-        var meetingCount = new int[n];
-        var usedRooms = new PriorityQueue<long[]>((a, b) -> a[0] != b[0] ? Long.compare(a[0], b[0]) : Long.compare(a[1], b[1]));
-        var unusedRooms = new PriorityQueue<Integer>();
-
+    public int mostBooked(int n, int[][] mt) {
+        int[] counts = new int[n];
+        long[] temp = new long[n];
+        Arrays.sort(mt, Comparator.comparingInt(a -> a[0]));
+        for (int[] m : mt) {
+            int st = m[0], ed = m[1];
+            boolean f = false;
+            long min = Long.MAX_VALUE;
+            int idx = -1;
+            for (int i = 0; i < n; i++) {
+                if (temp[i] < min) {
+                    min = temp[i];
+                    idx = i;
+                }
+                if (temp[i] <= st) {
+                    temp[i] = ed;
+                    f = true;
+                    counts[i]++;
+                    break;
+                }
+            }
+            if (!f) {
+                temp[idx] += (ed - st);
+                counts[idx]++;
+            }
+        }
+        int max = 0, answer = 0;
         for (int i = 0; i < n; i++) {
-            unusedRooms.offer(i);
-        }
-
-        Arrays.sort(meetings, (a, b) -> a[0] != b[0] ? Integer.compare(a[0], b[0]) : Integer.compare(a[1], b[1]));
-
-        for (int[] meeting : meetings) {
-            int start = meeting[0], end = meeting[1];
-
-            while (!usedRooms.isEmpty() && usedRooms.peek()[0] <= start) {
-                int room = (int) usedRooms.poll()[1];
-                unusedRooms.offer(room);
-            }
-
-            if (!unusedRooms.isEmpty()) {
-                int room = unusedRooms.poll();
-                usedRooms.offer(new long[]{end, room});
-                meetingCount[room]++;
-            } else {
-                long roomAvailabilityTime = usedRooms.peek()[0];
-                int room = (int) usedRooms.poll()[1];
-                usedRooms.offer(new long[]{roomAvailabilityTime + end - start, room});
-                meetingCount[room]++;
+            if (counts[i] > max) {
+                max = counts[i];
+                answer = i;
             }
         }
-
-        int maxMeetingCount = 0, maxMeetingCountRoom = 0;
-        for (int i = 0; i < n; i++) {
-            if (meetingCount[i] > maxMeetingCount) {
-                maxMeetingCount = meetingCount[i];
-                maxMeetingCountRoom = i;
-            }
-        }
-
-        return maxMeetingCountRoom;
+        return answer;
     }
 }
