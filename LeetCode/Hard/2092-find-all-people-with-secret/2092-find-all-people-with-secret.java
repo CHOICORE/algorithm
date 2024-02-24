@@ -1,35 +1,77 @@
 class Solution {
-    public List<Integer> findAllPeople(int n, int[][] meetings, int firstPerson) {
-        Map<Integer, List<int[]>> graph = new HashMap<>();
+    public static List<Integer> findAllPeople(int n, int[][] meetings, int firstPerson) {
+
+        int maxMeetTime = 0;
+
+        for (int[] meeting : meetings) maxMeetTime = Math.max(maxMeetTime, meeting[2]);
+
+
+        List<List<int[]>> list = new ArrayList<>();
+        for (int i = 0; i <= maxMeetTime; i++) {
+            list.add(new ArrayList<>());
+        }
+
         for (int[] meeting : meetings) {
-            int x = meeting[0], y = meeting[1], t = meeting[2];
-            graph.computeIfAbsent(x, k -> new ArrayList<>()).add(new int[]{t, y});
-            graph.computeIfAbsent(y, k -> new ArrayList<>()).add(new int[]{t, x});
+            int time = meeting[2];
+            int a = meeting[0];
+            int b = meeting[1];
+
+            list.get(time).add(new int[]{a, b});
         }
 
-        int[] earliest = new int[n];
-        Arrays.fill(earliest, Integer.MAX_VALUE);
-        earliest[0] = 0;
-        earliest[firstPerson] = 0;
 
-        dfs(0, 0, graph, earliest);
-        dfs(firstPerson, 0, graph, earliest);
+        int[] parent = new int[n];
+        for (int i = 0; i < parent.length; i++) parent[i] = i;
+        parent[firstPerson] = 0;
 
-        List<Integer> answer = new ArrayList<>();
-        for (int i = 0; i < n; ++i) {
-            if (earliest[i] != Integer.MAX_VALUE) {
-                answer.add(i);
+        for (List<int[]> intArray : list) {
+            if (intArray.isEmpty()) continue;
+
+            for (int[] i : intArray) {
+                int a = i[0];
+                int b = i[1];
+
+                union(a, b, parent);
             }
+
+            for (int[] i : intArray) {
+                int a = i[0];
+                int b = i[1];
+                find(a, parent);
+                find(b, parent);
+
+                if (parent[a] != 0) parent[a] = a;
+                if (parent[b] != 0) parent[b] = b;
+            }
+
+
         }
-        return answer;
+
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = 0; i < parent.length; i++) {
+            find(i, parent);
+
+            if (parent[i] == 0) result.add(i);
+        }
+
+        return result;
     }
 
-    private void dfs(int person, int time, Map<Integer, List<int[]>> graph, int[] earliest) {
-        for (int[] nextPersonTime : graph.getOrDefault(person, new ArrayList<>())) {
-            int t = nextPersonTime[0], nextPerson = nextPersonTime[1];
-            if (t >= time && earliest[nextPerson] > t) {
-                earliest[nextPerson] = t;
-                dfs(nextPerson, t, graph, earliest);
+
+    private static int find(int a, int[] parent) {
+        if (a == parent[a]) return a;
+        return parent[a] = find(parent[a], parent);
+    }
+
+    private static void union(int a, int b, int[] parent) {
+        a = find(a, parent);
+        b = find(b, parent);
+
+        if (a != b) {
+            if (a <= b) {
+                parent[b] = a;
+            } else {
+                parent[a] = b;
             }
         }
     }
