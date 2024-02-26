@@ -9,9 +9,21 @@
  * }
  */
 class Solution {
-    fun isSameTree(p: TreeNode?, q: TreeNode?): Boolean {
-        if (p == null && q == null) return true
-        if (p == null || q == null) return false
-        return p.`val` === q.`val` && isSameTree(p.left, q.left) && isSameTree(p.right, q.right)
+    fun isSameTree(
+        p: TreeNode?,
+        q: TreeNode?,
+    ): Boolean {
+        return dfs(p, q)
+    }
+
+    fun dfs(
+        p: TreeNode?,
+        q: TreeNode?,
+    ): Boolean {
+        if (p == null || q == null) return q == p
+
+        return p?.`val`!! == q?.`val`!! &&
+            dfs(p?.left, q?.left) &&
+            dfs(p?.right, q?.right)
     }
 }
