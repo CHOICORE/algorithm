@@ -13,9 +13,9 @@ class Solution {
         maxDepth(root)
         return diameter
     }
-
+    
     var diameter = 0
-
+    
     fun maxDepth(node: TreeNode?): Int {
         node ?: return 0
 
