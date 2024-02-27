@@ -9,21 +9,21 @@
  * }
  */
 class Solution {
-    var result: Int = kotlin.Int.Companion.MIN_VALUE
-
     fun diameterOfBinaryTree(root: TreeNode?): Int {
-        depth(root)
-        return result
+        maxDepth(root)
+        return diameter
     }
 
-    fun depth(node: TreeNode?): Int {
-        if (node == null) return 0
-        val leftDepth = depth(node.left)
-        val rightDepth = depth(node.right)
+    var diameter = 0
 
-        val currrentD = leftDepth + rightDepth
-        result = max(result, currrentD)
+    fun maxDepth(node: TreeNode?): Int {
+        node ?: return 0
 
-        return max(leftDepth, rightDepth) + 1
+        val left = maxDepth(node.left)
+        val right = maxDepth(node.right)
+
+        diameter = max(diameter, left + right)
+
+        return max(left, right) + 1
     }
 }
