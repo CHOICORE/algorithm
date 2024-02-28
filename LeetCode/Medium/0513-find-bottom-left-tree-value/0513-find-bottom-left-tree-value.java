@@ -28,7 +28,7 @@ class Solution {
         if (current == null) {
             return;
         }
-        if (depth > maxDepth) {  // If true, we discovered a new level
+        if (depth > maxDepth) {
             maxDepth = depth;
             bottomLeftValue = current.val;
         }
