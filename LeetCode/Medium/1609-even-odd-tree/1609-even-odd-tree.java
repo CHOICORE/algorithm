@@ -13,35 +13,45 @@
  *     }
  * }
  */
-public class Solution {
-    private List<Integer> prev = new ArrayList<>();
+class Solution {
+    private int[] h;
 
-    public boolean isEvenOddTree(TreeNode root) {
-        TreeNode current = root;
-        return dfs(current, 0);
-    }
-
-    private boolean dfs(TreeNode current, int level) {
-        if (current == null) {
+    private boolean recursive(TreeNode root, int level) {
+        if (root == null) {
             return true;
         }
-
-        if (current.val % 2 == level % 2) {
-            return false;
+        if ((level & 1) == 0) {
+            if ((root.val & 1) == 0) {
+                return false;
+            }
+            if (h[level] == 0) {
+                h[level] = root.val;
+            } else {
+                if (h[level] >= root.val) {
+                    return false;
+                } else {
+                    h[level] = root.val;
+                }
+            }
+        } else {
+            if ((root.val & 1) == 1) {
+                return false;
+            }
+            if (h[level] == 0) {
+                h[level] = root.val;
+            } else {
+                if (h[level] <= root.val) {
+                    return false;
+                } else {
+                    h[level] = root.val;
+                }
+            }
         }
+        return recursive(root.left, level + 1) && recursive(root.right, level + 1);
+    }
 
-        while (prev.size() <= level) {
-            prev.add(0);
-        }
-
-        if (prev.get(level) != 0 && 
-                ((level % 2 == 0 && current.val <= prev.get(level)) || 
-                 (level % 2 == 1 && current.val >= prev.get(level)))) {
-            return false;
-        }
-
-        prev.set(level, current.val);
-
-        return dfs(current.left, level + 1) && dfs(current.right, level + 1);
+    public boolean isEvenOddTree(TreeNode root) {
+        h = new int[100001];
+        return recursive(root, 0);
     }
 }
