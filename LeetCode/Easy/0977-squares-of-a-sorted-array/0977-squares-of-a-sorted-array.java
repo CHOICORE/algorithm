@@ -1,47 +1,18 @@
 class Solution {
-    public int getMax(int[] arr) {
-        int max = arr[0];
-        for (int i = 1; i < arr.length; i++) {
-            if (arr[i] > max) {
-                max = arr[i];
-            }
-        }
-        return max;
-    }
-
-    public void countSort(int[] arr, int exp) {
-        int[] output = new int[arr.length];
-        int[] count = new int[10];
-
-        for (int j : arr) {
-            count[(j / exp) % 10]++;
-        }
-
-        for (int i = 1; i < 10; i++) {
-            count[i] += count[i - 1];
-        }
-
-        for (int i = arr.length - 1; i >= 0; i--) {
-            output[count[(arr[i] / exp) % 10] - 1] = arr[i];
-            count[(arr[i] / exp) % 10]--;
-        }
-
-        System.arraycopy(output, 0, arr, 0, arr.length);
-    }
-
-    public void radixSort(int[] arr) {
-        int max = getMax(arr);
-
-        for (int exp = 1; max / exp > 0; exp *= 10) {
-            countSort(arr, exp);
-        }
-    }
-
     public int[] sortedSquares(int[] nums) {
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = nums[i] * nums[i];
+        int left = 0, right = nums.length - 1;
+        int[] answer = new int[nums.length];
+        int i = nums.length - 1, square = 0;
+        while (left <= right) {
+            if (Math.abs(nums[left]) > Math.abs(nums[right])) {
+                square = nums[left];
+                left++;
+            } else {
+                square = nums[right];
+                right--;
+            }
+            answer[i--] = square * square;
         }
-        radixSort(nums);
-        return nums;
+        return answer;
     }
 }
