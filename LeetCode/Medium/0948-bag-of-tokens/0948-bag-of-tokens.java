@@ -1,4 +1,4 @@
-public class Solution {
+class Solution {
     public int bagOfTokensScore(int[] tokens, int power) {
         int score = 0;
         Arrays.sort(tokens);
