@@ -1,19 +1,16 @@
 class Solution {
     public int minimumLength(String s) {
-        int begin = 0;
-        int end = s.length() - 1;
 
-        while (begin < end && s.charAt(begin) == s.charAt(end)) {
-            char c = s.charAt(begin);
-
-            while (begin <= end && s.charAt(begin) == c) {
-                begin++;
-            }
-            while (end > begin && s.charAt(end) == c) {
-                end--;
-            }
+        char[] chars = s.toCharArray();
+        int n = chars.length;
+        int i = 0;
+        int j = n - 1;
+        while (j > i) {
+            if (chars[i] != chars[j]) break;
+            char c = chars[i];
+            while (j >= i && chars[i] == c) i++;
+            while (j >= i && chars[j] == c) j--;
         }
-
-        return end - begin + 1;
+        return j - i + 1;
     }
 }
