@@ -10,16 +10,19 @@
 
 class Solution {
     fun hasCycle(head: ListNode?): Boolean {
-        if (head == null) return false
+        var isCircle: Boolean = false
+
         var slow = head
-        var fast = head
-        while (fast!!.next != null && fast.next!!.next != null) {
-            slow = slow!!.next
-            fast = fast.next!!.next
+        var fast = head?.next
+        while (slow != null && fast != null) {
+            slow = slow?.next
+            fast = fast.next?.next
             if (slow == fast) {
-                return true
+                isCircle = true
+                return isCircle
             }
         }
-        return false
+
+        return isCircle
     }
 }
