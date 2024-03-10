@@ -1,35 +1,39 @@
 class Solution {
     public int[] intersection(int[] nums1, int[] nums2) {
-        Arrays.sort(nums1);
-        Arrays.sort(nums2);
-
-        int N = nums1.length;
-        int M = nums2.length;
-        int p1 = 0;
-        int p2 = 0;
-
-        Set<Integer> intersection = new HashSet<>();
-
-        while (p1 < N && p2 < M) {
-            if (nums1[p1] == nums2[p2]) {
-                intersection.add(nums1[p1]);
-                p1++;
-                p2++;
-            }
-            else if (nums1[p1] < nums2[p2]) {
-                p1++;
-            } else {
-                p2++;
+        final int N = 1_001;
+        var set = new int[N];
+        for (var i : nums1) set[i] = 1;
+        int resCount = 0;
+        for (var i : nums2) {
+            if (set[i] == 1) {
+                set[i] = 2;
+                ++resCount;
             }
         }
-
-        int K = intersection.size();
-        int[] result = new int[K];
-        int curr = 0;
-        for (int x : intersection) {
-            result[curr++] = x;
+        var res = new int[resCount];
+        var i = 0;
+        var nums = nums2.length > nums1.length ? nums1 : nums2;
+        for (var v : nums) {
+            if (set[v] == 2) {
+                res[i++] = v;
+                set[v] = 1;
+            }
         }
+        return res;
+    }
 
-        return result;
+    public int[] intersectionOnSet(int[] nums1, int[] nums2) {
+        var s1 = new HashSet<Integer>(nums1.length);
+        for (var i : nums1) s1.add(i);
+        var s2 = new HashSet<Integer>(nums2.length);
+        for (var i : nums2) {
+            if (s1.contains(i)) s2.add(i);
+        }
+        var res = new int[s2.size()];
+        int j = 0;
+        for (var i : s2) {
+            res[j++] = i;
+        }
+        return res;
     }
 }
