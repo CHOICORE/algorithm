@@ -1,19 +1,29 @@
 class Solution {
     public String customSortString(String order, String s) {
-        StringBuilder result = new StringBuilder();
-        Map<Character, Integer> map = new HashMap<>();
-        for (char c : s.toCharArray()) {
-            map.put(c, map.getOrDefault(c, 0) + 1);
+        int[] count = new int[26];
+        for (int i = 0; i < s.length(); ++i) {
+            ++count[(s.charAt(i) - 'a')];
         }
-        for (char c : order.toCharArray()) {
-            if (map.containsKey(c)) {
-                result.append(String.valueOf(c).repeat(Math.max(0, map.get(c))));
-                map.remove(c);
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < order.length(); ++i) {
+            var ch = order.charAt(i);
+            var idx = (int) (ch - 'a');
+            var c = count[idx];
+            count[idx] = 0;
+            if (c > 0) {
+                for (int j = 0; j < c; ++j) {
+                    builder.append(ch);
+                }
             }
         }
-        for (char c : map.keySet()) {
-            result.append(String.valueOf(c).repeat(Math.max(0, map.get(c))));
+        for (int i = 0; i < 26; ++i) {
+            if (count[i] > 0) {
+                final var ch = (char) (i + 'a');
+                for (int j = 0; j < count[i]; ++j) {
+                    builder.append(ch);
+                }
+            }
         }
-        return result.toString();
+        return builder.toString();
     }
 }
