@@ -1,22 +1,29 @@
 class Solution {
-    public int numSubarraysWithSum(int[] nums, int goal) {
-        int totalCount = 0;
-        int currentSum = 0;
-        Map<Integer, Integer> freq = new HashMap<>();
-
-        for (int num : nums) {
-            currentSum += num;
-            if (currentSum == goal) {
-                totalCount++;
-            }
-
-            if (freq.containsKey(currentSum - goal)) {
-                totalCount += freq.get(currentSum - goal);
-            }
-
-            freq.put(currentSum, freq.getOrDefault(currentSum, 0) + 1);
+    public int solve(int[] nums, int k) {
+        if (k < 0) {
+            return 0;
         }
+        int j = 0;
+        int i = 0;
+        int sum = 0;
+        int ans = 0;
+        while (i < nums.length) {
+            sum += nums[i];
+            while (sum > k && j < nums.length) {
+                sum -= nums[j];
+                j++;
+            }
+            if (sum <= k) {
+                ans += i - j + 1;
+            }
+            i++;
+        }
+        return ans;
+    }
 
-        return totalCount;
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        int x = solve(nums, goal);
+        int y = solve(nums, goal - 1);
+        return x - y;
     }
 }
