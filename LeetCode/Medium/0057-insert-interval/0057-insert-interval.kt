@@ -1,30 +1,25 @@
 class Solution {
     fun insert(intervals: Array<IntArray>, newInterval: IntArray): Array<IntArray> {
-        val result: MutableList<IntArray> = java.util.ArrayList<IntArray>()
+        var start = newInterval[0]
+        var end = newInterval[1]
         var i = 0
-
-        while (i < intervals.size && intervals[i][1] < newInterval[0]) {
-            result.add(intervals[i])
-            i++
+        val ans = mutableListOf<IntArray>()
+        while (i < intervals.size && intervals[i][1] < start) {
+            ans += intervals[i++]
         }
-
-        while (i < intervals.size && intervals[i][0] <= newInterval[1]) {
-            newInterval[0] = min(newInterval[0], intervals[i][0])
-            newInterval[1] = max(newInterval[1], intervals[i][1])
-            i++
-        }
-        result.add(newInterval)
-
         while (i < intervals.size) {
-            result.add(intervals[i])
-            i++
+            if (intervals[i][0] <= end) {
+                start = intervals[i][0].coerceAtMost(start)
+                end = intervals[i][1].coerceAtLeast(end)
+                i++
+            } else {
+                ans += intArrayOf(start, end)
+                start = intervals[i][0]
+                end = intervals[i][1]
+                i++
+            }
         }
-
-        val arr = Array(result.size) { IntArray(2) }
-        for (j in result.indices) {
-            arr[j] = result[j]
-        }
-
-        return arr
+        ans += intArrayOf(start, end)
+        return ans.toTypedArray()
     }
 }
