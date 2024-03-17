@@ -1,24 +1,30 @@
 class Solution {
-
     public int[][] insert(int[][] intervals, int[] newInterval) {
-        int len = intervals.length;
-        int left = 0;
-        int right = len - 1;
-        while (left < len && newInterval[0] > intervals[left][1]) {
-            left++;
+        List<int[]> result = new ArrayList<>();
+        int i = 0;
+
+        while (i < intervals.length && intervals[i][1] < newInterval[0]) {
+            result.add(intervals[i]);
+            i++;
         }
-        while (right >= 0 && newInterval[1] < intervals[right][0]) {
-            right--;
+
+        while (i < intervals.length && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+            newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+            i++;
         }
-        int[][] res = new int[left + len - right][2];
-        for (int i = 0; i < left; i++) {
-            res[i] = Arrays.copyOf(intervals[i], intervals[i].length);
+        result.add(newInterval);
+
+        while (i < intervals.length) {
+            result.add(intervals[i]);
+            i++;
         }
-        res[left][0] = Math.min(newInterval[0], left == len ? newInterval[0] : intervals[left][0]);
-        res[left][1] = Math.max(newInterval[1], right == -1 ? newInterval[1] : intervals[right][1]);
-        for (int i = left + 1, j = right + 1; j < len; i++, j++) {
-            res[i] = intervals[j];
+
+        int[][] arr = new int[result.size()][2];
+        for (int j = 0; j < result.size(); j++) {
+            arr[j] = result.get(j);
         }
-        return res;
+
+        return arr;
     }
 }
