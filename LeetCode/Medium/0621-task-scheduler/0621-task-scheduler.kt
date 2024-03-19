@@ -1,32 +1,21 @@
 class Solution {
     fun leastInterval(tasks: CharArray, n: Int): Int {
-        val freq = IntArray(26)
+        val freqs = IntArray(26)
         for (ch in tasks) {
-            freq[ch.code - 'A'.code]++
+            freqs[ch - 'A']++
         }
 
-        val pq: PriorityQueue<Int> = PriorityQueue<Int>(Collections.reverseOrder())
-        for (i in 0..25) {
-            if (freq[i] > 0) {
-                pq.offer(freq[i])
+        Arrays.sort(freqs)
+        var idles = (freqs[25] - 1) * n
+        for (i in 24 downTo 0) {
+            if (idles <= 0) {
+                break
             }
-        }
 
-        var time = 0
-        while (!pq.isEmpty()) {
-            var cycle = n + 1
-            val store: MutableList<Int> = ArrayList()
-            var taskCount = 0
-            while (cycle-- > 0 && !pq.isEmpty()) {
-                val currentFreq = pq.poll()
-                if (currentFreq > 1) {
-                    store.add(currentFreq - 1)
-                }
-                taskCount++
-            }
-            store.forEach(Consumer { e: Int -> pq.offer(e) })
-            time += (if (pq.isEmpty()) taskCount else n + 1)
+            idles -= Math.min(freqs[i], freqs[25] - 1)
         }
-        return time
+        idles = Math.max(0, idles)
+
+        return tasks.size + idles
     }
 }
