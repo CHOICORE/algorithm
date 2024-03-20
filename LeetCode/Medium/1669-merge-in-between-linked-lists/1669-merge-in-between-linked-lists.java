@@ -10,23 +10,26 @@
  */
 class Solution {
     public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
-        ListNode start = null;
-        ListNode end = list1;
-
-        for (int index = 0; index < b; index++) {
-            if (index == a - 1) {
-                start = end;
-            }
-            end = end.next;
+        ListNode first = list1;
+        ListNode second = list1;
+        ListNode answer = first;
+        int i = 1;
+        int j = 0;
+        while (i < a) {
+            first = first.next;
+            i++;
         }
-        start.next = list2;
-
-        while (list2.next != null) {
-            list2 = list2.next;
+        while (j < b) {
+            second = second.next;
+            j++;
         }
-        list2.next = end.next;
-        end.next = null;
+        first.next = list2;
+        ListNode secon = list2;
+        while (secon.next != null) {
+            secon = secon.next;
+        }
+        secon.next = second.next;
 
-        return list1;
+        return answer;
     }
 }
