@@ -10,36 +10,23 @@
  */
 class Solution {
     public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
-        List<Integer> mergeArray = new ArrayList<>();
+        ListNode start = null;
+        ListNode end = list1;
 
-        int index = 0;
-        ListNode current1 = list1;
-        while (index < a) {
-            mergeArray.add(current1.val);
-            current1 = current1.next;
-            index++;
+        for (int index = 0; index < b; index++) {
+            if (index == a - 1) {
+                start = end;
+            }
+            end = end.next;
         }
+        start.next = list2;
 
-        ListNode current2 = list2;
-        while (current2 != null) {
-            mergeArray.add(current2.val);
-            current2 = current2.next;
+        while (list2.next != null) {
+            list2 = list2.next;
         }
+        list2.next = end.next;
+        end.next = null;
 
-        while (index < b + 1) {
-            current1 = current1.next;
-            index++;
-        }
-
-        while (current1 != null) {
-            mergeArray.add(current1.val);
-            current1 = current1.next;
-        }
-        ListNode resultList = null;
-        for (int i = mergeArray.size() - 1; i >= 0; i--) {
-            ListNode newNode = new ListNode(mergeArray.get(i), resultList);
-            resultList = newNode;
-        }
-        return resultList;
+        return list1;
     }
 }
