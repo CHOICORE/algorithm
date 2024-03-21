@@ -9,19 +9,15 @@
  */
 class Solution {
     fun reverseList(head: ListNode?): ListNode? {
-        var head = head
         var prev: ListNode? = null
-        var cur = head
-        var next: ListNode? = null
+        var curr = head
 
-        while (cur != null) {
-            next = cur.next
-            cur.next = prev
-            prev = cur
-            cur = next
+        while (curr != null) {
+            var temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = temp
         }
-
-        head = prev
-        return head
+        return (prev)
     }
 }
