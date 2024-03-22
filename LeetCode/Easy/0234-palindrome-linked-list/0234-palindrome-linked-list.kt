@@ -9,25 +9,29 @@
  */
 class Solution {
     fun isPalindrome(head: ListNode?): Boolean {
-        val array = IntArray(100000)
-        
-        if (head == null || head.next == null) {
-            return true
+        var fast = head
+        var slow = head
+        while (fast != null && slow != null && fast.next != null) {
+            fast = fast.next.next
+            slow = slow.next
         }
-        var h: ListNode? = head
-        val array1 = array
-        var size = 0
-
-        while (h != null) {
-            array1[size++] = h.`val`
-            h = h.next
+        var prev = slow
+        slow = slow!!.next
+        prev!!.next = null
+        while (slow != null) {
+            val next = slow.next
+            slow.next = prev
+            prev = slow
+            slow = next
         }
-
-        val m = size / 2
-        for (i in 0 until m) {
-            if (array[i] != array1[--size]) {
+        slow = prev
+        fast = head
+        while (fast != null && slow != null) {
+            if (fast.`val` != slow.`val`) {
                 return false
             }
+            fast = fast.next
+            slow = slow.next
         }
         return true
     }
