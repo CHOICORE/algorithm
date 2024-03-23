@@ -9,30 +9,31 @@
  * }
  */
 class Solution {
-
-    private ListNode temp;
-    private boolean isStop;
-
-    public void reorderList(ListNode head) {
-        temp = head;
-        isStop = false;
-        reorder(head);
+    public static void reorderList(ListNode head) {
+        if (head.next == null) {
+            return;
+        }
+        reorderList2(head, head.next);
     }
 
-    private void reorder(ListNode head) {
-        if (head == null) return;
-        reorder(head.next);
-
-        if (!isStop) {
-            ListNode next = temp.next;
-            temp.next = head;
-            head.next = next;
-            temp = next;
+    public static ListNode reorderList2(ListNode head, ListNode curr) {
+        ListNode temp;
+        if (curr.next != null) {
+            temp = reorderList2(head, curr.next);
+        } else {
+            temp = head;
+        }
+        if (temp == null) {
+            return null;
+        }
+        if (temp == curr || temp.next == curr) {
+            curr.next = null;
+            return null;
         }
 
-        if (temp != null && temp.next == head) {
-            temp.next = null;
-            isStop = true;
-        }
+        curr.next = temp.next;
+        temp.next = curr;
+        return curr.next;
     }
+
 }
