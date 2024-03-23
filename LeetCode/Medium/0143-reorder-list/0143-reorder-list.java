@@ -13,13 +13,13 @@ class Solution {
         if (head.next == null) {
             return;
         }
-        reorderList2(head, head.next);
+        reorderList(head, head.next);
     }
 
-    public static ListNode reorderList2(ListNode head, ListNode curr) {
+    public static ListNode reorderList(ListNode head, ListNode curr) {
         ListNode temp;
         if (curr.next != null) {
-            temp = reorderList2(head, curr.next);
+            temp = reorderList(head, curr.next);
         } else {
             temp = head;
         }
