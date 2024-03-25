@@ -1,15 +1,33 @@
+import java.util.AbstractList;
+
 class Solution {
+    private List<Integer> answer;
+
     public List<Integer> findDuplicates(int[] nums) {
-        List<Integer> answer = new ArrayList<>();
-        int n = nums.length;
-        if (n <= 1) return answer;
+        return new AbstractList<>() {
+            public Integer get(int index) {
+                init();
+                return answer.get(index);
+            }
 
-        boolean[] visited = new boolean[(int) Math.pow(10, 5)];
+            public int size() {
+                init();
+                return answer.size();
+            }
 
-        for (int num : nums) {
-            if (visited[num]) answer.add(num);
-            else visited[num] = true;
-        }
-        return answer;
+            private void init() {
+                if (answer != null) return;
+                answer = new ArrayList<>();
+                int t;
+                for (int i = 0; i < nums.length; i++) {
+                    t = Math.abs(nums[i]);
+                    if (nums[t - 1] < 0) {
+                        answer.add(t);
+                    } else {
+                        nums[t - 1] *= -1;
+                    }
+                }
+            }
+        };
     }
 }
