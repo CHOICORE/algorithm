@@ -4,11 +4,11 @@ class Solution {
         int n = nums.length;
         if (n <= 1) return answer;
 
-        boolean[] visit = new boolean[(int) Math.pow(10, 5)];
+        boolean[] visited = new boolean[(int) Math.pow(10, 5)];
 
         for (int num : nums) {
-            if (visit[num]) answer.add(num);
-            else visit[num] = true;
+            if (visited[num]) answer.add(num);
+            else visited[num] = true;
         }
         return answer;
     }
