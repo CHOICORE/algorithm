@@ -1,28 +1,21 @@
 class Solution {
     public int numSubarrayProductLessThanK(int[] nums, int k) {
-        if (k == 0) return 0;
-        double logK = Math.log(k);
-        int m = nums.length + 1;
-        double[] logsPrefixSum = new double[m];
+        int sum = 1;
+        int result = 0;
+        int left = 0;
 
-        for (int i = 0; i < nums.length; i++) {
-            logsPrefixSum[i + 1] = logsPrefixSum[i] + Math.log(nums[i]);
-        }
+        for (int right = 0; right < nums.length; right++) {
+            sum *= nums[right];
 
-        int totalCount = 0;
-
-        for (int currIdx = 0; currIdx < m; currIdx++) {
-            int low = currIdx + 1, high = m;
-            while (low < high) {
-                int mid = low + (high - low) / 2;
-                if (logsPrefixSum[mid] < logsPrefixSum[currIdx] + logK - 1e-9) {
-                    low = mid + 1;
-                } else {
-                    high = mid;
-                }
+            while (sum >= k && left <= right) {
+                sum /= nums[left];
+                left++;
             }
-            totalCount += low - currIdx - 1;
+
+            result += right - left + 1;
         }
-        return totalCount;
+
+        return result;
+
     }
 }
