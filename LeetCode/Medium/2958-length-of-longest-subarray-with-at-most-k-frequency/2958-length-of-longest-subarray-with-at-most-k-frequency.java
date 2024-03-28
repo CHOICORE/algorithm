@@ -1,26 +1,31 @@
 class Solution {
     public int maxSubarrayLength(int[] nums, int k) {
-        int max = Integer.MIN_VALUE;
         int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
 
-        for (int n : nums) {
-            max = Math.max(n, max);
-            min = Math.min(n, min);
+        for (int num : nums) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
         }
-        int[] freq = new int[max - min + 1];
+
+        int[] frequencies = new int[max - min + 1];
+
         int left = 0;
-        int maxLength = 0;
 
-        for (int right = 0; right < nums.length; ++right) {
-            int currVal = nums[right] - min;
-            freq[currVal]++;
+        int maxWindow = 0;
 
-            while (freq[currVal] > k) {
-                freq[nums[left] - min]--;
+        for (int right = 0; right < nums.length; right++) {
+            frequencies[nums[right] - min]++;
+
+            while (frequencies[nums[right] - min] > k) {
+                frequencies[nums[left] - min]--;
+
                 left++;
             }
-            maxLength = Math.max(right - left + 1, maxLength);
+
+            maxWindow = Math.max(maxWindow, right - left + 1);
         }
-        return maxLength;
+
+        return maxWindow;
     }
 }
