@@ -1,17 +1,26 @@
 class Solution {
     public int maxSubarrayLength(int[] nums, int k) {
-        int ans = 0, start = -1;
-        Map<Integer, Integer> frequency = new HashMap();
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
 
-        for (int end = 0; end < nums.length; end++) {
-            frequency.put(nums[end], frequency.getOrDefault(nums[end], 0) + 1);
-            while (frequency.get(nums[end]) > k) {
-                start++;
-                frequency.put(nums[start], frequency.get(nums[start]) - 1);
-            }
-            ans = Math.max(ans, end - start);
+        for (int n : nums) {
+            max = Math.max(n, max);
+            min = Math.min(n, min);
         }
+        int[] freq = new int[max - min + 1];
+        int left = 0;
+        int maxLength = 0;
 
-        return ans;
+        for (int right = 0; right < nums.length; ++right) {
+            int currVal = nums[right] - min;
+            freq[currVal]++;
+
+            while (freq[currVal] > k) {
+                freq[nums[left] - min]--;
+                left++;
+            }
+            maxLength = Math.max(right - left + 1, maxLength);
+        }
+        return maxLength;
     }
 }
