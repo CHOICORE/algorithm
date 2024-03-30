@@ -1,31 +1,20 @@
 class Solution {
-    public int subarraysWithKDistinct(int[] nums, int k) {
-        int[] distinctCount = new int[nums.length + 1];
-
-        int totalCount = 0;
-        int left = 0;
-        int right = 0;
-        int currCount = 0;
-
-        while (right < nums.length) {
-            if (distinctCount[nums[right++]]++ == 0) {
-                k--;
-            }
-            
-            if (k < 0) {
-                --distinctCount[nums[left++]];
-                k++;
-                currCount = 0;
-            }
-            
-            if (k == 0) {
-                while (distinctCount[nums[left]] > 1) {
-                    --distinctCount[nums[left++]];
-                    currCount++;
-                }
-                totalCount += (currCount + 1);
+    public int subarraysWithKDistinct(int[] nums, int K) {
+        int[] numFreq = new int[nums.length + 1];
+        int distinct = 0, start = 0, minEnd = 0, total = 0;
+        while (distinct == K || minEnd < nums.length) {
+            while (distinct < K && minEnd < nums.length)
+                if (numFreq[nums[minEnd++]]++ == 0)
+                    distinct++;
+            int maxEnd = minEnd;
+            while (maxEnd < nums.length && numFreq[nums[maxEnd]] > 0)
+                maxEnd++;
+            while (distinct == K) {
+                if (numFreq[nums[start++]]-- == 1)
+                    distinct--;
+                total += (maxEnd - minEnd + 1);
             }
         }
-        return totalCount;
+        return total;
     }
 }
