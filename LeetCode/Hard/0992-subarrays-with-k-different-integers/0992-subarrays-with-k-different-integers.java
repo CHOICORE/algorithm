@@ -1,24 +1,30 @@
 class Solution {
     public int subarraysWithKDistinct(int[] nums, int k) {
-        return slidingWindowAtMost(nums, k) - slidingWindowAtMost(nums, k - 1);
-    }
-    
-    private int slidingWindowAtMost(int[] nums, int distinctK) {
-        Map<Integer, Integer> freqMap = new HashMap<>();
-        int left = 0, totalCount = 0;
-        
-        for (int right = 0; right < nums.length; right++) {
-            freqMap.put(nums[right], freqMap.getOrDefault(nums[right], 0) + 1);
-            
-            while (freqMap.size() > distinctK) {
-                freqMap.put(nums[left], freqMap.get(nums[left]) - 1);
-                if (freqMap.get(nums[left]) == 0) {
-                    freqMap.remove(nums[left]);
-                }
-                left++;
+        int[] distinctCount = new int[nums.length + 1];
+
+        int totalCount = 0;
+        int left = 0;
+        int right = 0;
+        int currCount = 0;
+
+        while (right < nums.length) {
+            if (distinctCount[nums[right++]]++ == 0) {
+                k--;
             }
             
-            totalCount += (right - left + 1);
+            if (k < 0) {
+                --distinctCount[nums[left++]];
+                k++;
+                currCount = 0;
+            }
+            
+            if (k == 0) {
+                while (distinctCount[nums[left]] > 1) {
+                    --distinctCount[nums[left++]];
+                    currCount++;
+                }
+                totalCount += (currCount + 1);
+            }
         }
         return totalCount;
     }
