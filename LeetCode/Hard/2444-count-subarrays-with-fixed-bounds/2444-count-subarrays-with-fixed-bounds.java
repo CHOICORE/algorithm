@@ -1,11 +1,13 @@
 class Solution {
     public long countSubarrays(int[] nums, int minK, int maxK) {
-        long answer = 0;
-        int tmp = -1, left = -1, right = -1;
+        int left = -1;
+        int right = -1;
+        int c = -1;
+        long ans = 0;
 
-        for (int i = 0; i < nums.length; ++i) {
-            if (!(minK <= nums[i] && nums[i] <= maxK)) {
-                tmp = i;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] < minK || nums[i] > maxK) {
+                c = i;
             }
 
             if (nums[i] == minK) {
@@ -16,9 +18,11 @@ class Solution {
                 right = i;
             }
 
-            answer += Math.max(0, Math.min(left, right) - tmp);
+            int smaller = Math.min(left, right);
+            int temp = smaller - c;
+            ans += Math.max(temp, 0);
         }
 
-        return answer;
+        return ans;
     }
 }
