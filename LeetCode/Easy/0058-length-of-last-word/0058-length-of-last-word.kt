@@ -1,13 +1,14 @@
 class Solution {
     fun lengthOfLastWord(s: String): Int {
-        var length = 0
+        var count = 0
         for (i in s.length - 1 downTo 0) {
             if (s[i] != ' ') {
-                length++
-            } else if (length != 0) {
-                break
+                count++
+            } else if (count > 0) {
+                return count
             }
         }
-        return length
+
+        return count
     }
 }
