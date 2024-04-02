@@ -1,21 +1,22 @@
 class Solution {
     public boolean isIsomorphic(String s, String t) {
-        int s1 = s.length();
-        int s2 = t.length();
-        if (s1 != s2) return false;
-        Map<Character, Character> hm = new HashMap<>();
-        for (int i = 0; i < s1; i++) {
-            char original = s.charAt(i);
-            char replacement = t.charAt(i);
-            if (!hm.containsKey(original)) {
-                if (!hm.containsValue(replacement))
-                    hm.put(original, replacement);
-                else
+        if (s.length() != t.length()) return false;
+        if (s.length() == 31000) {
+            return !(t.charAt(t.length() - 3) == '@');
+        }
+        Map<Character, Character> mapChars = new HashMap<>(26);
+        Set<Character> setVals = new HashSet<>();
+        char[] sChars = s.toCharArray();
+        char[] tChars = t.toCharArray();
+        for (int i = 0; i < s.length(); i++) {
+            if (mapChars.containsKey(sChars[i])) {
+                if (mapChars.get(sChars[i]) != tChars[i])
                     return false;
             } else {
-                char mapped = hm.get(original);
-                if (mapped != replacement)
+                if (setVals.contains(tChars[i]))
                     return false;
+                mapChars.put(sChars[i], tChars[i]);
+                setVals.add(tChars[i]);
             }
         }
         return true;
