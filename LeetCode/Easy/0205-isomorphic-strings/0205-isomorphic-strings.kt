@@ -1,8 +1,5 @@
 class Solution {
-    fun isIsomorphic(
-        s: String,
-        t: String,
-    ): Boolean {
+    fun isIsomorphic(s: String, t: String): Boolean {
         val sCount = IntArray(256)
         val tCount = IntArray(256)
 
