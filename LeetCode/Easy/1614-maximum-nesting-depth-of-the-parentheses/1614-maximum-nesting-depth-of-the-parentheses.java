@@ -4,7 +4,6 @@ class Solution {
         int temp = 0;
         for (char i : s.toCharArray()) {
             if (i == '(') {
-
                 temp++;
             }
             if (i == ')') {
