@@ -1,31 +1,32 @@
 class Solution {
     public boolean checkValidString(String s) {
-        int n = s.length();
-        boolean[][] dp = new boolean[n + 1][n + 1];
-        
-        dp[n][0] = true;
+        Stack<Integer> openBrackets = new Stack<>();
+        Stack<Integer> asterisks = new Stack<>();
 
-        for (int index = n - 1; index >= 0; index--) {
-            for (int openBracket = 0; openBracket < n; openBracket++) {
-                boolean isValid = false;
-                
-                if (s.charAt(index) == '*') {
-                    isValid |= dp[index + 1][openBracket + 1];
-                    if (openBracket > 0) {
-                        isValid |= dp[index + 1][openBracket - 1];
-                    }
-                    isValid |= dp[index + 1][openBracket];
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+
+            if (ch == '(') {
+                openBrackets.push(i);
+            } else if (ch == '*') {
+                asterisks.push(i);
+            } else {
+                if (!openBrackets.empty()) {
+                    openBrackets.pop();
+                } else if (!asterisks.isEmpty()) {
+                    asterisks.pop();
                 } else {
-                    if (s.charAt(index) == '(') {
-                        isValid |= dp[index + 1][openBracket + 1];
-                    } else if (openBracket > 0) {
-                        isValid |= dp[index + 1][openBracket - 1];
-                    }
+                    return false;
                 }
-                dp[index][openBracket] = isValid;
             }
         }
 
-        return dp[0][0];
+        while (!openBrackets.isEmpty() && !asterisks.isEmpty()) {
+            if (openBrackets.pop() > asterisks.pop()) {
+                return false;
+            }
+        }
+
+        return openBrackets.isEmpty();
     }
 }
