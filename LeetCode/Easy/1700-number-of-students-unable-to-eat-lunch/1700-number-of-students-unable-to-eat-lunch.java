@@ -1,30 +1,24 @@
 class Solution {
     public int countStudents(int[] students, int[] sandwiches) {
-        int circleStudentCount = 0;
-        int squareStudentCount = 0;
-        
+        int CSW = 0, SSW = 0;
+
         for (int student : students) {
-            if (student == 0) {
-                circleStudentCount++;
+            if (student == 1) {
+                SSW++;
             } else {
-                squareStudentCount++;
+                CSW++;
             }
         }
-        
+
         for (int sandwich : sandwiches) {
-            if (sandwich == 0 && circleStudentCount == 0) {
-                return squareStudentCount;
-            }
-            if (sandwich == 1 && squareStudentCount == 0) {
-                return circleStudentCount;
-            }
-            if (sandwich == 0) {
-                circleStudentCount--;
+            if (sandwich == 1 && SSW > 0) {
+                SSW--;
+            } else if (sandwich == 0 && CSW > 0) {
+                CSW--;
             } else {
-                squareStudentCount--;
+                return SSW + CSW;
             }
         }
-        
         return 0;
     }
 }
