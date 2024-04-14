@@ -14,22 +14,29 @@
  * }
  */
 class Solution {
-    public int left = 0;
-
     public int sumOfLeftLeaves(TreeNode root) {
-        class Traverse {
-            Traverse(TreeNode root) {
-                TreeNode temp = root;
-                if (temp.left != null) {
-                    if (temp.left.left == null && temp.left.right == null) left += temp.left.val;
-                    new Traverse(temp.left);
-                }
-                if (temp.right != null) {
-                    new Traverse(temp.right);
+        if (root == null) return 0;
+
+        int sum = 0;
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+
+            if (node.left != null) {
+                if (node.left.left == null && node.left.right == null) {
+                    sum += node.left.val;
+                } else {
+                    stack.push(node.left);
                 }
             }
+
+            if (node.right != null) {
+                stack.push(node.right);
+            }
         }
-        new Traverse(root);
-        return left;
+
+        return sum;
     }
 }
