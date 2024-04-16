@@ -21,9 +21,7 @@ class Solution {
             return zoo;
         }
 
-        if (root == null) {
-            return root;
-        }
+        if (root == null) return null;
 
         if (cur == depth - 1) {
             TreeNode left = root.left;
@@ -47,7 +45,5 @@ class Solution {
 
     public TreeNode addOneRow(TreeNode root, int val, int depth) {
         return helper(root, val, depth, 1);
-
-
     }
 }
