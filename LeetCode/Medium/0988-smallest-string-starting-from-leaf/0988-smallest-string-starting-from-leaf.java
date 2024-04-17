@@ -14,36 +14,50 @@
  * }
  */
 class Solution {
+
+    char[] chs = null;
+    int l = 0;
+
     public String smallestFromLeaf(TreeNode root) {
-        String smallestString = "";
-        Queue<Pair<TreeNode, String>> nodeQueue = new LinkedList<>();
-        
-        nodeQueue.add(new Pair<>(root, String.valueOf((char) (root.val + 'a'))));
-        
-        while (!nodeQueue.isEmpty()) {
-            
-            Pair<TreeNode, String> pair = nodeQueue.poll();
-            TreeNode node = pair.getKey();
-            String currentString = pair.getValue();
-            
-            if (node.left == null && node.right == null) {
-                
-                if (smallestString.isEmpty()) {
-                    smallestString = currentString;
-                } else {
-                    smallestString = currentString.compareTo(smallestString) < 0 ? currentString : smallestString;
+        int d = depth(root);
+        solve(root, new char[d], d - 1);
+        return new String(chs, l, d - l);
+    }
+
+    private int depth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(depth(root.left), depth(root.right)) + 1;
+    }
+
+    private void solve(TreeNode node, char[] t, int i) {
+        if (node == null) {
+            return;
+        }
+        t[i] = (char) ('a' + node.val);
+        if (node.left == null && node.right == null) {
+            if (chs == null) {
+                chs = Arrays.copyOf(t, t.length);
+                l = i;
+            } else {
+                for (int k = 0, d = Math.max(l, i); k + d < t.length; k++) {
+                    if (chs[l + k] < t[i + k]) {
+                        return;
+                    } else if (chs[l + k] > t[i + k]) {
+                        chs = Arrays.copyOf(t, t.length);
+                        l = i;
+                        return;
+                    }
+                }
+                if (l < i) {
+                    chs = Arrays.copyOf(t, t.length);
+                    l = i;
                 }
             }
-            
-            if (node.left != null) {
-                nodeQueue.add(new Pair<>(node.left, (char) (node.left.val + 'a') + currentString));
-            }
-            
-            if (node.right != null) {
-                nodeQueue.add(new Pair<>(node.right, (char) (node.right.val + 'a') + currentString));
-            }
+            return;
         }
-
-        return smallestString;
+        solve(node.left, t, i - 1);
+        solve(node.right, t, i - 1);
     }
 }
