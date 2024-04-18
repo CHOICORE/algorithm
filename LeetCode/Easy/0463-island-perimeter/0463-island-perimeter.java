@@ -1,26 +1,30 @@
 class Solution {
     public int islandPerimeter(int[][] grid) {
-        int n = grid.length;
-        int m = grid[0].length;
-        int cnt = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (grid[i][j] == 1) {
-                    if ((j > 0 && grid[i][j - 1] == 0) || j == 0)
-                        cnt++;
+        int height = grid.length;
+        int width = grid[0].length;
 
-                    if ((i > 0 && grid[i - 1][j] == 0) || i == 0)
-                        cnt++;
+        int result = 0;
 
-                    if ((j < m - 1 && grid[i][j + 1] == 0) || j == m - 1)
-                        cnt++;
-
-                    if ((i < n - 1 && grid[i + 1][j] == 0) || i == n - 1)
-                        cnt++;
-                }
+        for (int[] value : grid) {
+            int prev = 0;
+            for (int x = 0; x < width; x++) {
+                int keep = value[x];
+                result += prev ^ keep;
+                prev = keep;
             }
+            result += prev;
         }
-        
-        return cnt;
+
+
+        for (int x = 0; x < width; x++) {
+            int prev = 0;
+            for (int[] ints : grid) {
+                int keep = ints[x];
+                result += prev ^ keep;
+                prev = keep;
+            }
+            result += prev;
+        }
+        return result;
     }
 }
