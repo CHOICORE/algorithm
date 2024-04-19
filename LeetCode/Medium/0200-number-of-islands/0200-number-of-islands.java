@@ -1,35 +1,49 @@
 class Solution {
-    
     public int numIslands(char[][] grid) {
-    int m = grid.length;
-    int n = grid[0].length;
+        int ans = 0;
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (!visited[i][j] && grid[i][j] == '1') {
+                    bfs(grid, i, j, visited);
+                    ans++;
+                }
+            }
+        }
+        return ans;
+    }
 
-    int count = 0;
-
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            if (grid[i][j] == '1') {
-                count++;
-                dfs(grid, i, j);
+    void bfs(char[][] grid, int i, int j, boolean[][] visited) {
+        Queue<Pair> q = new LinkedList<Pair>();
+        visited[i][j] = true;
+        q.add(new Pair(i, j));
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        while (!q.isEmpty()) {
+            int r = q.peek().first;
+            int c = q.peek().second;
+            q.remove();
+            for (int k = 0; k < 4; k++) {
+                int rowNum = r + dx[k];
+                int colNum = c + dy[k];
+                if (0 <= rowNum && rowNum < grid.length && colNum >= 0
+                        && colNum < grid[0].length
+                        && grid[rowNum][colNum] == '1'
+                        && !visited[rowNum][colNum]) {
+                    visited[rowNum][colNum] = true;
+                    q.add(new Pair(rowNum, colNum));
+                }
             }
         }
     }
-        return count;
-    }
 
-    private void dfs(char[][] grid, int row, int col) {
-        int m = grid.length;
-        int n = grid[0].length;
+    static class Pair {
+        int first;
+        int second;
 
-        if (row < 0 || row >= m || col < 0 || col >= n || grid[row][col] == '0') {
-            return;
+        Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
         }
-
-        grid[row][col] = '0';
-
-        dfs(grid, row - 1, col); // 위로
-        dfs(grid, row + 1, col); // 아래로
-        dfs(grid, row, col - 1); // 왼쪽으로
-        dfs(grid, row, col + 1); // 오른쪽으로
     }
 }
