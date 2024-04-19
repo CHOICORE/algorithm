@@ -7,7 +7,7 @@ class Solution {
         return result
     }
 
-    fun dfs(
+    private fun dfs(
         grid: Array<CharArray>,
         x: Int,
         y: Int,
