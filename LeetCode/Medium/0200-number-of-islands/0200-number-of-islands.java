@@ -1,49 +1,34 @@
 class Solution {
+    int rows;
+    int cols;
+    int islands = 0;
+
     public int numIslands(char[][] grid) {
-        int ans = 0;
-        boolean[][] visited = new boolean[grid.length][grid[0].length];
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (!visited[i][j] && grid[i][j] == '1') {
-                    bfs(grid, i, j, visited);
-                    ans++;
-                }
-            }
-        }
-        return ans;
+        rows = grid.length;
+        cols = grid[0].length;
+        for (int row = 0; row < rows; row++)
+            check(grid, row);
+        return islands;
     }
 
-    void bfs(char[][] grid, int i, int j, boolean[][] visited) {
-        Queue<Pair> q = new LinkedList<Pair>();
-        visited[i][j] = true;
-        q.add(new Pair(i, j));
-        int[] dx = {-1, 1, 0, 0};
-        int[] dy = {0, 0, -1, 1};
-        while (!q.isEmpty()) {
-            int r = q.peek().first;
-            int c = q.peek().second;
-            q.remove();
-            for (int k = 0; k < 4; k++) {
-                int rowNum = r + dx[k];
-                int colNum = c + dy[k];
-                if (0 <= rowNum && rowNum < grid.length && colNum >= 0
-                        && colNum < grid[0].length
-                        && grid[rowNum][colNum] == '1'
-                        && !visited[rowNum][colNum]) {
-                    visited[rowNum][colNum] = true;
-                    q.add(new Pair(rowNum, colNum));
-                }
+    public void check(final char[][] grid, int row) {
+        final char[] finalRow = grid[row];
+        for (int col = 0; col < cols; ++col)
+            if (finalRow[col] == '1') {
+                bfs(grid, row, col);
+                ++islands;
             }
-        }
     }
 
-    static class Pair {
-        int first;
-        int second;
-
-        Pair(int first, int second) {
-            this.first = first;
-            this.second = second;
-        }
+    public void bfs(char[][] grid, int row, int col) {
+        grid[row][col] = '*';
+        if (row > 0 && grid[row - 1][col] == '1')
+            bfs(grid, row - 1, col);
+        if (row + 1 < rows && grid[row + 1][col] == '1')
+            bfs(grid, row + 1, col);
+        if (col > 0 && grid[row][col - 1] == '1')
+            bfs(grid, row, col - 1);
+        if (col + 1 < cols && grid[row][col + 1] == '1')
+            bfs(grid, row, col + 1);
     }
 }
