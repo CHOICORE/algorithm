@@ -1,35 +1,32 @@
 class Solution {
-    var rows: Int = 0
-    var cols: Int = 0
-    var islands: Int = 0
-
     fun numIslands(grid: Array<CharArray>): Int {
-        rows = grid.size
-        cols = grid[0].size
-        for (row in 0 until rows) check(grid, row)
-        return islands
+        var result = 0
+        for (x in grid.indices)
+            for (y in grid[x].indices)
+                result += dfs(grid, x, y)
+        return result
     }
 
-    private fun check(
+    fun dfs(
         grid: Array<CharArray>,
-        row: Int,
-    ) {
-        val finalRow = grid[row]
-        for (col in 0 until cols) if (finalRow[col] == '1') {
-            bfs(grid, row, col)
-            ++islands
+        x: Int,
+        y: Int,
+    ): Int {
+        if (!isCoords(grid, x, y) || grid[x][y] == '0') {
+            return 0
         }
+
+        grid[x][y] = '0'
+        dfs(grid, x + 1, y)
+        dfs(grid, x, y + 1)
+        dfs(grid, x - 1, y)
+        dfs(grid, x, y - 1)
+        return 1
     }
 
-    private fun bfs(
+    private fun isCoords(
         grid: Array<CharArray>,
-        row: Int,
-        col: Int,
-    ) {
-        grid[row][col] = '*'
-        if (row > 0 && grid[row - 1][col] == '1') bfs(grid, row - 1, col)
-        if (row + 1 < rows && grid[row + 1][col] == '1') bfs(grid, row + 1, col)
-        if (col > 0 && grid[row][col - 1] == '1') bfs(grid, row, col - 1)
-        if (col + 1 < cols && grid[row][col + 1] == '1') bfs(grid, row, col + 1)
-    }
+        x: Int,
+        y: Int,
+    ) = x >= 0 && y >= 0 && x < grid.size && y < grid[0].size
 }
