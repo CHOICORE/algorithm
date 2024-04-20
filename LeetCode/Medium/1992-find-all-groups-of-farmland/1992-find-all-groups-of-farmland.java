@@ -1,55 +1,44 @@
 class Solution {
-    int[][] dirs = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
-    
-    private boolean isWithinFarm(int x, int y, int N, int M) {
-        return x >= 0 && x < N && y >= 0 && y < M;
-    }
-
-    private Pair<Integer, Integer> BFS(Queue<Pair<Integer, Integer>> q, int[][] land,
-                                       boolean[][] visited) {
-        Pair<Integer, Integer> curr = new Pair<Integer, Integer>(0, 0);
-
-        while (!q.isEmpty()) {
-            curr = q.remove();
-
-            int x = curr.getKey();
-            int y = curr.getValue();
-
-            for (int[] dir : dirs) {
-                int newX = x + dir[0], newY = y + dir[1];
-                
-                if (isWithinFarm(newX, newY, land.length, land[0].length) && !visited[newX][newY]
-                        && land[newX][newY] == 1) {
-                    visited[newX][newY] = true;
-                    q.add(new Pair(newX, newY));
-                }
-            }
-        }
-
-        return curr;
-    }
-
     public int[][] findFarmland(int[][] land) {
-        boolean[][] visited = new boolean[land.length][land[0].length];
-        List<int[]> ans = new ArrayList<>();
+        List<int[]> result = new ArrayList<>();
 
+        int m = land.length;
+        int n = land[0].length;
 
-        for (int row1 = 0; row1 < land.length; row1++) {
-            for (int col1 = 0; col1 < land[0].length; col1++) {
-                if (land[row1][col1] == 1 && !visited[row1][col1]) {
-                    Queue<Pair<Integer, Integer>> q = new LinkedList<>();
-
-                    q.add(new Pair(row1, col1));
-                    visited[row1][col1] = true;
-
-                    Pair<Integer, Integer> last = BFS(q, land, visited);
-
-                    int[] arr = new int[]{row1, col1, last.getKey(), last.getValue()};
-                    ans.add(arr);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (land[i][j] == 1) {
+                    int[] coordinates = findFarmlandCoordinates(land, i, j);
+                    result.add(coordinates);
                 }
             }
         }
 
-        return ans.stream().toArray(int[][]::new);
+        return result.toArray(new int[result.size()][]);
+    }
+
+    private int[] findFarmlandCoordinates(int[][] land, int row, int col) {
+        int[] coordinates = new int[4];
+        coordinates[0] = row;
+        coordinates[1] = col;
+
+        int m = land.length;
+        int n = land[0].length;
+
+        int r = row;
+        int c = col;
+        
+        while (r < m && land[r][col] == 1) r++;
+        while (c < n && land[row][c] == 1) c++;
+        coordinates[2] = r - 1;
+        coordinates[3] = c - 1;
+
+        for (int i = row; i < r; i++) {
+            for (int j = col; j < c; j++) {
+                land[i][j] = 0;
+            }
+        }
+
+        return coordinates;
     }
 }
