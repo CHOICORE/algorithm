@@ -1,37 +1,43 @@
 class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        if (n == 1) return Collections.singletonList(0);
-
-        int[] degree = new int[n];
-        Map<Integer, List<Integer>> adjacencyList = new HashMap<>();
+        int[] counts = new int[n];
+        int[] links = new int[n];
         for (int[] edge : edges) {
-            degree[edge[0]]++;
-            degree[edge[1]]++;
-            adjacencyList.computeIfAbsent(edge[0], x -> new ArrayList<>()).add(edge[1]);
-            adjacencyList.computeIfAbsent(edge[1], x -> new ArrayList<>()).add(edge[0]);
+            links[edge[0]] ^= edge[1];
+            counts[edge[0]]++;
+            links[edge[1]] ^= edge[0];
+            counts[edge[1]]++;
         }
-
-        Queue<Integer> leaves = new LinkedList<>();
-        for (int i = 0; i < degree.length; i++) {
-            if (degree[i] == 1) {
-                leaves.add(i);
-            }
+        Queue<Integer> queue = new LinkedList<>();
+        int[] dists = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (counts[i] == 1)
+                queue.add(i);
         }
-
-        int remainingNodes = n;
-        while (remainingNodes > 2) {
-            int size = leaves.size();
-            remainingNodes -= size;
-            for (int i = 0; i < size; i++) {
-                int leaf = leaves.poll();
-                for (int neighbor : adjacencyList.get(leaf)) {
-                    if (--degree[neighbor] == 1) {
-                        leaves.add(neighbor);
-                    }
+        int stp = 1;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int j = 0; j < size; j++) {
+                int tmp = queue.poll();
+                links[links[tmp]] ^= tmp;
+                counts[links[tmp]]--;
+                if (counts[links[tmp]] == 1) {
+                    dists[links[tmp]] = Math.max(stp, dists[links[tmp]]);
+                    queue.add(links[tmp]);
                 }
             }
+            stp++;
         }
-
-        return new ArrayList<>(leaves);
+        int max = 0;
+        for (int i = 0; i < n; i++) {
+            max = Math.max(dists[i], max);
+        }
+        
+        List<Integer> answer = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (dists[i] == max)
+                answer.add(i);
+        }
+        return answer;
     }
 }
