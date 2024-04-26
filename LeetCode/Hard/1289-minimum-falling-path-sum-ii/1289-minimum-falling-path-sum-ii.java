@@ -1,54 +1,41 @@
 class Solution {
     public int minFallingPathSum(int[][] grid) {
-        int nextMin1C = -1;
-        int nextMin2C = -1;
+        int n = grid.length;
+        return minFallingPathSum(0, grid).minSum;
+    }
 
-        int nextMin1 = -1;
-        int nextMin2 = -1;
+    private Triplet minFallingPathSum(int row, int[][] grid) {
 
-        for (int col = 0; col < grid.length; col++) {
-            if (nextMin1 == -1 || grid[grid.length - 1][col] <= nextMin1) {
-                nextMin2 = nextMin1;
-                nextMin2C = nextMin1C;
-                nextMin1 = grid[grid.length - 1][col];
-                nextMin1C = col;
-            } else if (nextMin2 == -1 || grid[grid.length - 1][col] <= nextMin2) {
-                nextMin2 = grid[grid.length - 1][col];
-                nextMin2C = col;
+        if (row == grid.length) {
+            return new Triplet(0, 0, 0);
+        }
+
+        Triplet nextRowTriplet = minFallingPathSum(row + 1, grid); //trying passing row++
+        Triplet currentTriplet = new Triplet(Integer.MAX_VALUE, Integer.MAX_VALUE, -1);
+
+        for (int col = 0; col < grid[0].length; col++) {
+            int sum = grid[row][col] + ((col != nextRowTriplet.minSumIndex) ? nextRowTriplet.minSum : nextRowTriplet.secondMinSum);
+            if (sum <= currentTriplet.minSum) {
+                currentTriplet.secondMinSum = currentTriplet.minSum;
+                currentTriplet.minSum = sum;
+                currentTriplet.minSumIndex = col;
+            } else if (sum < currentTriplet.secondMinSum) {
+                currentTriplet.secondMinSum = sum;
             }
         }
 
-        for (int row = grid.length - 2; row >= 0; row--) {
-            int min1C = -1;
-            int min2C = -1;
+        return currentTriplet;
+    }
+    
+    static class Triplet {
+        int minSum;
+        int secondMinSum;
+        int minSumIndex;
 
-            int min1 = -1;
-            int min2 = -1;
-
-            for (int col = 0; col < grid.length; col++) {
-                int value;
-                if (col != nextMin1C) {
-                    value = grid[row][col] + nextMin1;
-                } else {
-                    value = grid[row][col] + nextMin2;
-                }
-
-                if (min1 == -1 || value <= min1) {
-                    min2 = min1;
-                    min2C = min1C;
-                    min1 = value;
-                    min1C = col;
-                } else if (min2 == -1 || value <= min2) {
-                    min2 = value;
-                    min2C = col;
-                }
-            }
-
-            nextMin1C = min1C;
-            nextMin1 = min1;
-            nextMin2 = min2;
+        Triplet(int minSum, int secondMinSum, int minSumIndex) {
+            this.minSum = minSum;
+            this.secondMinSum = secondMinSum;
+            this.minSumIndex = minSumIndex;
         }
-
-        return nextMin1;
     }
 }
