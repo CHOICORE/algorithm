@@ -1,52 +1,26 @@
 class Solution {
     public int findRotateSteps(String ring, String key) {
-        int ringLen = ring.length();
-        int keyLen = key.length();
-        
-        Map<Character, List<Integer>> characterIndices = new HashMap<>();
-        for (int i = 0; i < ring.length(); i++) {
-            char ch = ring.charAt(i);
-            characterIndices.computeIfAbsent(ch, k -> new ArrayList<>()).add(i);
+        char[] r = ring.toCharArray();
+        List<Integer>[] p = new List[26];
+        for (int i = 0; i < r.length; i++) {
+            int c = r[i] - 'a';
+            List<Integer> l = p[c];
+            if (l == null) p[c] = l = new ArrayList<>();
+            l.add(i);
         }
-        
-        PriorityQueue<int[]> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
-
-        heap.offer(new int[]{0, 0, 0});
-        
-        Set<Pair<Integer, Integer>> seen = new HashSet<>();
-        
-        int totalSteps = 0;
-        while (!heap.isEmpty()) {
-            int[] state = heap.poll();
-            totalSteps = state[0];
-            int ringIndex = state[1];
-            int keyIndex = state[2];
-            
-            if (keyIndex == keyLen) {
-                break;
-            }
-            
-            Pair<Integer, Integer> currentState = new Pair<>(ringIndex, keyIndex);
-            if (seen.contains(currentState)) {
-                continue;
-            }
-            
-            seen.add(currentState);
-            
-            for (int nextIndex : characterIndices.get(key.charAt(keyIndex))) {
-                heap.offer(
-                        new int[]{totalSteps + countSteps(ringIndex, nextIndex, ringLen),
-                                nextIndex, keyIndex + 1});
-            }
-        }
-
-        
-        return totalSteps + keyLen;
+        return helper(0, 0, p, key.toCharArray(), ring, new int[key.length()][r.length]);
     }
-    
-    private int countSteps(int curr, int next, int ringLen) {
-        int stepsBetween = Math.abs(curr - next);
-        int stepsAround = ringLen - stepsBetween;
-        return Math.min(stepsBetween, stepsAround);
+
+    int helper(int in, int pos, List<Integer>[] p, char[] k, String r, int[][] memo) {
+        if (in == k.length) return 0;
+        if (memo[in][pos] > 0) return memo[in][pos] - 1;
+        int min = Integer.MAX_VALUE;
+        for (int i : p[k[in] - 'a']) {
+            int m;
+            if (i >= pos) m = Math.min(i - pos, pos + r.length() - i);
+            else m = Math.min(pos - i, i + r.length() - pos);
+            min = Math.min(min, m + helper(in + 1, i, p, k, r, memo));
+        }
+        return (memo[in][pos] = min + 2) - 1;
     }
 }
