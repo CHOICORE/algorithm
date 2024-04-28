@@ -1,41 +1,48 @@
 class Solution {
-    private void computeAllDistanceSums(int root, int n, HashMap<Integer, List<Integer>> graph, int[] answer, int[] subtreeSize) {
-        for (Integer child : graph.get(root)) {
-            if (answer[child] == 0) {
-                answer[child] = (answer[root] - subtreeSize[child]) + (n - subtreeSize[child]);
-                computeAllDistanceSums(child, n, graph, answer, subtreeSize);
-            }
-        }
-    }
+    int[][] graph;
+    int[] count;
+    int[] answer;
+    int N;
 
-    private void computeRootStatistics(int root, HashMap<Integer, List<Integer>> graph, int level, boolean[] visited, int[] subtreeSize, int[] distance) {
-        visited[root] = true;
-        var size = 1;
-        for (Integer child : graph.get(root)) {
-            if (!visited[child]) {
-                computeRootStatistics(child, graph, level + 1, visited, subtreeSize, distance);
-                size += subtreeSize[child];
-            }
-        }
-        distance[root] = level;
-        subtreeSize[root] = size;
-    }
+    public int[] sumOfDistancesInTree(int N, int[][] edges) {
+        this.N = N;
+        this.answer = new int[N];
+        this.graph = new int[N][];
+        this.count = new int[N];
 
-    public int[] sumOfDistancesInTree(int n, int[][] edges) {
-        var answer = new int[n];
-        var graph = new HashMap<Integer, List<Integer>>();
-        for (var i = 0; i < n; i++) graph.put(i, new LinkedList<>());
-        for (var edge : edges) {
-            graph.get(edge[0]).add(edge[1]);
-            graph.get(edge[1]).add(edge[0]);
+        for (int[] e : edges) {
+            ++count[e[0]];
+            ++count[e[1]];
         }
-        var root = ThreadLocalRandom.current().nextInt(0, n);
-        var subtreeSize = new int[n];
-        var distance = new int[n];
-        var visited = new boolean[n];
-        computeRootStatistics(root, graph, 0, visited, subtreeSize, distance);
-        answer[root] = Arrays.stream(distance).sum();
-        computeAllDistanceSums(root, n, graph, answer, subtreeSize);
+        for (int i = 0; i < N; i++) {
+            graph[i] = new int[count[i]];
+        }
+        for (int[] e : edges) {
+            graph[e[0]][--count[e[0]]] = e[1];
+            graph[e[1]][--count[e[1]]] = e[0];
+        }
+        dfs1(0, -1);
+        dfs2(0, -1);
         return answer;
+    }
+
+    public void dfs1(int cur, int parent) {
+        count[cur] = 1;
+        for (int child : graph[cur]) {
+            if (child != parent) {
+                dfs1(child, cur);
+                count[cur] += count[child];
+                answer[cur] += answer[child] + count[child];
+            }
+        }
+    }
+
+    public void dfs2(int cur, int parent) {
+        for (int child : graph[cur]) {
+            if (child != parent) {
+                answer[child] = answer[cur] + N - 2 * count[child];
+                dfs2(child, cur);
+            }
+        }
     }
 }
