@@ -1,25 +1,11 @@
 class Solution {
     public String reversePrefix(String word, char ch) {
-        Stack<Character> stack = new Stack<>();
-        StringBuilder result = new StringBuilder();
-
-        int index = 0;
-        while (index < word.length()) {
-            stack.push(word.charAt(index));
-            if (word.charAt(index) == ch) {
-                while (!stack.isEmpty()) {
-                    result.append(stack.pop());
-                }
-                index++;
-                while (index < word.length()) {
-                    result.append(word.charAt(index));
-                    index++;
-                }
-                return result.toString();
-            }
-            index++;
+        int firstOccurrence = word.indexOf(ch);
+        if (firstOccurrence == -1) {
+            return word;
         }
 
-        return word;
+        StringBuilder prefix = new StringBuilder(word.substring(0, firstOccurrence + 1));
+        return prefix.reverse().toString() + word.substring(firstOccurrence + 1);
     }
 }
