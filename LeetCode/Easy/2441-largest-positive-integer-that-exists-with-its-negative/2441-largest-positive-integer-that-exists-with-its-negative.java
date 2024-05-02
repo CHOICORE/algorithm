@@ -1,15 +1,17 @@
 class Solution {
     public int findMaxK(int[] nums) {
-        int answer = -1;
+        int[] sum = new int[1001];
+        int max = -1;
+        for (int n : nums) {
+            int index = n > 0 ? n : -n;
+            if (sum[index] != n) {
+                sum[index] += n;
+            }
 
-        for (int i : nums) {
-            for (int j : nums) {
-                if (i == -j) {
-                    answer = Math.max(answer, Math.abs(i));
-                }
+            if (sum[index] == 0) {
+                max = Math.max(max, index);
             }
         }
-
-        return answer;
+        return max;
     }
 }
