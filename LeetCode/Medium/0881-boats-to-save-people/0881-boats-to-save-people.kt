@@ -1,6 +1,6 @@
 class Solution {
     fun numRescueBoats(people: IntArray, limit: Int): Int {
-        val n = people.size
+      val n = people.size
         if (n < 2) {
             return n
         }
@@ -15,6 +15,7 @@ class Solution {
         var start = 0
         var end = n - 1
         while (start <= end) {
+
             if (people[end] + people[start] <= limit) {
                 start++
                 end--
