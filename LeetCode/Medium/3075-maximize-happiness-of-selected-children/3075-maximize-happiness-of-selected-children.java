@@ -1,5 +1,5 @@
 class Solution {
-    public static long maximumHappinessSum(int[] happiness, int k) {
+    public long maximumHappinessSum(int[] happiness, int k) {
         Arrays.sort(happiness);
         long answer = happiness[happiness.length - 1];
         int j = 1;
