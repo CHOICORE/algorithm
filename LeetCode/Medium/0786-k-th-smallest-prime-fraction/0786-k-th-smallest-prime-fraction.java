@@ -1,41 +1,44 @@
 class Solution {
     public int[] kthSmallestPrimeFraction(int[] arr, int k) {
         int n = arr.length;
-        double left = 0, right = 1.0;
-        
-        while (left < right) {
-            double mid = (left + right) / 2;
-            
-            double maxFraction = 0.0;
-            int totalSmallerFractions = 0, numeratorIdx = 0, denominatorIdx = 0;
-            int j = 1;
-            
-            for (int i = 0; i < n - 1; i++) {
-                while (j < n && arr[i] >= mid * arr[j]) {
-                    j++;
-                }
-                
-                totalSmallerFractions += (n - j);
-                
-                if (j == n) break;
-                
-                double fraction = (double) arr[i] / arr[j];
-                
-                if (fraction > maxFraction) {
-                    numeratorIdx = i;
-                    denominatorIdx = j;
-                    maxFraction = fraction;
-                }
+        double low = 0;
+        double high = 1.0;
+
+        while (low < high) {
+            double mid = (low + high) / 2;
+            int[] res = getFractionsLessThanMid(arr, k, n, mid);
+
+            if (res[0] == k) return new int[]{arr[res[1]], arr[res[2]]};
+            else if (res[0] > k) high = mid;
+            else low = mid;
+        }
+
+        return new int[]{};
+    }
+
+    private int[] getFractionsLessThanMid(int[] arr, int k, int n, double mid) {
+        double maxLessThanMid = 0.0;
+        int x = 0, y = 0;
+
+        int total = 0;
+        int j = 1;
+
+        for (int i = 0; i < n - 1; i++) {
+            while (j < n && arr[i] > arr[j] * mid) {
+                j++;
             }
-            
-            if (totalSmallerFractions == k) {
-                return new int[]{arr[numeratorIdx], arr[denominatorIdx]};
-            } else if (totalSmallerFractions > k) {
-                right = mid;
-            } else {
-                left = mid;
+
+            if (j == n) break;
+
+            total += (n - j);
+
+            double fraction = (double) arr[i] / arr[j];
+            if (fraction > maxLessThanMid) {
+                maxLessThanMid = fraction;
+                x = i;
+                y = j;
             }
         }
-        return new int[]{};
+        return new int[]{total, x, y};
     }
 }
