@@ -1,34 +1,28 @@
 class Solution {
     public double mincostToHireWorkers(int[] quality, int[] wage, int k) {
         int n = quality.length;
-        double totalCost = Double.MAX_VALUE;
-        double currentTotalQuality = 0;
-        List<Pair<Double, Integer>> wageToQualityRatio = new ArrayList<>();
-        
-        for (int i = 0; i < n; i++) {
-            wageToQualityRatio.add(
-                    new Pair<>((double) wage[i] / quality[i], quality[i]));
+        Worker[] a = new Worker[n];
+        for (int i = 0; i < n; ++i) {
+            a[i] = new Worker(quality[i], wage[i]);
         }
-        
-        Collections.sort(wageToQualityRatio,
-                Comparator.comparingDouble(Pair::getKey));
-        
-        PriorityQueue<Integer> highestQualityWorkers = new PriorityQueue<>(
-                Collections.reverseOrder());
-        
-        for (int i = 0; i < n; i++) {
-            highestQualityWorkers.add(wageToQualityRatio.get(i).getValue());
-            currentTotalQuality += wageToQualityRatio.get(i).getValue();
-            
-            if (highestQualityWorkers.size() > k) {
-                currentTotalQuality -= highestQualityWorkers.poll();
-            }
-            
-            if (highestQualityWorkers.size() == k) {
-                totalCost = Math.min(totalCost, currentTotalQuality *
-                        wageToQualityRatio.get(i).getKey());
-            }
+        Arrays.sort(a);
+        int s = 0;
+        double res = 1e15;
+        PriorityQueue<Integer> q = new PriorityQueue<>();
+        for (Worker worker : a) {
+            q.add(-worker.q());
+            s += worker.q();
+            if (q.size() > k) s += q.poll();
+            if (q.size() == k) res = Math.min(res, (double) s * worker.w() / worker.q());
         }
-        return totalCost;
+        return res;
     }
+    
+    record Worker(int q, int w) implements Comparable<Worker> {
+
+    @Override
+    public int compareTo(Worker other) {
+        return Integer.compare(w * other.q, q * other.w);
+    }
+}
 }
