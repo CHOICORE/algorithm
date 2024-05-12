@@ -1,25 +1,23 @@
 class Solution {
-    private int findMax(int[][] grid, int x, int y) {
-        int maxElement = 0;
-        for (int i = x; i < x + 3; i++) {
-            for (int j = y; j < y + 3; j++) {
-                maxElement = Math.max(maxElement, grid[i][j]);
+    public int[][] largestLocal(int[][] grid) {
+        int n = grid.length;
+        int[][] answer = new int[n - 2][n - 2];
+        for (int k = 0; k < n - 2; k++) {
+            for (int l = 0; l < n - 2; l++) {
+                answer[k][l] = max(grid, k + 1, l + 1);
             }
         }
-
-        return maxElement;
+        return answer;
     }
 
-    public int[][] largestLocal(int[][] grid) {
-        int N = grid.length;
-
-        int[][] maxLocal = new int[N - 2][N - 2];
-        for (int i = 0; i < N - 2; i++) {
-            for (int j = 0; j < N - 2; j++) {
-                maxLocal[i][j] = findMax(grid, i, j);
+    private int max(int[][] grid, int r, int c) {
+        int n = grid.length;
+        int max = grid[r][c];
+        for (int i = r - 1; i < r + 2; i++) {
+            for (int j = c - 1; j < c + 2; j++) {
+                max = Math.max(grid[i][j], max);
             }
         }
-
-        return maxLocal;
+        return max;
     }
 }
