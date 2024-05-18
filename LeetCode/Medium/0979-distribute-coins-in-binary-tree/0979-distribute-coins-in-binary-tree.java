@@ -23,9 +23,7 @@ class Solution {
     }
 
     private int dfs(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
+        if (root == null) return 0;
 
         if (root.left == null && root.right == null) {
             return root.val - 1;
