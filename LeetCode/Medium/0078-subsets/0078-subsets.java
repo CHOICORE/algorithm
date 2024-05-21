@@ -1,23 +1,21 @@
 class Solution {
-    List<List<Integer>> result;
-
     public List<List<Integer>> subsets(int[] nums) {
-        result = new ArrayList<>();
-        if (nums == null || nums.length == 0) return result;
-
-        subsets(nums, new ArrayList<>(), 0);
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> curr = new ArrayList<>();
+        explore(nums, 0, curr, result);
         return result;
     }
 
-    private void subsets(int[] nums, ArrayList<Integer> temp, int index) {
-        if (index >= nums.length) {
-            result.add(new ArrayList<>(temp));
+    private void explore(int[] nums, int index, List<Integer> curr, List<List<Integer>> result) {
+        if (index == nums.length) {
+            result.add(new ArrayList<>(curr));
             return;
         }
 
-        temp.add(nums[index]);
-        subsets(nums, temp, index + 1);
-        temp.removeLast();
-        subsets(nums, temp, index + 1);
+        curr.add(nums[index]);
+        explore(nums, index + 1, curr, result);
+        curr.removeLast();
+
+        explore(nums, index + 1, curr, result);
     }
 }
