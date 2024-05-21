@@ -6,7 +6,7 @@ class Solution {
         return result;
     }
 
-    private void explore(int[] nums, int index, List<Integer> curr, List<List<Integer>> result) {
+    void explore(int[] nums, int index, List<Integer> curr, List<List<Integer>> result) {
         if (index == nums.length) {
             result.add(new ArrayList<>(curr));
             return;
