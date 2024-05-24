@@ -1,47 +1,39 @@
 class Solution {
-    private int maxScore;
-    private int[] freq;
+    public static int backtrack(String[] words, int[] frr, int[] score, int idx) {
+        if (idx == words.length) {
+            return 0;
+        }
+        int scoreOfaWord = 0;
+        int no = backtrack(words, frr, score, idx + 1);
+        boolean isValid = true;
+        for (int i = 0; i < words[idx].length(); i++) {
+            char ch = words[idx].charAt(i);
+            if (frr[ch - 'a'] <= 0) {
+                isValid = false;
+            }
+            frr[ch - 'a']--;
+            scoreOfaWord += score[ch - 'a'];
+
+        }
+        int yes = 0;
+        if (isValid) {
+            yes = scoreOfaWord + backtrack(words, frr, score, idx + 1);
+        }
+        for (int i = 0; i < words[idx].length(); i++) {
+            frr[words[idx].charAt(i) - 'a']++;
+        }
+        return Math.max(no, yes);
+
+
+    }
 
     public int maxScoreWords(String[] words, char[] letters, int[] score) {
-        int W = words.length;
-        freq = new int[26];
-        for (char c : letters) {
-            freq[c - 'a']++;
+        int[] frequency = new int[26];
+        for (char letter : letters) {
+            frequency[letter - 'a']++;
         }
-        maxScore = 0;
-        check(W - 1, words, score, new int[26], 0);
-        return maxScore;
-    }
-    
-    private boolean isValidWord(int[] subsetLetters) {
-        for (int c = 0; c < 26; c++) {
-            if (freq[c] < subsetLetters[c]) {
-                return false;
-            }
-        }
-        return true;
-    }
+        return backtrack(words, frequency, score, 0);
 
-    private void check(int w, String[] words, int[] score, int[] subsetLetters, int totalScore) {
-        if (w == -1) {
-            maxScore = Math.max(maxScore, totalScore);
-            return;
-        }
-        check(w - 1, words, score, subsetLetters, totalScore);
-        int L = words[w].length();
-        for (int i = 0; i < L; i++) {
-            int c = words[w].charAt(i) - 'a';
-            subsetLetters[c]++;
-            totalScore += score[c];
-        }
 
-        if (isValidWord(subsetLetters)) {
-            check(w - 1, words, score, subsetLetters, totalScore);
-        }
-        for (int i = 0; i < L; i++) {
-            int c = words[w].charAt(i) - 'a';
-            subsetLetters[c]--;
-            totalScore -= score[c];
-        }
     }
 }
