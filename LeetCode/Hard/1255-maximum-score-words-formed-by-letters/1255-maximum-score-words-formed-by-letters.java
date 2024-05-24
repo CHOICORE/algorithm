@@ -1,35 +1,47 @@
 class Solution {
+    private int maxScore;
+    private int[] freq;
+
     public int maxScoreWords(String[] words, char[] letters, int[] score) {
         int W = words.length;
-        int[] freq = new int[26];
+        freq = new int[26];
         for (char c : letters) {
             freq[c - 'a']++;
         }
-        int maxScore = 0;
-        int[] subsetLetters = new int[26];
-        for (int mask = 0; mask < 1 << W; mask++) {
-            Arrays.fill(subsetLetters, 0);
-            for (int i = 0; i < W; i++) {
-                if ((mask & (1 << i)) > 0) {
-                    int L = words[i].length();
-                    for (int j = 0; j < L; j++) {
-                        subsetLetters[words[i].charAt(j) - 'a']++;
-                    }
-                }
-            }
-            maxScore = Math.max(maxScore, subsetScore(subsetLetters, score, freq));
-        }
+        maxScore = 0;
+        check(W - 1, words, score, new int[26], 0);
         return maxScore;
     }
-
-    private int subsetScore(int[] subsetLetters, int[] score, int[] freq) {
-        int totalScore = 0;
+    
+    private boolean isValidWord(int[] subsetLetters) {
         for (int c = 0; c < 26; c++) {
-            totalScore += subsetLetters[c] * score[c];
-            if (subsetLetters[c] > freq[c]) {
-                return 0;
+            if (freq[c] < subsetLetters[c]) {
+                return false;
             }
         }
-        return totalScore;
+        return true;
+    }
+
+    private void check(int w, String[] words, int[] score, int[] subsetLetters, int totalScore) {
+        if (w == -1) {
+            maxScore = Math.max(maxScore, totalScore);
+            return;
+        }
+        check(w - 1, words, score, subsetLetters, totalScore);
+        int L = words[w].length();
+        for (int i = 0; i < L; i++) {
+            int c = words[w].charAt(i) - 'a';
+            subsetLetters[c]++;
+            totalScore += score[c];
+        }
+
+        if (isValidWord(subsetLetters)) {
+            check(w - 1, words, score, subsetLetters, totalScore);
+        }
+        for (int i = 0; i < L; i++) {
+            int c = words[w].charAt(i) - 'a';
+            subsetLetters[c]--;
+            totalScore -= score[c];
+        }
     }
 }
