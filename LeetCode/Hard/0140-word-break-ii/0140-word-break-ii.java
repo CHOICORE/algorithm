@@ -6,23 +6,13 @@ class Solution {
         return results;
     }
 
-    private void backtrack(
-            String s,
-            Set<String> wordSet,
-            StringBuilder currentSentence,
-            List<String> results,
-            int startIndex
-    ) {
+    void backtrack(String s, Set<String> wordSet, StringBuilder currentSentence, List<String> results, int startIndex) {
         if (startIndex == s.length()) {
             results.add(currentSentence.toString().trim());
             return;
         }
-        
-        for (
-                int endIndex = startIndex + 1;
-                endIndex <= s.length();
-                endIndex++
-        ) {
+
+        for (int endIndex = startIndex + 1; endIndex <= s.length(); endIndex++) {
             String word = s.substring(startIndex, endIndex);
             if (wordSet.contains(word)) {
                 int currentLength = currentSentence.length();
