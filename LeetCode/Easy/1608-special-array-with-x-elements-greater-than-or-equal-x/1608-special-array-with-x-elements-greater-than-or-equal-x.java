@@ -1,35 +1,19 @@
 class Solution {
-    private int getFirstGreaterOrEqual(int[] nums, int val) {
-        int start = 0;
-        int end = nums.length - 1;
-
-        int index = nums.length;
-        while (start <= end) {
-            int mid = (start + end) / 2;
-
-            if (nums[mid] >= val) {
-                index = mid;
-                end = mid - 1;
-            } else {
-                start = mid + 1;
-            }
-        }
-
-        return index;
-    }
-
     public int specialArray(int[] nums) {
-        Arrays.sort(nums);
-
-        int N = nums.length;
-        for (int i = 1; i <= N; i++) {
-            int k = getFirstGreaterOrEqual(nums, i);
-
-            if (N - k == i) {
-                return i;
-            }
+        int[] numCounts = new int[nums.length + 1];
+        for (int num : nums)
+            if (num > nums.length)
+                numCounts[nums.length]++;
+            else
+                numCounts[num]++;
+        int bigNumsCount = 0;
+        for (int specialGuess = nums.length; specialGuess > 0; specialGuess--) {
+            bigNumsCount += numCounts[specialGuess];
+            if (bigNumsCount > specialGuess)
+                return -1;
+            if (bigNumsCount == specialGuess)
+                return specialGuess;
         }
-
         return -1;
     }
 }
