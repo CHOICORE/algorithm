@@ -1,22 +1,12 @@
 class Solution {
-    public int countTriplets(int[] arr) {
+    public int countTriplets(int[] nums) {
         int count = 0;
-        
-        for (int start = 0; start < arr.length - 1; ++start) {
-            int xorA = 0;
-            
-            for (int mid = start + 1; mid < arr.length; ++mid) {
-                xorA ^= arr[mid - 1];
-                
-                int xorB = 0;
-                
-                for (int end = mid; end < arr.length; ++end) {
-                    xorB ^= arr[end];
-                    
-                    if (xorA == xorB) {
-                        ++count;
-                    }
-                }
+
+        for (int i = 0; i < nums.length; i++) {
+            int xor = 0;
+            for (int j = i; j < nums.length; j++) {
+                xor ^= nums[j];
+                if (xor == 0) count += (j - i);
             }
         }
 
