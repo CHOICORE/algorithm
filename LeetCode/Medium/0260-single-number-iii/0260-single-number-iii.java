@@ -1,26 +1,15 @@
 class Solution {
     public int[] singleNumber(int[] nums) {
-        int xor = 0;
-        for (int num : nums) {
-            xor ^= num;
+        int answer = 0;
+        for (int i = 0; i < nums.length; i++) {
+            answer = answer ^ nums[i];
         }
-
-        int mask = 1;
-        while ((xor & mask) == 0) {
-            mask <<= 1;
+        answer &= -answer;
+        int[] result = new int[2];
+        for (int n : nums) {
+            if ((answer & n) == 0) result[0] ^= n;
+            else result[1] ^= n;
         }
-
-        int num1 = 0;
-        int num2 = 0;
-
-        for (int num : nums) {
-            if ((num & mask) == 0) {
-                num1 ^= num;
-            } else {
-                num2 ^= num;
-            }
-        }
-
-        return new int[]{num1, num2};
+        return result;
     }
 }
