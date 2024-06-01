@@ -1,9 +1,11 @@
 class Solution {
+    public static int iterateString(int n, String s) {
+        if (n == s.length() - 1)
+            return 0;
+        return Math.abs(s.charAt(n) - s.charAt(n + 1)) + iterateString(n + 1, s);
+    }
+
     public int scoreOfString(String s) {
-        int score = 0;
-        for (int i = 0; i < s.length() - 1; i++) {
-            score += Math.abs(s.charAt(i) - s.charAt(i + 1));
-        }
-        return score;
+        return iterateString(0, s);
     }
 }
