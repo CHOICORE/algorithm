@@ -1,14 +1,19 @@
 class Solution {
     public int appendCharacters(String s, String t) {
-        int first = 0, longestPrefix = 0;
+        if (s.equals(t)) return 0;
+        char charS[] = s.toCharArray();
+        char charT[] = t.toCharArray();
 
-        while (first < s.length() && longestPrefix < t.length()) {
-            if (s.charAt(first) == t.charAt(longestPrefix)) {
-                longestPrefix++;
-            }
-            first++;
+        int i = 0, j = 0;
+        int m = charS.length, n = charT.length;
+        for (; i < m; i++) {
+            if (charS[i] == charT[j])
+                j++;
+
+            if (j == n)
+                return 0;
         }
-        
-        return t.length() - longestPrefix;
+        return n - j;
+
     }
 }
