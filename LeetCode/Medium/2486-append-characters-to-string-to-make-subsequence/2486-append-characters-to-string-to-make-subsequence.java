@@ -7,13 +7,10 @@ class Solution {
         int i = 0, j = 0;
         int m = charS.length, n = charT.length;
         for (; i < m; i++) {
-            if (charS[i] == charT[j])
-                j++;
-
-            if (j == n)
-                return 0;
+            if (charS[i] == charT[j]) j++;
+            if (j == n) return 0;
         }
+        
         return n - j;
-
     }
 }
