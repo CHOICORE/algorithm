@@ -1,16 +1,23 @@
 class Solution {
     public int longestPalindrome(String s) {
-        int[] indexs = new int[128];
-        for (char c : s.toCharArray()) {
-            indexs[c]++;
+        int[] array = new int[58];
+        int count = 0, odd = 0;
+
+        for (char each : s.toCharArray()) {
+            array[each - 'A']++;
         }
-        int count = 0;
-        for (int index : indexs) {
-            count += index / 2 * 2;
-            if (index % 2 == 1 && count % 2 == 0) {
-                count++;
+
+        for (int each : array) {
+            if (each % 2 == 0 && each != 0) {
+                count += each;
+            } else if (each % 2 == 1 && each != 1) {
+                count += each - 1;
+                odd = 1;
+            } else if (each == 1) {
+                odd = 1;
             }
         }
-        return count;
+
+        return count + odd;
     }
 }
