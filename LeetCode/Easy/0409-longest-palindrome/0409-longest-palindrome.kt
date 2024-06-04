@@ -1,24 +1,21 @@
 class Solution {
     fun longestPalindrome(s: String): Int {
-        val array = IntArray(58)
-        var count = 0
-        var odd = 0
-
-        for (each in s.toCharArray()) {
-            array[each.code - 'A'.code]++
+        val counts = IntArray(128) { 0 }
+        for (char in s) {
+            counts[char.code] = counts[char.code] + 1
         }
+        var odd = 0
+        var max = 0
 
-        for (each in array) {
-            if (each % 2 == 0 && each != 0) {
-                count += each
-            } else if (each % 2 == 1 && each != 1) {
-                count += each - 1
-                odd = 1
-            } else if (each == 1) {
+        for (count in counts) {
+            if (count % 2 == 0) {
+                max += count
+            } else {
+                max += count - 1
                 odd = 1
             }
         }
 
-        return count + odd
+        return (max + odd)
     }
 }
