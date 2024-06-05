@@ -1,39 +1,36 @@
 class Solution {
     public List<String> commonChars(String[] words) {
-        int wordsSize = words.length;
-        int[] commonCharacterCounts = new int[26];
-        int[] currentCharacterCounts = new int[26];
-        List<String> result = new ArrayList<>();
-        
-        for (char ch : words[0].toCharArray()) {
-            commonCharacterCounts[ch - 'a']++;
+        int[] last = count(words[0]);
+        for (int i = 1; i < words.length; i++) {
+            last = intersection(last, count(words[i]));
         }
+        List<String> arr = new ArrayList<>();
+        for (int i = 0; i < 26; i++) {
+            if (last[i] != 0) {
+                char a = 'a';
+                a += (char) i;
+                String s = String.valueOf(a);
+                while (last[i] > 0) {
+                    arr.add(s);
+                    last[i]--;
+                }
+            }
+        }
+        return arr;
+    }
 
-        for (int i = 1; i < wordsSize; i++) {
-            Arrays.fill(currentCharacterCounts, 0);
-            
-            for (char ch : words[i].toCharArray()) {
-                currentCharacterCounts[ch - 'a']++;
-            }
-            
-            for (int letter = 0; letter < 26; letter++) {
-                commonCharacterCounts[letter] = Math.min(
-                        commonCharacterCounts[letter],
-                        currentCharacterCounts[letter]
-                );
-            }
+    int[] intersection(int[] a, int[] b) {
+        int[] t = new int[26];
+        for (int i = 0; i < 26; i++) {
+            t[i] = Math.min(a[i], b[i]);
         }
-        
-        for (int letter = 0; letter < 26; letter++) {
-            for (
-                    int commonCount = 0;
-                    commonCount < commonCharacterCounts[letter];
-                    commonCount++
-            ) {
-                result.add(String.valueOf((char) (letter + 'a')));
-            }
-        }
+        return t;
+    }
 
-        return result;
+    int[] count(String str) {
+        int[] t = new int[26];
+        for (char c : str.toCharArray()) t[c - 'a']++;
+        return t;
     }
 }
+    
