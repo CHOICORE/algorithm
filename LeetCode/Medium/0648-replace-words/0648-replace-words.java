@@ -1,23 +1,53 @@
 class Solution {
-    public String replaceWords(List<String> dictionary, String sentence) {
-        String[] wordArray = sentence.split(" ");
-        Set<String> dictSet = new HashSet<>(dictionary);
+    Node root = new Node();
 
-        for (int i = 0; i < wordArray.length; i++) {
-            wordArray[i] = shortestRoot(wordArray[i], dictSet);
+    public String replaceWords(List<String> dictionary, String sentence) {
+        for (String str : dictionary) {
+            insert(str);
         }
 
-        return String.join(" ", wordArray);
+        String[] arr = sentence.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String s : arr) {
+            String replace = search(s);
+            if (Objects.equals(replace, "")) {
+                builder.append(s);
+            } else {
+                builder.append(replace);
+            }
+            builder.append(" ");
+        }
+        return builder.toString().trim();
     }
 
-    private String shortestRoot(String word, Set<String> dictSet) {
-        for (int i = 1; i <= word.length(); i++) {
-            String root = word.substring(0, i);
-            if (dictSet.contains(root)) {
-                return root;
+    public void insert(String str) {
+        Node node = this.root;
+        for (char c : str.toCharArray()) {
+            int n = c - 'a';
+            if (node.children[n] == null) {
+                node.children[n] = new Node();
             }
+            node = node.children[n];
         }
-        
-        return word;
+        node.isWord = true;
+    }
+
+    public String search(String str) {
+        Node node = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            int n = c - 'a';
+            if (node.children[n] == null) {
+                return "";
+            }
+            node = node.children[n];
+            if (node.isWord) return str.substring(0, i + 1);
+        }
+        return "";
+    }
+
+    static class Node {
+        boolean isWord;
+        Node[] children = new Node[26];
     }
 }
