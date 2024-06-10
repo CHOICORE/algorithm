@@ -1,33 +1,22 @@
 class Solution {
-    private void countingSort(int[] arr) {
-        Map<Integer, Integer> counts = new HashMap<>();
-        int min = Arrays.stream(arr).min().getAsInt();
-        int max = Arrays.stream(arr).max().getAsInt();
-        
-        for (int val : arr) {
-            counts.put(val, counts.getOrDefault(val, 0) + 1);
-        }
-
-        int index = 0;
-        for (int val = min; val <= max; ++val) {
-            while (counts.getOrDefault(val, 0) > 0) {
-                arr[index] = val;
-                index += 1;
-                counts.put(val, counts.get(val) - 1);
-            }
-        }
-    }
-
     public int heightChecker(int[] heights) {
-        int[] sortedHeights = heights.clone();
-        countingSort(sortedHeights);
-
-        int count = 0;
-        for (int i = 0; i < sortedHeights.length; ++i) {
-            if (heights[i] != sortedHeights[i]) {
-                count += 1;
+        int[] heightsFreq = new int[101];
+        int[] expected = new int[heights.length];
+        for (int height : heights) {
+            heightsFreq[height]++;
+        }
+        int count = 0, diffCount = 0;
+        for (int index = 0; index < heightsFreq.length && count < heights.length; index++) {
+            while (heightsFreq[index] > 0) {
+                expected[count++] = index;
+                heightsFreq[index]--;
             }
         }
-        return count;
+        for (int index = 0; index < heights.length; index++) {
+            if (heights[index] != expected[index]) {
+                diffCount++;
+            }
+        }
+        return diffCount;
     }
 }
