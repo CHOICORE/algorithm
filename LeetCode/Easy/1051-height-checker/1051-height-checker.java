@@ -1,50 +1,42 @@
 class Solution {
-    private void merge(int[] arr, int left, int mid, int right, int[] tempArr) {
-        int start2 = mid + 1;
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-
-        if (n1 >= 0) System.arraycopy(arr, left, tempArr, left, n1);
-        if (n2 >= 0) System.arraycopy(arr, start2, tempArr, start2, n2);
+    private void heapify(int[] arr, int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
         
-        int i = 0, j = 0, k = left;
-        while (i < n1 && j < n2) {
-            if (tempArr[left + i] <= tempArr[start2 + j]) {
-                arr[k] = tempArr[left + i];
-                i += 1;
-            } else {
-                arr[k] = tempArr[start2 + j];
-                j += 1;
-            }
-            k += 1;
+        if (left < n && arr[left] > arr[largest]) {
+            largest = left;
         }
         
-        while (i < n1) {
-            arr[k] = tempArr[left + i];
-            i += 1;
-            k += 1;
+        if (right < n && arr[right] > arr[largest]) {
+            largest = right;
         }
-        while (j < n2) {
-            arr[k] = tempArr[start2 + j];
-            j += 1;
-            k += 1;
+        
+        if (largest != i) {
+            int swap = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = swap;
+            heapify(arr, n, largest);
         }
     }
-    
-    private void mergeSort(int[] arr, int left, int right, int[] tempArr) {
-        if (left >= right) {
-            return;
+
+    private void heapSort(int[] arr) {
+        int n = arr.length;
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(arr, n, i);
         }
-        int mid = (left + right) / 2;
-        mergeSort(arr, left, mid, tempArr);
-        mergeSort(arr, mid + 1, right, tempArr);
-        merge(arr, left, mid, right, tempArr);
+        
+        for (int i = n - 1; i >= 0; i--) {
+            int swap = arr[0];
+            arr[0] = arr[i];
+            arr[i] = swap;
+            heapify(arr, i, 0);
+        }
     }
 
     public int heightChecker(int[] heights) {
         int[] sortedHeights = heights.clone();
-        int[] tempArray = new int[heights.length];
-        mergeSort(sortedHeights, 0, sortedHeights.length - 1, tempArray);
+        heapSort(sortedHeights);
 
         int count = 0;
         for (int i = 0; i < sortedHeights.length; ++i) {
