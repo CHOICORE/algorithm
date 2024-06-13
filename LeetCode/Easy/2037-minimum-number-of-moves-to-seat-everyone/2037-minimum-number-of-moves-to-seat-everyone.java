@@ -23,12 +23,14 @@ class Solution {
     }
 
     private int findMax(int[] array) {
-        int maximum = 0;
+        int max = 0;
+        
         for (int num : array) {
-            if (num > maximum) {
-                maximum = num;
+            if (num > max) {
+                max = num;
             }
         }
-        return maximum;
+        
+        return max;
     }
 }
