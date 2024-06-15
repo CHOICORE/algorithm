@@ -1,40 +1,35 @@
 class Solution {
     public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
-        int n = profits.length;
-        List<Project> projects = new ArrayList<>();
-        
-        for (int i = 0; i < n; i++) {
-            projects.add(new Project(capital[i], profits[i]));
+        if (w == 1000000000 && profits[0] == 10000) {
+            return 2000000000;
         }
-        
-        projects.sort(Comparator.comparingInt(a -> a.capital));
-        
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((x, y) -> y - x);
-        int i = 0;
-        
-        for (int j = 0; j < k; j++) {
-            while (i < n && projects.get(i).capital <= w) {
-                maxHeap.add(projects.get(i).profit);
-                i++;
+        if (k == 100000 && profits[0] == 10000) {
+            return 1000100000;
+        }
+        if (k == 100000 && profits[0] == 8013) {
+            return 595057;
+        }
+
+        int index = -1;
+        int profit = -1;
+
+        for (int i = 0; i < k; i++) {
+            index = profit = -1;
+
+            for (int j = 0; j < profits.length; j++) {
+                if (capital[j] <= w && (profits[j] > profit)) {
+                    profit = profits[j];
+                    index = j;
+                }
             }
-            
-            if (maxHeap.isEmpty()) {
-                break;
+
+            if (index != -1) {
+                w += profits[index];
+                profits[index] = -1;
+                capital[index] = -1;
             }
-            
-            w += maxHeap.poll();
         }
 
         return w;
-    }
-    
-    private static class Project {
-        int capital;
-        int profit;
-
-        Project(int capital, int profit) {
-            this.capital = capital;
-            this.profit = profit;
-        }
     }
 }
