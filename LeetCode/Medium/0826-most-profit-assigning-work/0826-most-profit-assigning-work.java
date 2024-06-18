@@ -1,43 +1,35 @@
 class Solution {
+    public int maxProfitAssignment(int[] difficulty, int[] profit, int[] worker) {
+        if (difficulty.length != profit.length) {
+            return 0;
+        }
 
-    private static int getNetProfit(int[] worker, List<int[]> jobProfile) {
-        int netProfit = 0;
-        for (int ability : worker) {
-            int l = 0, r = jobProfile.size() - 1, jobProfit = 0;
-            while (l <= r) {
-                int mid = (l + r) / 2;
-                if (jobProfile.get(mid)[0] <= ability) {
-                    jobProfit = Math.max(jobProfit, jobProfile.get(mid)[1]);
-                    l = mid + 1;
-                } else {
-                    r = mid - 1;
-                }
+        int maxDifficulty = 0;
+        for (int diff : difficulty) {
+            maxDifficulty = Math.max(maxDifficulty, diff);
+        }
+
+        int[] bestProfit = new int[maxDifficulty + 1];
+        for (int i = 0; i < profit.length; i++) {
+            bestProfit[difficulty[i]] = Math.max(bestProfit[difficulty[i]], profit[i]);
+        }
+
+        int maxProfit = 0;
+        for (int i = 0; i < bestProfit.length; i++) {
+            if (bestProfit[i] > maxProfit) {
+                maxProfit = bestProfit[i];
             }
-
-            netProfit += jobProfit;
-        }
-        return netProfit;
-    }
-
-    public int maxProfitAssignment(
-            int[] difficulty,
-            int[] profit,
-            int[] worker
-    ) {
-        List<int[]> jobProfile = new ArrayList<>();
-        jobProfile.add(new int[]{0, 0});
-        for (int i = 0; i < difficulty.length; i++) {
-            jobProfile.add(new int[]{difficulty[i], profit[i]});
+            bestProfit[i] = maxProfit;
         }
 
-        jobProfile.sort(Comparator.comparingInt(a -> a[0]));
-        for (int i = 0; i < jobProfile.size() - 1; i++) {
-            jobProfile.get(i + 1)[1] = Math.max(
-                    jobProfile.get(i)[1],
-                    jobProfile.get(i + 1)[1]
-            );
+        int result = 0;
+        for (int w : worker) {
+            if (w > maxDifficulty) {
+                result += bestProfit[maxDifficulty];
+            } else {
+                result += bestProfit[w];
+            }
         }
-
-        return getNetProfit(worker, jobProfile);
+        return result;
     }
 }
