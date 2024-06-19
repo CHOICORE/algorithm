@@ -4,7 +4,6 @@ class Solution {
         int count = 0;
 
         for (int j : bloomDay) {
-            // If the flower is bloomed, add to the set. Else reset the count.
             if (j <= mid) {
                 count++;
             } else {
