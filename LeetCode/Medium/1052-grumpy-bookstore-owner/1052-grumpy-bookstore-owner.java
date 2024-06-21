@@ -1,30 +1,22 @@
 class Solution {
     public int maxSatisfied(int[] customers, int[] grumpy, int minutes) {
-        int n = customers.length;
-        int unrealizedCustomers = 0;
-        
-        for (int i = 0; i < minutes; i++) {
-            unrealizedCustomers += customers[i] * grumpy[i];
-        }
+        int n = grumpy.length;
+        int i = 0;
+        int curWin = 0;
+        int maxWin = 0;
 
-        int maxUnrealizedCustomers = unrealizedCustomers;
-        
-        for (int i = minutes; i < n; i++) {
-            unrealizedCustomers += customers[i] * grumpy[i];
-            unrealizedCustomers -= customers[i - minutes] * grumpy[i - minutes];
-            
-            maxUnrealizedCustomers = Math.max(
-                    maxUnrealizedCustomers,
-                    unrealizedCustomers
-            );
+        for (int j = 0; j < n; j++) {
+            curWin += customers[j] * grumpy[j];
+            maxWin = Math.max(curWin, maxWin);
+            if (j >= minutes - 1) {
+                curWin -= customers[i] * grumpy[i++];
+            }
         }
-        
-        int totalCustomers = maxUnrealizedCustomers;
-        
-        for (int i = 0; i < customers.length; i++) {
-            totalCustomers += customers[i] * (1 - grumpy[i]);
+        int answer = maxWin;
+        for (i = 0; i < grumpy.length; i++) {
+            answer += customers[i] * (1 - grumpy[i]);
         }
-        
-        return totalCustomers;
+        return answer;
+
     }
 }
