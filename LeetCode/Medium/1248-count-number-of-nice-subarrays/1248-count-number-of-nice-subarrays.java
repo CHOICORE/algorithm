@@ -1,17 +1,16 @@
 class Solution {
     public int numberOfSubarrays(int[] nums, int k) {
-        int currSum = 0, subarrays = 0;
-        Map<Integer, Integer> prefixSum = new HashMap<>();
-        prefixSum.put(currSum, 1);
-
-        for (int num : nums) {
-            currSum += num % 2;
-            if (prefixSum.containsKey(currSum - k)) {
-                subarrays = subarrays + prefixSum.get(currSum - k);
+        int n = nums.length;
+        int[] counts = new int[n + 1];
+        counts[0] = 1;
+        int answer = 0, oddNumbers = 0;
+        for (int value : nums) {
+            oddNumbers += value & 1;
+            if (oddNumbers - k >= 0) {
+                answer += counts[oddNumbers - k];
             }
-            prefixSum.put(currSum, prefixSum.getOrDefault(currSum, 0) + 1);
+            counts[oddNumbers]++;
         }
-
-        return subarrays;
+        return answer;
     }
 }
