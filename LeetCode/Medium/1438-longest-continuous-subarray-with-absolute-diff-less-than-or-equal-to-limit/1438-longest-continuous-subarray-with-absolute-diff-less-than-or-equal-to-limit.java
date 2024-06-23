@@ -1,34 +1,60 @@
 class Solution {
     public int longestSubarray(int[] nums, int limit) {
-        Deque<Integer> maxDeque = new LinkedList<>();
-        Deque<Integer> minDeque = new LinkedList<>();
-        int left = 0;
-        int maxLength = 0;
+        MonotonicQueue win = new MonotonicQueue();
+        int left = 0, right = 0;
+        int res = 0;
+        while (right < nums.length) {
+            win.add(nums[right]);
+            right++;
 
-        for (int right = 0; right < nums.length; ++right) {
-            while (!maxDeque.isEmpty() && maxDeque.peekLast() < nums[right]) {
-                maxDeque.pollLast();
-            }
-            maxDeque.offerLast(nums[right]);
-            
-            while (!minDeque.isEmpty() && minDeque.peekLast() > nums[right]) {
-                minDeque.pollLast();
-            }
-            minDeque.offerLast(nums[right]);
-            
-            while (maxDeque.peekFirst() - minDeque.peekFirst() > limit) {
-                if (maxDeque.peekFirst() == nums[left]) {
-                    maxDeque.pollFirst();
-                }
-                if (minDeque.peekFirst() == nums[left]) {
-                    minDeque.pollFirst();
-                }
-                ++left;
+
+            while (win.getMax() - win.getMin() > limit) {
+                win.remove(nums[left]);
+                left++;
             }
 
-            maxLength = Math.max(maxLength, right - left + 1);
+            res = Math.max(res, right - left);
         }
 
-        return maxLength;
+        return res;
     }
+}
+
+
+class MonotonicQueue {
+    LinkedList<Integer> maxQueue = new LinkedList<>();
+    LinkedList<Integer> minQueue = new LinkedList<>();
+
+    public void add(int x) {
+
+        while (!maxQueue.isEmpty() && maxQueue.getLast() < x) {
+            maxQueue.removeLast();
+        }
+        maxQueue.addLast(x);
+
+
+        while (!minQueue.isEmpty() && minQueue.getLast() > x) {
+            minQueue.removeLast();
+        }
+        minQueue.addLast(x);
+    }
+
+    public int getMax() {
+        return maxQueue.getFirst();
+    }
+
+    public int getMin() {
+        return minQueue.getFirst();
+    }
+
+    public void remove(int x) {
+        if (maxQueue.getFirst() == x) {
+            maxQueue.removeFirst();
+        }
+
+        if (minQueue.getFirst() == x) {
+            minQueue.removeFirst();
+        }
+    }
+
 }
