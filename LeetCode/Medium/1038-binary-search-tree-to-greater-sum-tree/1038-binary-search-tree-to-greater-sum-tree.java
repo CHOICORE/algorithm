@@ -15,40 +15,22 @@
  */
 class Solution {
     public TreeNode bstToGst(TreeNode root) {
-        List<Integer> inorderTraversal = new ArrayList<>();
-        inorder(root, inorderTraversal);
-        
-        Collections.reverse(inorderTraversal);
-        
-        replaceValues(root, inorderTraversal);
+        if (root == null) {
+            return null;
+        }
+        List<TreeNode> list = new ArrayList<>();
+        traversal(root, list);
+        int sum = 0;
+        for (TreeNode x : list) {
+            sum = sum + x.val;
+            x.val = sum;
+        }
         return root;
     }
-    
-    private void inorder(TreeNode root, List<Integer> inorderTraversal) {
-        if (root == null) {
-            return;
-        }
-        inorder(root.left, inorderTraversal);
-        inorderTraversal.add(root.val);
-        inorder(root.right, inorderTraversal);
-    }
-    
-    private void replaceValues(TreeNode root, List<Integer> inorderTraversal) {
-        if (root == null) {
-            return;
-        }
-        replaceValues(root.left, inorderTraversal);
-        replaceValues(root.right, inorderTraversal);
 
-        int nodeSum = 0;
-        for (int i : inorderTraversal) {
-            if (i > root.val) {
-                nodeSum += i;
-            } else {
-                break;
-            }
-        }
-
-        root.val += nodeSum;
+    public void traversal(TreeNode root, List<TreeNode> list) {
+        if (root.right != null) traversal(root.right, list);
+        list.add(root);
+        if (root.left != null) traversal(root.left, list);
     }
 }
