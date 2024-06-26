@@ -14,37 +14,33 @@
  * }
  */
 class Solution {
+    private List<TreeNode> ordered = new ArrayList<>();
+
     public TreeNode balanceBST(TreeNode root) {
-        List<Integer> inorder = new ArrayList<>();
-        inorderTraversal(root, inorder);
-        
-        return createBalancedBST(inorder, 0, inorder.size() - 1);
+        inOrder(root);
+        return bst(0, ordered.size() - 1);
     }
 
-    private void inorderTraversal(TreeNode root, List<Integer> inorder) {
-        if (root == null) return;
-        inorderTraversal(root.left, inorder);
-        inorder.add(root.val);
-        inorderTraversal(root.right, inorder);
-    }
-
-    private TreeNode createBalancedBST(
-            List<Integer> inorder,
-            int start,
-            int end
-    ) {
+    private TreeNode bst(int start, int end) {
         if (start > end) return null;
-        
-        int mid = start + (end - start) / 2;
-        
-        TreeNode leftSubtree = createBalancedBST(inorder, start, mid - 1);
-        TreeNode rightSubtree = createBalancedBST(inorder, mid + 1, end);
-        
-        TreeNode node = new TreeNode(
-                inorder.get(mid),
-                leftSubtree,
-                rightSubtree
-        );
-        return node;
+        else if (start == end) {
+            TreeNode ret = ordered.get(start);
+            ret.left = null;
+            ret.right = null;
+            return ret;
+        } else {
+            int mid = start + (end - start) / 2;
+            TreeNode ret = ordered.get(mid);
+            ret.left = bst(start, mid - 1);
+            ret.right = bst(mid + 1, end);
+            return ret;
+        }
+    }
+
+    private void inOrder(TreeNode node) {
+        if (node == null) return;
+        inOrder(node.left);
+        ordered.add(node);
+        inOrder(node.right);
     }
 }
