@@ -1,18 +1,11 @@
 class Solution {
     public int findCenter(int[][] edges) {
-        Map<Integer, Integer> degree = new HashMap<>();
+        int a = edges[0][0];
+        int b = edges[0][1];
 
-        for (int[] edge : edges) {
-            degree.put(edge[0], degree.getOrDefault(edge[0], 0) + 1);
-            degree.put(edge[1], degree.getOrDefault(edge[1], 0) + 1);
-        }
-
-        for (int node : degree.keySet()) {
-            if (degree.get(node) == edges.length) {
-                return node;
-            }
-        }
-
-        return -1;
+        if (a == edges[1][0] || a == edges[1][1])
+            return a;
+        else
+            return b;
     }
 }
