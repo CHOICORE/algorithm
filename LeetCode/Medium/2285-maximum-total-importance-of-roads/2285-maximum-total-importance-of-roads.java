@@ -1,21 +1,21 @@
 class Solution {
     public long maximumImportance(int n, int[][] roads) {
-        long[] degree = new long[n];
-
-        for (int[] edge : roads) {
-            degree[edge[0]]++;
-            degree[edge[1]]++;
+        int[] br = new int[n];
+        for (int[] r : roads) {
+            br[r[0]]++;
+            br[r[1]]++;
         }
-
-        Arrays.sort(degree);
-
-        long value = 1;
-        long totalImportance = 0;
-        for (long d : degree) {
-            totalImportance += (value * d);
-            value++;
+        int[] cnt = new int[n];
+        for (int b : br) {
+            cnt[b]++;
         }
-
-        return totalImportance;
+        long sum = 0;
+        long val = 1;
+        for (long i = 0; i < n; i++) {
+            for (int j = 0; j < cnt[(int) i]; j++) {
+                sum += i * val++;
+            }
+        }
+        return sum;
     }
 }
