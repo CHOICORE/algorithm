@@ -1,59 +1,31 @@
 class Solution {
     public List<List<Integer>> getAncestors(int n, int[][] edges) {
-        List<Integer>[] adjacencyList = new ArrayList[n];
+        List<List<Integer>> res = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            adjacencyList[i] = new ArrayList<>();
-        }
-        
-        int[] indegree = new int[n];
-        for (int[] edge : edges) {
-            int from = edge[0];
-            int to = edge[1];
-            adjacencyList[from].add(to);
-            indegree[to]++;
-        }
-        
-        Queue<Integer> nodesWithZeroIndegree = new LinkedList<>();
-        for (int i = 0; i < indegree.length; i++) {
-            if (indegree[i] == 0) {
-                nodesWithZeroIndegree.add(i);
-            }
-        }
-        
-        List<Integer> topologicalOrder = new ArrayList<>();
-        while (!nodesWithZeroIndegree.isEmpty()) {
-            int currentNode = nodesWithZeroIndegree.poll();
-            topologicalOrder.add(currentNode);
-            
-            for (int neighbor : adjacencyList[currentNode]) {
-                indegree[neighbor]--;
-                if (indegree[neighbor] == 0) {
-                    nodesWithZeroIndegree.add(neighbor);
-                }
-            }
-        }
-        
-        List<List<Integer>> ancestorsList = new ArrayList<>();
-        List<Set<Integer>> ancestorsSetList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            ancestorsList.add(new ArrayList<>());
-            ancestorsSetList.add(new HashSet<>());
-        }
-        
-        for (int node : topologicalOrder) {
-            for (int neighbor : adjacencyList[node]) {
-                ancestorsSetList.get(neighbor).add(node);
-                ancestorsSetList
-                        .get(neighbor)
-                        .addAll(ancestorsSetList.get(node));
-            }
-        }
-        
-        for (int i = 0; i < ancestorsList.size(); i++) {
-            ancestorsList.get(i).addAll(ancestorsSetList.get(i));
-            Collections.sort(ancestorsList.get(i));
+            res.add(new ArrayList<>());
         }
 
-        return ancestorsList;
+        List<Integer>[] graph = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        for (int[] edge : edges) {
+            graph[edge[0]].add(edge[1]);
+        }
+        for (int i = 0; i < n; i++) {
+            dfs(graph, i, i, res, new boolean[n]);
+        }
+        return res;
+    }
+
+    public void dfs(List<Integer>[] graph, int parent, int curr, List<List<Integer>> res, boolean[] visit) {
+        visit[curr] = true;
+        for (int i = 0; i < graph[curr].size(); i++) {
+            int dest = graph[curr].get(i);
+            if (!visit[dest]) {
+                res.get(dest).add(parent);
+                dfs(graph, parent, dest, res, visit);
+            }
+        }
     }
 }
