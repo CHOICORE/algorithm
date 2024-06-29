@@ -18,7 +18,7 @@ class Solution {
         return res;
     }
 
-    public void dfs(List<Integer>[] graph, int parent, int curr, List<List<Integer>> res, boolean[] visit) {
+    void dfs(List<Integer>[] graph, int parent, int curr, List<List<Integer>> res, boolean[] visit) {
         visit[curr] = true;
         for (int i = 0; i < graph[curr].size(); i++) {
             int dest = graph[curr].get(i);
