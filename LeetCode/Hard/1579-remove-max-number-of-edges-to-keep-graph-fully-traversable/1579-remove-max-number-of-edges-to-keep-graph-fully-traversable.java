@@ -3,7 +3,6 @@ class Solution {
         UnionFind alice = new UnionFind(n);
         UnionFind bob = new UnionFind(n);
 
-
         int edgesRequired = 0;
         for (int[] edge : edges) {
             if (edge[0] == 3) {
@@ -24,7 +23,6 @@ class Solution {
         }
 
         return -1;
-
     }
 
     static class UnionFind {
