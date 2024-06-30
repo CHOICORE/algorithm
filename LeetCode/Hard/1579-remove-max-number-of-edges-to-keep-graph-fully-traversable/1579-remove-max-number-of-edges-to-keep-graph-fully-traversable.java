@@ -27,7 +27,7 @@ class Solution {
 
     }
 
-    static class UnionFind {
+    class UnionFind {
 
         int[] representative;
         int[] componentSize;
