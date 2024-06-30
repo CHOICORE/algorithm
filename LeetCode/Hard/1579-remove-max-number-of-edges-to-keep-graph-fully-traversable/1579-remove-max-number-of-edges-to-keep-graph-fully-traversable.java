@@ -1,74 +1,79 @@
 class Solution {
-    static final int
-            TYPE = 0, U = 1, V = 2,
-            ALICE = 1, BOB = 2, BOTH = 3;
+    public int maxNumEdgesToRemove(int n, int[][] edges) {
+        UnionFind alice = new UnionFind(n);
+        UnionFind bob = new UnionFind(n);
 
-    public int maxNumEdgesToRemove(
-            final int n, final int[][] edges) {
 
-        for (int i = 0, j = edges.length - 1; i < j; ) {
-            if (edges[i][TYPE] == BOTH) {
-                ++i;
-                continue;
+        int edgesRequired = 0;
+        for (int[] edge : edges) {
+            if (edge[0] == 3) {
+                edgesRequired += (alice.preformUnion(edge[1], edge[2]) | bob.preformUnion(edge[1], edge[2]));
             }
-            final var temp = edges[i];
-            edges[i] = edges[j];
-            edges[j] = temp;
-            --j;
         }
 
-        final UnionFind
-                aliceUf = new UnionFind(n),
-                bobUf = new UnionFind(n);
-        int added = 0;
-
-        for (final var edge : edges) {
-            final int type = edge[TYPE];
-            final int u = edge[U];
-            final int v = edge[V];
-
-            added += switch (type) {
-                case BOTH -> aliceUf.union(u, v) | bobUf.union(u, v);
-                case ALICE -> aliceUf.union(u, v);
-                default -> bobUf.union(u, v);
-            };
-
-            if (aliceUf.isUnited() && bobUf.isUnited())
-                return edges.length - added;
+        for (int[] edge : edges) {
+            if (edge[0] == 2) {
+                edgesRequired += bob.preformUnion(edge[1], edge[2]);
+            } else if (edge[0] == 1) {
+                edgesRequired += alice.preformUnion(edge[1], edge[2]);
+            }
         }
 
-        if (aliceUf.isUnited() && bobUf.isUnited())
-            return edges.length - added;
+        if (alice.isConnected() && bob.isConnected()) {
+            return edges.length - edgesRequired;
+        }
+
         return -1;
-    }
-}
 
-class UnionFind {
-    final int[] parent;
-    int groups;
-
-    UnionFind(final int n) {
-        parent = new int[n + 1];
-        groups = n;
     }
 
-    int union(final int u, final int v) {
-        final int uParent = find(u);
-        final int vParent = find(v);
-        if (uParent == vParent)
-            return 0;
-        parent[uParent] = vParent;
-        --groups;
-        return 1;
-    }
+    static class UnionFind {
 
-    int find(final int v) {
-        if (parent[v] != 0)
-            return parent[v] = find(parent[v]);
-        return v;
-    }
+        int[] representative;
+        int[] componentSize;
+        int components;
 
-    boolean isUnited() {
-        return groups == 1;
+        UnionFind(int n) {
+            components = n;
+            representative = new int[n + 1];
+            componentSize = new int[n + 1];
+
+            for (int i = 0; i <= n; i++) {
+                representative[i] = i;
+                componentSize[i] = i;
+            }
+        }
+
+        int findRepresentative(int x) {
+            if (representative[x] == x) {
+                return x;
+            }
+
+            return representative[x] = findRepresentative(representative[x]);
+        }
+
+        int preformUnion(int x, int y) {
+            x = findRepresentative(x);
+            y = findRepresentative(y);
+
+            if (x == y) {
+                return 0;
+            }
+
+            if (componentSize[x] > componentSize[y]) {
+                componentSize[x] += componentSize[y];
+                representative[y] = x;
+            } else {
+                componentSize[y] += componentSize[x];
+                representative[x] = y;
+            }
+
+            components--;
+            return 1;
+        }
+
+        boolean isConnected() {
+            return components == 1;
+        }
     }
 }
