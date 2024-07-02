@@ -1,20 +1,20 @@
 class Solution {
     public int[] intersect(int[] nums1, int[] nums2) {
-        int l1 = nums1.length;
-        int l2 = nums2.length;
-        int i = 0, j = 0, k = 0;
-        Arrays.sort(nums1);
-        Arrays.sort(nums2);
-        while (i < l1 && j < l2) {
-            if (nums1[i] < nums2[j]) {
-                i++;
-            } else if (nums1[i] > nums2[j]) {
-                j++;
-            } else {
-                nums1[k++] = nums1[i++];
-                j++;
+        int[] arr = new int[1_001];
+        int[] result = new int[1_001];
+
+        for (int num : nums1) {
+            arr[num]++;
+        }
+
+        int ctr = 0;
+        for (int num : nums2) {
+            if (arr[num] > 0) {
+                result[ctr++] = num;
+                arr[num]--;
             }
         }
-        return Arrays.copyOfRange(nums1, 0, k);
+
+        return Arrays.copyOfRange(result, 0, ctr);
     }
 }
