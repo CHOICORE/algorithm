@@ -20,7 +20,6 @@ class Solution {
         int min = Integer.MAX_VALUE;
 
         while (curr.next != null) {
-
             if (prev.val > curr.val && curr.val < curr.next.val || prev.val < curr.val && curr.val > curr.next.val) {
 
                 if (previous == -1) {
