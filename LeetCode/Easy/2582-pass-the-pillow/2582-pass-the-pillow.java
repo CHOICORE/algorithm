@@ -4,10 +4,8 @@ class Solution {
         int currentTime = 0;
         int direction = 1;
         while (currentTime < time) {
-            if (
-                    0 < currentPillowPosition + direction &&
-                            currentPillowPosition + direction <= n
-            ) {
+            if (0 < currentPillowPosition + direction
+                    && currentPillowPosition + direction <= n) {
                 currentPillowPosition += direction;
                 currentTime++;
             } else {
