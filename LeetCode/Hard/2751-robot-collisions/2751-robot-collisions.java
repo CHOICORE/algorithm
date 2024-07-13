@@ -32,7 +32,12 @@ class Solution {
 
         stack.sort(Comparator.comparingInt(a -> a.index));
 
-        return stack.stream().map(robot -> robot.health).collect(Collectors.toList());
+        List<Integer> answer = new ArrayList<>();
+        for (Robot robot : stack) {
+            answer.add(robot.health);
+        }
+        
+        return answer;
     }
 
     static class Robot {
