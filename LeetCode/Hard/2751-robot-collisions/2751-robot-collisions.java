@@ -1,50 +1,51 @@
 class Solution {
-    public List<Integer> survivedRobotsHealths(
-            int[] positions,
-            int[] healths,
-            String directions
-    ) {
-        int n = positions.length;
-        Integer[] indices = new Integer[n];
-        List<Integer> result = new ArrayList<>();
-        Stack<Integer> stack = new Stack<>();
+    public List<Integer> survivedRobotsHealths(int[] positions, int[] healths, String directions) {
+        Robot[] robots = new Robot[positions.length];
+        List<Robot> stack = new ArrayList<>();
 
-        for (int index = 0; index < n; ++index) {
-            indices[index] = index;
+        for (int i = 0; i < positions.length; ++i) {
+            robots[i] = new Robot(i, positions[i], healths[i], directions.charAt(i));
         }
 
-        Arrays.sort(
-                indices,
-                (lhs, rhs) -> Integer.compare(positions[lhs], positions[rhs])
-        );
+        Arrays.sort(robots, Comparator.comparingInt(a -> a.position));
 
-        for (int currentIndex : indices) {
-            if (directions.charAt(currentIndex) == 'R') {
-                stack.push(currentIndex);
-            } else {
-                while (!stack.isEmpty() && healths[currentIndex] > 0) {
-                    int topIndex = stack.pop();
-
-                    if (healths[topIndex] > healths[currentIndex]) {
-                        healths[topIndex] -= 1;
-                        healths[currentIndex] = 0;
-                        stack.push(topIndex);
-                    } else if (healths[topIndex] < healths[currentIndex]) {
-                        healths[currentIndex] -= 1;
-                        healths[topIndex] = 0;
-                    } else {
-                        healths[currentIndex] = 0;
-                        healths[topIndex] = 0;
-                    }
+        for (Robot robot : robots) {
+            if (robot.direction == 'R') {
+                stack.add(robot);
+                continue;
+            }
+            while (!stack.isEmpty() && stack.getLast().direction == 'R' && robot.health > 0) {
+                if (stack.getLast().health == robot.health) {
+                    stack.removeLast();
+                    robot.health = 0;
+                } else if (stack.getLast().health < robot.health) {
+                    stack.removeLast();
+                    robot.health -= 1;
+                } else {
+                    stack.getLast().health -= 1;
+                    robot.health = 0;
                 }
             }
+            if (robot.health > 0)
+                stack.add(robot);
         }
-        
-        for (int index = 0; index < n; ++index) {
-            if (healths[index] > 0) {
-                result.add(healths[index]);
-            }
+
+        stack.sort(Comparator.comparingInt(a -> a.index));
+
+        return stack.stream().map(robot -> robot.health).collect(Collectors.toList());
+    }
+
+    static class Robot {
+        public int index;
+        public int position;
+        public int health;
+        public char direction;
+
+        public Robot(int index, int position, int health, char direction) {
+            this.index = index;
+            this.position = position;
+            this.health = health;
+            this.direction = direction;
         }
-        return result;
     }
 }
