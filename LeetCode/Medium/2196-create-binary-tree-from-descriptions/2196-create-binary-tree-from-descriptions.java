@@ -14,37 +14,28 @@
  * }
  */
 class Solution {
-    public TreeNode createBinaryTree(int[][] descriptions) {
-        Map<Integer, TreeNode> nodeMap = new HashMap<>();
-        
-        Set<Integer> children = new HashSet<>();
-        
-        for (int[] description : descriptions) {
-            int parentValue = description[0];
-            int childValue = description[1];
-            boolean isLeft = description[2] == 1;
-            
-            if (!nodeMap.containsKey(parentValue)) {
-                nodeMap.put(parentValue, new TreeNode(parentValue));
-            }
-            if (!nodeMap.containsKey(childValue)) {
-                nodeMap.put(childValue, new TreeNode(childValue));
-            }
-            
-            if (isLeft) {
-                nodeMap.get(parentValue).left = nodeMap.get(childValue);
-            } else {
-                nodeMap.get(parentValue).right = nodeMap.get(childValue);
-            }
-            
-            children.add(childValue);
+    public TreeNode createBinaryTree(final int[][] descriptions) {
+        final TreeNode[] nodes = new TreeNode[100001];
+        final boolean[] children = new boolean[100001];
+
+        for (final int[] description : descriptions) {
+            if (nodes[description[0]] == null)
+                nodes[description[0]] = new TreeNode(description[0]);
+
+            if (nodes[description[1]] == null)
+                nodes[description[1]] = new TreeNode(description[1]);
+
+            if (description[2] == 0)
+                nodes[description[0]].right = nodes[description[1]];
+            else
+                nodes[description[0]].left = nodes[description[1]];
+
+            children[description[1]] = true;
         }
-        
-        for (TreeNode node : nodeMap.values()) {
-            if (!children.contains(node.val)) {
-                return node;
-            }
-        }
+
+        for (final int[] description : descriptions)
+            if (!children[description[0]])
+                return nodes[description[0]];
 
         return null;
     }
