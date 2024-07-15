@@ -15,8 +15,8 @@
  */
 class Solution {
     public TreeNode createBinaryTree(final int[][] descriptions) {
-        final TreeNode[] nodes = new TreeNode[100001];
-        final boolean[] children = new boolean[100001];
+        final TreeNode[] nodes = new TreeNode[100_001];
+        final boolean[] children = new boolean[100_001];
 
         for (final int[] description : descriptions) {
             if (nodes[description[0]] == null)
