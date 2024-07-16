@@ -14,97 +14,41 @@
  * }
  */
 class Solution {
+    static byte[] path = new byte[200_001];
+    int strtLevel = -1;
+    int destLevel = -1;
+    int comnLevel = -1;
+
     public String getDirections(TreeNode root, int startValue, int destValue) {
-        Map<Integer, TreeNode> parentMap = new HashMap<>();
-
-        TreeNode startNode = findStartNode(root, startValue);
-        populateParentMap(root, parentMap);
-
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(startNode);
-        Set<TreeNode> visitedNodes = new HashSet<>();
-        Map<TreeNode, Pair<TreeNode, String>> pathTracker = new HashMap<>();
-        visitedNodes.add(startNode);
-
-        while (!queue.isEmpty()) {
-            TreeNode currentNode = queue.poll();
-
-            if (currentNode.val == destValue) {
-                return backtrackPath(currentNode, pathTracker);
-            }
-
-            if (parentMap.containsKey(currentNode.val)) {
-                TreeNode parentNode = parentMap.get(currentNode.val);
-                if (!visitedNodes.contains(parentNode)) {
-                    queue.add(parentNode);
-                    pathTracker.put(parentNode, new Pair(currentNode, "U"));
-                    visitedNodes.add(parentNode);
-                }
-            }
-
-            if (
-                    currentNode.left != null &&
-                            !visitedNodes.contains(currentNode.left)
-            ) {
-                queue.add(currentNode.left);
-                pathTracker.put(currentNode.left, new Pair(currentNode, "L"));
-                visitedNodes.add(currentNode.left);
-            }
-
-            if (
-                    currentNode.right != null &&
-                            !visitedNodes.contains(currentNode.right)
-            ) {
-                queue.add(currentNode.right);
-                pathTracker.put(currentNode.right, new Pair(currentNode, "R"));
-                visitedNodes.add(currentNode.right);
-            }
-        }
-
-        return "";
+        findPaths(root, startValue, destValue, 100_000);
+        int answerIdx = comnLevel;
+        for (int i = strtLevel; i > comnLevel; i--)
+            path[--answerIdx] = 'U';
+        return new String(path, answerIdx, destLevel - answerIdx);
     }
 
-    private String backtrackPath(
-            TreeNode node,
-            Map<TreeNode, Pair<TreeNode, String>> pathTracker
-    ) {
-        StringBuilder path = new StringBuilder();
-
-        while (pathTracker.containsKey(node)) {
-            path.append(pathTracker.get(node).getValue());
-            node = pathTracker.get(node).getKey();
+    private int findPaths(TreeNode node, int strtVal, int destVal, int level) {
+        if (node == null) return 0;
+        int result = 0;
+        if (node.val == strtVal) {
+            strtLevel = level;
+            result = 1;
+        } else if (node.val == destVal) {
+            destLevel = level;
+            result = 1;
         }
-
-        path.reverse();
-
-        return path.toString();
-    }
-
-    private void populateParentMap(
-            TreeNode node,
-            Map<Integer, TreeNode> parentMap
-    ) {
-        if (node == null) return;
-
-        if (node.left != null) {
-            parentMap.put(node.left.val, node);
-            populateParentMap(node.left, parentMap);
+        int leftFound = 0;
+        int rightFound = 0;
+        if (comnLevel < 0) {
+            if (destLevel < 0) path[level] = 'L';
+            leftFound = findPaths(node.left, strtVal, destVal, level + 1);
+            if (comnLevel < 0) {
+                if (destLevel < 0) path[level] = 'R';
+                rightFound = findPaths(node.right, strtVal, destVal, level + 1);
+            }
         }
-
-        if (node.right != null) {
-            parentMap.put(node.right.val, node);
-            populateParentMap(node.right, parentMap);
-        }
-    }
-
-    private TreeNode findStartNode(TreeNode node, int startValue) {
-        if (node == null) return null;
-
-        if (node.val == startValue) return node;
-
-        TreeNode leftResult = findStartNode(node.left, startValue);
-
-        if (leftResult != null) return leftResult;
-        return findStartNode(node.right, startValue);
+        if (comnLevel < 0 && leftFound + rightFound + result == 2)
+            comnLevel = level;
+        return result | leftFound | rightFound;
     }
 }
