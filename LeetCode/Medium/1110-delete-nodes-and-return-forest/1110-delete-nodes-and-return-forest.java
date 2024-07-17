@@ -14,44 +14,34 @@
  * }
  */
 class Solution {
+    private boolean[] s = new boolean[1_001];
+    private List<TreeNode> nodes = new ArrayList<>();
+
     public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
-        Set<Integer> toDeleteSet = new HashSet<>();
-        for (int val : to_delete) {
-            toDeleteSet.add(val);
+        for (int x : to_delete) {
+            s[x] = true;
         }
-        List<TreeNode> forest = new ArrayList<>();
-
-        root = processNode(root, toDeleteSet, forest);
-
-        if (root != null) {
-            forest.add(root);
+        if (dfs(root) != null) {
+            nodes.add(root);
         }
-
-        return forest;
+        return nodes;
     }
 
-    private TreeNode processNode(
-            TreeNode node,
-            Set<Integer> toDeleteSet,
-            List<TreeNode> forest
-    ) {
-        if (node == null) {
+    private TreeNode dfs(TreeNode root) {
+        if (root == null) {
             return null;
         }
-
-        node.left = processNode(node.left, toDeleteSet, forest);
-        node.right = processNode(node.right, toDeleteSet, forest);
-
-        if (toDeleteSet.contains(node.val)) {
-            if (node.left != null) {
-                forest.add(node.left);
-            }
-            if (node.right != null) {
-                forest.add(node.right);
-            }
-            return null;
+        root.left = dfs(root.left);
+        root.right = dfs(root.right);
+        if (!s[root.val]) {
+            return root;
         }
-
-        return node;
+        if (root.left != null) {
+            nodes.add(root.left);
+        }
+        if (root.right != null) {
+            nodes.add(root.right);
+        }
+        return null;
     }
 }
