@@ -1,34 +1,34 @@
 class Solution {
     public List<Integer> luckyNumbers(int[][] matrix) {
-        int N = matrix.length, M = matrix[0].length;
+        List<Integer> answer = new ArrayList<>();
 
-        List<Integer> rowMin = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            int col = findMin(matrix, i);
+
+            int maxCol = matrix[i][col];
+            if (maxInCol(matrix, maxCol, col))
+                answer.add(maxCol);
+        }
+
+        return answer;
+    }
+
+    private int findMin(int[][] matrix, int row) {
+        int val = matrix[row][0], col = 0;
+        for (int i = 1; i < matrix[row].length; i++) {
+            if (matrix[row][i] < val) {
+                val = matrix[row][i];
+                col = i;
+            }
+        }
+        return col;
+    }
+
+    private boolean maxInCol(int[][] matrix, int val, int col) {
         for (int[] ints : matrix) {
-            int rMin = Integer.MAX_VALUE;
-            for (int j = 0; j < M; j++) {
-                rMin = Math.min(rMin, ints[j]);
-            }
-            rowMin.add(rMin);
+            if (ints[col] > val)
+                return false;
         }
-
-        List<Integer> colMax = new ArrayList<>();
-        for (int i = 0; i < M; i++) {
-            int cMax = Integer.MIN_VALUE;
-            for (int[] ints : matrix) {
-                cMax = Math.max(cMax, ints[i]);
-            }
-            colMax.add(cMax);
-        }
-
-        List<Integer> luckyNumbers = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (matrix[i][j] == rowMin.get(i) && matrix[i][j] == colMax.get(j)) {
-                    luckyNumbers.add(matrix[i][j]);
-                }
-            }
-        }
-
-        return luckyNumbers;
+        return true;
     }
 }
