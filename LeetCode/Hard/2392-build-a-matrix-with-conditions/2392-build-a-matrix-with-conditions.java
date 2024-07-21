@@ -1,49 +1,78 @@
 class Solution {
-    public int[][] buildMatrix(
-            int k,
-            int[][] rowConditions,
-            int[][] colConditions
-    ) {
-        int[] orderRows = topoSort(rowConditions, k);
-        int[] orderColumns = topoSort(colConditions, k);
-        if (
-                orderRows.length == 0 || orderColumns.length == 0
-        ) return new int[0][0];
-        int[][] matrix = new int[k][k];
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
-                if (orderRows[i] == orderColumns[j]) {
-                    matrix[i][j] = orderRows[i];
-                }
+    public int[][] buildMatrix(int k, int[][] rowConditions, int[][] colConditions) {
+        List<Integer>[] rowGraph = new ArrayList[k + 1];
+        for (int i = 1; i < rowGraph.length; i++) {
+            rowGraph[i] = new ArrayList<>();
+        }
+        for (int[] rowCondition : rowConditions) {
+            rowGraph[rowCondition[0]].add(rowCondition[1]);
+        }
+
+        List<Integer>[] colGraph = new ArrayList[k + 1];
+        for (int i = 1; i < colGraph.length; i++) {
+            colGraph[i] = new ArrayList<>();
+        }
+        for (int[] colCondition : colConditions) {
+            colGraph[colCondition[0]].add(colCondition[1]);
+        }
+
+        int[] visited = new int[k + 1];
+        Deque<Integer> queue = new LinkedList<>();
+        for (int i = 1; i < rowGraph.length; i++) {
+            if (!topSort(rowGraph, i, visited, queue)) {
+                return new int[0][0];
             }
         }
-        return matrix;
+
+
+        int[] rowOrder = new int[k];
+        int[] rowIndexMap = new int[k + 1];
+        for (int i = 0; i < k; i++) {
+            int node = queue.pollLast();
+            rowOrder[i] = node; //
+            rowIndexMap[node] = i;
+        }
+
+        visited = new int[k + 1];
+        queue = new LinkedList();
+        for (int i = 1; i < colGraph.length; i++) {
+            if (!topSort(colGraph, i, visited, queue)) {
+                return new int[0][0];
+            }
+        }
+
+        int[] colOrder = new int[k];
+        int[] colIndexMap = new int[k + 1];
+        for (int i = 0; i < k; i++) {
+            int node = queue.pollLast();
+            colOrder[i] = node;
+            colIndexMap[node] = i;
+        }
+
+        int[][] result = new int[k][k];
+
+        for (int i = 1; i <= k; i++) {
+            result[rowIndexMap[i]][colIndexMap[i]] = i;
+        }
+
+        return result;
+
     }
 
-    private int[] topoSort(int[][] edges, int n) {
-        List<Integer>[] adj = new ArrayList[n + 1];
-        for (int i = 0; i <= n; i++) {
-            adj[i] = new ArrayList<Integer>();
+    public boolean topSort(List<Integer>[] graph, int node, int[] visited, Deque<Integer> queue) {
+        if (visited[node] == 2) {
+            return false;
         }
-        int[] deg = new int[n + 1], order = new int[n];
-        int idx = 0;
-        for (int[] x : edges) {
-            adj[x[0]].add(x[1]);
-            deg[x[1]]++;
-        }
-        Queue<Integer> q = new LinkedList<>();
-        for (int i = 1; i <= n; i++) {
-            if (deg[i] == 0) q.offer(i);
-        }
-        while (!q.isEmpty()) {
-            int f = q.poll();
-            order[idx++] = f;
-            n--;
-            for (int v : adj[f]) {
-                if (--deg[v] == 0) q.offer(v);
+        if (visited[node] == 0) {
+            visited[node] = 2;
+            for (int child : graph[node]) {
+                if (!topSort(graph, child, visited, queue)) {
+                    return false;
+                }
             }
+            visited[node] = 1;
+            queue.add(node);
         }
-        if (n != 0) return new int[0];
-        return order;
+        return true;
     }
 }
