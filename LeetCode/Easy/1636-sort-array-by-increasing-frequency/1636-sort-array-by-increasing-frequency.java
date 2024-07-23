@@ -1,26 +1,42 @@
 class Solution {
     public int[] frequencySort(int[] nums) {
-        Map<Integer, Integer> freq = new HashMap<>();
+        int[] count = new int[202];
         for (int num : nums) {
-            freq.put(num, freq.getOrDefault(num, 0) + 1);
+            count[num + 100]++;
         }
-        
-        Integer[] numsObj = new Integer[nums.length];
-        for (int i = 0; i < nums.length; i++) {
-            numsObj[i] = nums[i];
-        }
-
-        Arrays.sort(numsObj, (a, b) -> {
-            if (freq.get(a).equals(freq.get(b))) {
-                return Integer.compare(b, a);
-            }
-            return Integer.compare(freq.get(a), freq.get(b));
-        });
-
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = numsObj[i];
-        }
-
+        quickSort(nums, count, 0, nums.length - 1);
         return nums;
+    }
+
+    void quickSort(int[] nums, int[] freq, int low, int high) {
+        if (low < high) {
+            int pivot = partition(nums, freq, low, high);
+            quickSort(nums, freq, low, pivot - 1);
+            quickSort(nums, freq, pivot + 1, high);
+        }
+    }
+
+    int partition(int[] nums, int[] freq, int low, int high) {
+        int pivot = freq[nums[high] + 100];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (pivot > freq[nums[j] + 100]) {
+                i++;
+                int temp = nums[j];
+                nums[j] = nums[i];
+                nums[i] = temp;
+            } else if (freq[nums[j] + 100] == pivot) {
+                if (nums[high] <= nums[j]) {
+                    i++;
+                    int temp = nums[j];
+                    nums[j] = nums[i];
+                    nums[i] = temp;
+                }
+            }
+        }
+        int temp = nums[i + 1];
+        nums[i + 1] = nums[high];
+        nums[high] = temp;
+        return i + 1;
     }
 }
