@@ -1,52 +1,41 @@
 class Solution {
     public int secondMinimum(int n, int[][] edges, int time, int change) {
-        Map<Integer, List<Integer>> adj = new HashMap<>();
+        List<Integer>[] graph = new ArrayList[n + 1];
+        for (int i = 0; i < n + 1; i++) graph[i] = new ArrayList<>();
         for (int[] edge : edges) {
-            int a = edge[0], b = edge[1];
-            adj.computeIfAbsent(a, value -> new ArrayList<Integer>()).add(b);
-            adj.computeIfAbsent(b, value -> new ArrayList<Integer>()).add(a);
-        }
-        int[] dist1 = new int[n + 1], dist2 = new int[n + 1], freq = new int[n + 1];
-        for (int i = 1; i <= n; i++) {
-            dist1[i] = dist2[i] = Integer.MAX_VALUE;
-            freq[i] = 0;
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
         }
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> (a[1] - b[1]));
-        pq.offer(new int[]{1, 0});
-        dist1[1] = 0;
+        Deque<int[]> deque = new LinkedList<>();
+        int[] visitedNum = new int[n + 1];
+        int[] timeArr = new int[n + 1];
+        Arrays.fill(timeArr, -1);
+        deque.offerLast(new int[]{1, 0});
+        timeArr[0] = 0;
 
-        while (!pq.isEmpty()) {
-            int[] temp = pq.poll();
-            int node = temp[0];
-            int time_taken = temp[1];
+        while (!deque.isEmpty()) {
+            int curSize = deque.size();
+            for (int i = 0; i < curSize; i++) {
+                int[] cur = deque.pollFirst();
 
-            freq[node]++;
-            
-            if (freq[node] == 2 && node == n)
-                return time_taken;
-            if ((time_taken / change) % 2 == 1)
-                time_taken = change * (time_taken / change + 1) + time;
-            else
-                time_taken = time_taken + time;
+                int nextTime = 0;
+                int curLight = cur[1] / change;
+                if (curLight % 2 == 0) {
+                    nextTime = cur[1] + time;
+                } else nextTime = (curLight + 1) * change + time;
 
-            if (!adj.containsKey(node))
-                continue;
-            for (int neighbor : adj.get(node)) {
-                if (freq[neighbor] == 2)
-                    continue;
-                
-                if (dist1[neighbor] > time_taken) {
-                    dist2[neighbor] = dist1[neighbor];
-                    dist1[neighbor] = time_taken;
-                    pq.offer(new int[]{neighbor, time_taken});
-                } else if (dist2[neighbor] > time_taken && dist1[neighbor] != time_taken) {
-                    dist2[neighbor] = time_taken;
-                    pq.offer(new int[]{neighbor, time_taken});
+                for (int nextNode : graph[cur[0]]) {
+                    if (visitedNum[nextNode] < 2 && timeArr[nextNode] < nextTime) {
+                        deque.offerLast(new int[]{nextNode, nextTime});
+                        visitedNum[nextNode]++;
+                        timeArr[nextNode] = nextTime;
+                        if (nextNode == n && visitedNum[nextNode] == 2) return nextTime;
+                    }
                 }
-            }
 
+            }
         }
-        return 0;
+        return -1;
     }
 }
