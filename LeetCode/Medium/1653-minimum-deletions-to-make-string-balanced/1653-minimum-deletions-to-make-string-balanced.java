@@ -13,8 +13,7 @@ class Solution {
             a -= ('b' - letters[i]);
             b += (letters[i] - 'a');
         }
-
-        output = Math.min(output, a + b);
-        return output;
+        
+        return Math.min(output, a + b);
     }
 }
