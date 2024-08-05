@@ -1,29 +1,32 @@
 class Solution {
     public String kthDistinct(String[] arr, int k) {
-        int n = arr.length;
-        List<String> distinctStrings = new ArrayList<>();
-        
-        for (int i = 0; i < n; i++) {
-            String currentString = arr[i];
-            boolean isDistinct = true;
-            
-            for (int j = 0; j < n; j++) {
-                if (j == i) continue;
-                if (arr[j].equals(currentString)) {
-                    isDistinct = false;
-                    break;
+        List<String> uniqueValInArray = new LinkedList<>();
+        int totalDistinct = 0;
+        Set<String> nonDistinctSet = new HashSet<>();
+        Set<String> distinctSet = new HashSet<>();
+        for (String s : arr) {
+            if (!nonDistinctSet.contains(s)) {
+                if (!distinctSet.contains(s)) {
+                    distinctSet.add(s);
+                    totalDistinct++;
+                } else {
+                    nonDistinctSet.add(s);
+                    distinctSet.remove(s);
+                    totalDistinct--;
                 }
             }
-            
-            if (isDistinct) {
-                distinctStrings.add(currentString);
-            }
         }
-        
-        if (distinctStrings.size() < k) {
+        if (totalDistinct < k) {
             return "";
         }
-
-        return distinctStrings.get(k - 1);
+        for (String s : arr) {
+            if (distinctSet.contains(s)) {
+                k--;
+                if (k == 0) {
+                    return s;
+                }
+            }
+        }
+        return "";
     }
 }
