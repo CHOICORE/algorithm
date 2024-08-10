@@ -1,69 +1,66 @@
 class Solution {
-    private static final int[][] DIRECTIONS = {
-            {0, 1},
-            {0, -1},
-            {1, 0},
-            {-1, 0},
-    };
+    int[] parent;
+    int[] rank;
+    int count;
 
     public int regionsBySlashes(String[] grid) {
-        int gridSize = grid.length;
-        int[][] expandedGrid = new int[gridSize * 3][gridSize * 3];
-        
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                int baseRow = i * 3;
-                int baseCol = j * 3;
-                if (grid[i].charAt(j) == '\\') {
-                    expandedGrid[baseRow][baseCol] = 1;
-                    expandedGrid[baseRow + 1][baseCol + 1] = 1;
-                    expandedGrid[baseRow + 2][baseCol + 2] = 1;
-                } else if (grid[i].charAt(j) == '/') {
-                    expandedGrid[baseRow][baseCol + 2] = 1;
-                    expandedGrid[baseRow + 1][baseCol + 1] = 1;
-                    expandedGrid[baseRow + 2][baseCol] = 1;
+        int rows = grid.length;
+        int dots = rows + 1;
+        parent = new int[dots * dots];
+        rank = new int[dots * dots];
+        for (int i = 0; i < parent.length; i++) {
+            parent[i] = i;
+            rank[i] = 1;
+        }
+
+        for (int i = 0; i < dots; i++) {
+            for (int j = 0; j < dots; j++) {
+                if (i == 0 || j == 0 || i == rows || j == rows) {
+                    int cells = i * dots + j;
+                    union(0, cells);
                 }
             }
         }
 
-        int regionCount = 0;
-        for (int i = 0; i < gridSize * 3; i++) {
-            for (int j = 0; j < gridSize * 3; j++) {
-                if (expandedGrid[i][j] == 0) {
-                    floodFill(expandedGrid, i, j);
-                    regionCount++;
+        for (int i = 0; i < rows; i++) {
+            char[] ch = grid[i].toCharArray();
+            for (int j = 0; j < ch.length; j++) {
+                if (ch[j] == '\\') {
+                    int cell1 = i * dots + j;
+                    int cell2 = (i + 1) * dots + (j + 1);
+                    union(cell1, cell2);
+                } else if (ch[j] == '/') {
+                    int cell1 = (i + 1) * dots + j;
+                    int cell2 = i * dots + (j + 1);
+                    union(cell1, cell2);
                 }
             }
         }
-        return regionCount;
+        return count;
     }
-    
-    private void floodFill(int[][] expandedGrid, int row, int col) {
-        Queue<int[]> queue = new LinkedList<>();
-        expandedGrid[row][col] = 1;
-        queue.add(new int[]{row, col});
 
-        while (!queue.isEmpty()) {
-            int[] currentCell = queue.poll();
-            for (int[] direction : DIRECTIONS) {
-                int newRow = direction[0] + currentCell[0];
-                int newCol = direction[1] + currentCell[1];
-                if (isValidCell(expandedGrid, newRow, newCol)) {
-                    expandedGrid[newRow][newCol] = 1;
-                    queue.add(new int[]{newRow, newCol});
-                }
+    public void union(int a, int b) {
+        int parentA = find(a);
+        int parentB = find(b);
+        if (parentA == parentB) {
+            count++;
+        } else {
+            if (rank[parentA] > rank[parentB]) {
+                parent[parentB] = parentA;
+            } else if (rank[parentA] < rank[parentB]) {
+                parent[parentA] = parentB;
+            } else {
+                parent[parentB] = parentA;
+                rank[parentA]++;
             }
         }
     }
-    
-    private boolean isValidCell(int[][] expandedGrid, int row, int col) {
-        int n = expandedGrid.length;
-        return (
-                row >= 0 &&
-                        col >= 0 &&
-                        row < n &&
-                        col < n &&
-                        expandedGrid[row][col] == 0
-        );
+
+    public int find(int a) {
+        if (parent[a] == a)
+            return a;
+        int temp = find(parent[a]);
+        parent[a] = temp;
+        return temp;
     }
 }
