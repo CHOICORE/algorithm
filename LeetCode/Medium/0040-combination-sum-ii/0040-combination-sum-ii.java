@@ -1,38 +1,58 @@
+import java.util.*;
+
 class Solution {
     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
-        List<List<Integer>> list = new LinkedList<>();
-        Arrays.sort(candidates);
-        backtrack(list, new ArrayList<>(), candidates, target, 0);
-        return list;
+        return new AbstractList<>() {
+            List<List<Integer>> result = null;
+
+            public List<Integer> get(int i) {
+                init();
+                return result.get(i);
+            }
+
+            public int size() {
+                init();
+                return result.size();
+            }
+
+            private void init() {
+                if (result != null) return;
+
+                Arrays.sort(candidates);
+                
+                Map<Integer, Integer> freqMap = new HashMap<>();
+                for (int i : candidates) {
+                    freqMap.put(i, freqMap.getOrDefault(i, 0) + 1);
+                }
+
+                List<int[]> freq = new ArrayList<>();
+                freqMap.forEach((k, v) -> freq.add(new int[]{k, v}));
+
+                Set<List<Integer>> set = new HashSet<>();
+                impl(freq, 0, target, new ArrayList<>(), 0, set);
+                result = new ArrayList<>(set);
+            }
+        };
     }
 
-    private void backtrack(
-            List<List<Integer>> answer,
-            List<Integer> tempList,
-            int[] candidates,
-            int totalLeft,
-            int index
-    ) {
-        if (totalLeft < 0) return;
-        else if (totalLeft == 0) {
-            answer.add(new ArrayList<>(tempList));
-        } else {
-            for (
-                    int i = index;
-                    i < candidates.length && totalLeft >= candidates[i];
-                    i++
-            ) {
-                if (i > index && candidates[i] == candidates[i - 1]) continue;
-                tempList.add(candidates[i]);
-                backtrack(
-                        answer,
-                        tempList,
-                        candidates,
-                        totalLeft - candidates[i],
-                        i + 1
-                );
-                tempList.remove(tempList.size() - 1);
-            }
+    private void impl(List<int[]> candidates, int start, int target, List<Integer> list, int sum, Set<List<Integer>> result) {
+        if (sum == target) {
+            result.add(new ArrayList<>(list));
+            return;
+        }
+
+        for (int i = start; i < candidates.size(); i++) {
+            int[] c = candidates.get(i);
+            if (c[1] == 0) continue;
+            if (sum + c[0] > target) continue;
+
+            list.add(c[0]);
+            c[1]--;
+
+            impl(candidates, i, target, list, sum + c[0], result);
+
+            list.remove(list.size() - 1);
+            c[1]++;
         }
     }
 }
