@@ -1,22 +1,14 @@
 class Solution {
-    public int[] twoSum(int[] nums, int k) {
-        int[] ans = new int[2];
-        int i = 0, j = 1;
-        int n = nums.length;
-        while (i < n) {
-            if (i + j >= n) {
-                j++;
-                i = 0;
-                continue;
-            } else {
-                if (nums[i] + nums[i + j] == k) {
-                    ans[0] = i;
-                    ans[1] = i + j;
-                    break;
-                }
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if (map.containsKey(complement)) {
+                return new int[] {map.get(complement), i};
             }
-            i++;
+            map.put(nums[i], i);
         }
-        return ans;
+        
+        return null;
     }
 }
