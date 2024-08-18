@@ -10,7 +10,7 @@ class Solution {
             nums[0] = 1;
             int ugly, i2 = 0, i3 = 0, i5 = 0;
 
-            for (int i = 1; i < 1690; i++) {
+            for (int i = 1; i < nums.length; i++) {
                 ugly = Math.min(Math.min(nums[i2] * 2, nums[i3] * 3), nums[i5] * 5);
                 nums[i] = ugly;
 
