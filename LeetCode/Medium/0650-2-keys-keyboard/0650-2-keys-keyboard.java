@@ -1,19 +1,16 @@
 class Solution {
-    int n;
-
     public int minSteps(int n) {
-        if (n == 1) return 0;
-        this.n = n;
-        return 1 + minStepsHelper(1, 1);
-    }
-
-    private int minStepsHelper(int currLen, int pasteLen) {
-        if (currLen == n) return 0;
-        if (currLen > n) return 1_000;
-
-        int opt1 = 2 + minStepsHelper(currLen * 2, currLen);
-        int opt2 = 1 + minStepsHelper(currLen + pasteLen, pasteLen);
-
-        return Math.min(opt1, opt2);
+        int answer = 0;
+        for (int i = 2; i * i <= n; ) {
+            if (n % i == 0) {
+                answer += i;
+                n = n / i;
+            } else {
+                i++;
+            }
+        }
+        if (n != 1) answer = answer + n;
+        
+        return answer;
     }
 }
