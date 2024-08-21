@@ -1,58 +1,49 @@
 class Solution {
-    private int[][] memo;
-    private char[] array;
-
     public int strangePrinter(String s) {
-        if (s.isEmpty()) {
-            return 0;
+        s = removeDuplicates(s);
+        int n = s.length();
+        int[][] minTurns = new int[n][n];
+        
+        for (int i = 0; i < n; i++) {
+            minTurns[i][i] = 1;
         }
-        array = squash(s);
-        int N = array.length;
-        memo = new int[N][];
+        
+        for (int length = 2; length <= n; length++) {
+            for (int start = 0; start + length - 1 < n; start++) {
+                int end = start + length - 1;
+                
+                minTurns[start][end] = length;
+                
+                for (int split = 0; split < length - 1; split++) {
+                    int totalTurns =
+                            minTurns[start][start + split] +
+                                    minTurns[start + split + 1][end];
+                    
+                    if (s.charAt(start + split) == s.charAt(end)) {
+                        totalTurns--;
+                    }
 
-        for (int i = 0; i < N; i++) {
-            memo[i] = new int[N];
-            memo[i][i] = 1;
-            if (i != N - 1) {
-                int next = i + 1;
-                memo[i][next] = array[i] == array[next] ? 1 : 2;
-            }
-        }
-        return strangePrinter(0, array.length - 1);
-    }
-
-    public int strangePrinter(int i, int j) {
-        if (i > j) {
-            return 0;
-        }
-        if (memo[i][j] == 0) {
-
-            int nextIdx = i + 1;
-            int letter = array[i];
-
-            int answer = 1 + strangePrinter(nextIdx, j);
-
-            for (int k = nextIdx; k <= j; k++) {
-                if (array[k] == letter) {
-
-                    int betterAnswer = strangePrinter(i, k - 1) + strangePrinter(k + 1, j);
-                    answer = Math.min(answer, betterAnswer);
+                    minTurns[start][end] = Math.min(
+                            minTurns[start][end],
+                            totalTurns
+                    );
                 }
             }
-            memo[i][j] = answer;
         }
-        return memo[i][j];
+        
+        return minTurns[0][n - 1];
     }
 
-    char[] squash(String s) {
-        char[] chars = s.toCharArray();
-        int last = 0;
-        int fullLength = chars.length;
-        for (int i = 1; i < fullLength; i++) {
-            if (chars[i] != chars[last]) {
-                chars[++last] = chars[i];
+    private String removeDuplicates(String s) {
+        StringBuilder uniqueChars = new StringBuilder();
+        int i = 0;
+        while (i < s.length()) {
+            char currentChar = s.charAt(i);
+            uniqueChars.append(currentChar);
+            while (i < s.length() && s.charAt(i) == currentChar) {
+                i++;
             }
         }
-        return Arrays.copyOf(chars, last + 1);
+        return uniqueChars.toString();
     }
 }
