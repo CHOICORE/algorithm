@@ -1,49 +1,31 @@
 class Solution {
     public int strangePrinter(String s) {
-        s = removeDuplicates(s);
-        int n = s.length();
-        int[][] minTurns = new int[n][n];
-        
-        for (int i = 0; i < n; i++) {
-            minTurns[i][i] = 1;
-        }
-        
-        for (int length = 2; length <= n; length++) {
-            for (int start = 0; start + length - 1 < n; start++) {
-                int end = start + length - 1;
-                
-                minTurns[start][end] = length;
-                
-                for (int split = 0; split < length - 1; split++) {
-                    int totalTurns =
-                            minTurns[start][start + split] +
-                                    minTurns[start + split + 1][end];
-                    
-                    if (s.charAt(start + split) == s.charAt(end)) {
-                        totalTurns--;
-                    }
-
-                    minTurns[start][end] = Math.min(
-                            minTurns[start][end],
-                            totalTurns
-                    );
-                }
-            }
-        }
-        
-        return minTurns[0][n - 1];
+        char[] sc = s.toCharArray();
+        final int n = removeDuplicates(sc);
+        if (n <= 1) return n;
+        return dfs(0, n - 1, sc, new int[n][n]);
     }
 
-    private String removeDuplicates(String s) {
-        StringBuilder uniqueChars = new StringBuilder();
-        int i = 0;
-        while (i < s.length()) {
-            char currentChar = s.charAt(i);
-            uniqueChars.append(currentChar);
-            while (i < s.length() && s.charAt(i) == currentChar) {
-                i++;
+    private int dfs(int left, int right, char[] sc, int[][] memo) {
+        if (left >= right) return (left == right) ? 1 : 0;
+        if (memo[left][right] != 0) return memo[left][right];
+        int letter = sc[left];
+        int answer = 1 + dfs(left + 1, right, sc, memo);
+        for (int k = left + 1; k <= right; k++)
+            if (sc[k] == letter)
+                answer = Math.min(answer, dfs(left + 1, k - 1, sc, memo) + dfs(k, right, sc, memo));
+        return memo[left][right] = answer;
+    }
+
+    private int removeDuplicates(char[] sc) {
+        int scOutIdx = 0;
+        char prev = 0;
+        for (char c : sc) {
+            if (c != prev) {
+                sc[scOutIdx++] = c;
+                prev = c;
             }
         }
-        return uniqueChars.toString();
+        return scOutIdx;
     }
 }
