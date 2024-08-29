@@ -1,50 +1,67 @@
 class Solution {
 
     public int removeStones(int[][] stones) {
+        int maxRow = 0;
+        int maxCol = 0;
+        int i, j;
         int n = stones.length;
-        UnionFind uf = new UnionFind(n);
-        
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                if (
-                    stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]
-                ) {
-                    uf.union(i, j);
+        for (i = 0; i < n; i++) {
+            maxRow = Math.max(maxRow, stones[i][0]);
+            maxCol = Math.max(maxCol, stones[i][1]);
+        }
+        int m = maxRow + maxCol + 1;
+        DisjointSet ds = new DisjointSet(m);
+        int[] res = new int[m + 1];
+        for (i = 0; i < n; i++) {
+            int row = stones[i][0];
+            int col = stones[i][1] + maxRow + 1;
+            ds.unionSet(row, col);
+            res[row] = 1;
+            res[col] = 1;
+        }
+        int com = 0;
+        for (i = 0; i <= m; i++) {
+            if (res[i] == 1) {
+                if (ds.findUPar(i) == i) {
+                    com++;
                 }
             }
         }
-
-        return n - uf.count;
+        return n - com;
     }
-    
-    private static class UnionFind {
 
+    static class DisjointSet {
+
+        int[] rank;
         int[] parent;
-        int count;
 
-        UnionFind(int n) {
-            parent = new int[n];
-            Arrays.fill(parent, -1);
-            count = n;
-        }
-        
-        int find(int node) {
-            if (parent[node] == -1) {
-                return node;
+        public DisjointSet(int n) {
+            rank = new int[n + 1];
+            parent = new int[n + 1];
+            for (int i = 0; i <= n; i++) {
+                rank[i] = 0;
+                parent[i] = i;
             }
-            return parent[node] = find(parent[node]);
         }
-        
-        void union(int n1, int n2) {
-            int root1 = find(n1);
-            int root2 = find(n2);
 
-            if (root1 == root2) {
-                return;
+        public int findUPar(int u) {
+            if (parent[u] == u) {
+                return u;
             }
-            
-            count--;
-            parent[root1] = root2;
+            return parent[u] = findUPar(parent[u]);
+        }
+
+        public void unionSet(int u, int v) {
+            u = findUPar(u);
+            v = findUPar(v);
+            if (rank[u] < rank[v]) {
+                parent[u] = v;
+            } else if (rank[v] < rank[u]) {
+                parent[v] = u;
+            } else {
+                parent[v] = u;
+                rank[u]++;
+            }
         }
     }
 }
