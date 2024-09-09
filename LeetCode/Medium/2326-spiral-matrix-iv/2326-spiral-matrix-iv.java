@@ -8,38 +8,44 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
-class Solution {
+ class Solution {
     public int[][] spiralMatrix(int m, int n, ListNode head) {
-        int i = 0;
-        int j = 0;
-        int cur_d = 0;
-        int[][] movement = {
-                        {0, 1},
-                        {1, 0},
-                        {0, -1},
-                        {-1, 0},
-                };
         int[][] answer = new int[m][n];
-        for (int[] row : answer) {
-            Arrays.fill(row, -1);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                answer[i][j] = -1;
+            }
         }
+        if (head == null) return answer;
+        int top = 0, left = 0;
+        int right = n - 1, bottom = m - 1;
 
-        while (head != null) {
-            answer[i][j] = head.val;
-            int newi = i + movement[cur_d][0], newj = j + movement[cur_d][1];
-            
-            if (
-                    Math.min(newi, newj) < 0 ||
-                            newi >= m ||
-                            newj >= n ||
-                            answer[newi][newj] != -1
-            ) cur_d = (cur_d + 1) % 4;
-            i += movement[cur_d][0];
-            j += movement[cur_d][1];
-
-            head = head.next;
+        while (head != null && top <= bottom && left <= right) {
+            for (int i = left; i <= right; i++) {
+                answer[top][i] = head.val;
+                head = head.next;
+                if (head == null) return answer;
+            }
+            top++;
+            for (int i = top; i <= bottom; i++) {
+                answer[i][right] = head.val;
+                head = head.next;
+                if (head == null) return answer;
+            }
+            right--;
+            for (int i = right; i >= left; i--) {
+                answer[bottom][i] = head.val;
+                head = head.next;
+                if (head == null) return answer;
+            }
+            bottom--;
+            for (int i = bottom; i >= top; i--) {
+                answer[i][left] = head.val;
+                head = head.next;
+                if (head == null) return answer;
+            }
+            left++;
         }
-
         return answer;
     }
 }
