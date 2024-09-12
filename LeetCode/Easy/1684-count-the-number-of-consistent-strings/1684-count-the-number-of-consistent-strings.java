@@ -1,22 +1,20 @@
 class Solution {
     public int countConsistentStrings(String allowed, String[] words) {
-        Set<Character> set = new HashSet<>();
-        for (int i = 0; i < allowed.length(); i++) {
-            set.add(allowed.charAt(i));
+        boolean[] arr = new boolean[26];
+        for (char c : allowed.toCharArray()) {
+            arr[c - 97] = true;
         }
-        int count = 0;
 
-        for (final String word : words) {
-            boolean notContains = false;
-            for (int j = 0; j < word.length(); j++) {
-                if (!set.contains(word.charAt(j))) {
-                    notContains = true;
+        int count = 0;
+        for (String word : words) {
+            boolean flag = true;
+            for (char c : word.toCharArray()) {
+                if (!arr[c - 97]) {
+                    flag = false;
                     break;
                 }
             }
-            if (!notContains) {
-                count++;
-            }
+            if (flag) count++;
         }
         return count;
     }
