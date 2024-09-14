@@ -1,15 +1,14 @@
 class Solution {
-
     public int longestSubarray(int[] nums) {
-        int maxVal = 0, answer = 0, currentStreak = 0;
+        int max = 0, answer = 0, currentStreak = 0;
 
         for (int num : nums) {
-            if (maxVal < num) {
-                maxVal = num;
+            if (max < num) {
+                max = num;
                 answer = currentStreak = 0;
             }
 
-            if (maxVal == num) {
+            if (max == num) {
                 currentStreak++;
             } else {
                 currentStreak = 0;
