@@ -7,17 +7,15 @@ class Solution {
             int m = Integer.parseInt(time.substring(3));
             minutes[i] = h * 60 + m;
         }
-        
+
         Arrays.sort(minutes);
-        
-        int ans = Integer.MAX_VALUE;
+
+        int answer = Integer.MAX_VALUE;
         for (int i = 0; i < minutes.length - 1; i++) {
-            ans = Math.min(ans, minutes[i + 1] - minutes[i]);
+            answer = Math.min(answer, minutes[i + 1] - minutes[i]);
         }
-        
-        return Math.min(
-                ans,
-                24 * 60 - minutes[minutes.length - 1] + minutes[0]
+
+        return Math.min(answer, 24 * 60 - minutes[minutes.length - 1] + minutes[0]
         );
     }
 }
