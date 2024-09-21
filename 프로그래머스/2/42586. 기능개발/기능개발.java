@@ -7,7 +7,6 @@ class Solution {
         Queue<Integer> taken = new LinkedList<>();
 
         for (int i = 0; i < progresses.length; i++) {
-            // (((((complete - progresses[i]) - 1) / speeds[i]) + 1))
             taken.add((complete - progresses[i] - 1) / speeds[i] + 1);
         }
 
