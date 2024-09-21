@@ -22,7 +22,7 @@ class Solution {
 
             deploys.add(count);
         }
-        
+
         return deploys
             .stream()
             .mapToInt(Integer::intValue)
