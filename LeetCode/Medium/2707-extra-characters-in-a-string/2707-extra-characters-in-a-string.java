@@ -1,40 +1,30 @@
-class TrieNode {
-    TrieNode[] children = new TrieNode[26];
-    boolean isWord = false;
-}
-
 class Solution {
+    Integer[] memo;
+    Set<String> dictionarySet;
+
     public int minExtraChar(String s, String[] dictionary) {
-        TrieNode root = new TrieNode();
-        for (String word : dictionary) {
-            insert(root, word);
-        }
         int n = s.length();
-        int[] dp = new int[n + 1];
-        for (int i = n - 1; i >= 0; i--) {
-            dp[i] = dp[i + 1] + 1;
-            TrieNode node = root;
-            for (int j = i; j < n; j++) {
-                int c = s.charAt(j) - 'a';
-                if (node.children[c] == null) break;
-                node = node.children[c];
-                if (node.isWord) {
-                    dp[i] = Math.min(dp[i], dp[j + 1]);
-                }
-            }
-        }
-        return dp[0];
+        memo = new Integer[n];
+        dictionarySet = new HashSet<>(Arrays.asList(dictionary));
+        return dp(0, n, s);
     }
 
-    private void insert(TrieNode root, String word) {
-        TrieNode node = root;
-        for (char c : word.toCharArray()) {
-            int i = c - 'a';
-            if (node.children[i] == null) {
-                node.children[i] = new TrieNode();
-            }
-            node = node.children[i];
+    private int dp(int start, int n, String s) {
+        if (start == n) {
+            return 0;
         }
-        node.isWord = true;
+        if (memo[start] != null) {
+            return memo[start];
+        }
+        
+        int ans = dp(start + 1, n, s) + 1;
+        for (int end = start; end < n; end++) {
+            var curr = s.substring(start, end + 1);
+            if (dictionarySet.contains(curr)) {
+                ans = Math.min(ans, dp(end + 1, n, s));
+            }
+        }
+
+        return memo[start] = ans;
     }
 }
