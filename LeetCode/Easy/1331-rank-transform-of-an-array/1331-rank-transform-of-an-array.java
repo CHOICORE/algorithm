@@ -1,17 +1,20 @@
 class Solution {
     public int[] arrayRankTransform(int[] arr) {
-        Map<Integer, Integer> numToRank = new HashMap<>();
-        int[] sortedArr = Arrays.copyOf(arr, arr.length);
-        Arrays.sort(sortedArr);
-        int rank = 1;
-        for (int i = 0; i < sortedArr.length; i++) {
-            if (i > 0 && sortedArr[i] > sortedArr[i - 1]) {
-                rank++;
-            }
-            numToRank.put(sortedArr[i], rank);
-        }
+        Map<Integer, List<Integer>> numToIndices = new TreeMap<>();
+
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = numToRank.get(arr[i]);
+            if (!numToIndices.containsKey(arr[i])) {
+                numToIndices.put(arr[i], new ArrayList<>());
+            }
+            numToIndices.get(arr[i]).add(i);
+        }
+        
+        int rank = 1;
+        for (int num : numToIndices.keySet()) {
+            for (int index : numToIndices.get(num)) {
+                arr[index] = rank;
+            }
+            rank++;
         }
         return arr;
     }
