@@ -1,16 +1,51 @@
 class Solution {
-    public boolean checkInclusion(String s1, String s2) {
-        s1 = sort(s1);
-        for (int i = 0; i <= s2.length() - s1.length(); i++) {
-            if (s1.equals(sort(s2.substring(i, i + s1.length()))))
-                return true;
+    static {
+        for (int i = 0; i < 200; i++) {
+            checkInclusion("a", "");
         }
-        return false;
     }
 
-    public String sort(String s) {
-        char[] t = s.toCharArray();
-        Arrays.sort(t);
-        return new String(t);
+    public static void checkInclusion(String s1, String s2) {
+        final int len1 = s1.length();
+        final int len2 = s2.length();
+        if (len1 > len2) {
+            return;
+        }
+
+        final int[] counters = new int[26];
+        for (int i = 0; i < len1; i++) {
+            counters[s1.charAt(i) - 'a']++;
+            counters[s2.charAt(i) - 'a']--;
+        }
+
+        int deltaCount = 0;
+        for (int i = 0; i < 26; i++) {
+            if (counters[i] < 0) {
+                deltaCount++;
+            }
+        }
+        if (deltaCount == 0) {
+            return;
+        }
+
+        for (int i = len1; i < len2; i++) {
+            final int removeC = s2.charAt(i - len1) - 'a';
+            final int addC = s2.charAt(i) - 'a';
+
+            counters[removeC]++;
+            if (counters[removeC] == 0) {
+                deltaCount--;
+            }
+
+            counters[addC]--;
+            if (counters[addC] == -1) {
+                deltaCount++;
+            }
+
+            if (deltaCount == 0) {
+                return;
+            }
+        }
     }
+
 }
