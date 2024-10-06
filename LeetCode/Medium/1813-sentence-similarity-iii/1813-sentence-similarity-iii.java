@@ -1,23 +1,30 @@
 class Solution {
-    public boolean areSentencesSimilar(String s1, String s2) {
-        Deque<String> deque1 = new ArrayDeque<>(Arrays.asList(s1.split(" ")));
-        Deque<String> deque2 = new ArrayDeque<>(Arrays.asList(s2.split(" ")));
-        while (
-            !deque1.isEmpty() &&
-                !deque2.isEmpty() &&
-                deque1.peek().equals(deque2.peek())
-        ) {
-            deque1.poll();
-            deque2.poll();
+    public boolean areSentencesSimilar(String sentence1, String sentence2) {
+        String[] words1 = sentence1.split(" ");
+        String[] words2 = sentence2.split(" ");
+
+        int n1 = words1.length;
+        int n2 = words2.length;
+
+        if (n1 == n2) {
+            for (int i = 0; i < n1; i++) {
+                if (!words1[i].equals(words2[i])) {
+                    return false;
+                }
+            }
+            return true;
         }
-        while (
-            !deque1.isEmpty() &&
-                !deque2.isEmpty() &&
-                deque1.peekLast().equals(deque2.peekLast())
-        ) {
-            deque1.pollLast();
-            deque2.pollLast();
+        
+        int i = 0, j = 0;
+
+        while (i < n1 && i < n2 && words1[i].equals(words2[i])) {
+            i++;
         }
-        return deque1.isEmpty() || deque2.isEmpty();
+
+        while (j < n1 - i && j < n2 - i && words1[n1 - 1 - j].equals(words2[n2 - 1 - j])) {
+            j++;
+        }
+
+        return i + j >= Math.min(n1, n2);
     }
 }
