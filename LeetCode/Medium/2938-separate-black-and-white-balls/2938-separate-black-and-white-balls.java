@@ -1,13 +1,13 @@
 class Solution {
     public long minimumSteps(String s) {
-        int whitePosition = 0;
         long totalSwaps = 0;
+        int blackBallCount = 0;
 
-        for (int currentPos = 0; currentPos < s.length(); currentPos++) {
-            if (s.charAt(currentPos) == '0') {
-                totalSwaps += currentPos - whitePosition;
-                
-                whitePosition++;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '0') {
+                totalSwaps += blackBallCount;
+            } else {
+                blackBallCount++;
             }
         }
 
