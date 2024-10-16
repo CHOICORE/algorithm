@@ -1,56 +1,40 @@
 class Solution {
     public String longestDiverseString(int a, int b, int c) {
-        PriorityQueue<Pair> pq = new PriorityQueue<Pair>((x, y) ->
-            (y.count - x.count)
-        );
-        if (a > 0) {
-            pq.add(new Pair(a, 'a'));
-        }
+        int x = 0, y = 0, z = 0;
+        int totalIterations = a + b + c;
+        
+        StringBuilder answer = new StringBuilder();
 
-        if (b > 0) {
-            pq.add(new Pair(b, 'b'));
-        }
-
-        if (c > 0) {
-            pq.add(new Pair(c, 'c'));
-        }
-
-        StringBuilder ans = new StringBuilder();
-        while (!pq.isEmpty()) {
-            Pair p = pq.poll();
-            int count = p.count;
-            char character = p.character;
+        for (int i = 0; i < totalIterations; i++) {
             if (
-                ans.length() >= 2 &&
-                    ans.charAt(ans.length() - 1) == p.character &&
-                    ans.charAt(ans.length() - 2) == p.character
+                (a >= b && a >= c && x != 2) ||
+                    (a > 0 && (y == 2 || z == 2))
             ) {
-                if (pq.isEmpty()) break;
-
-                Pair temp = pq.poll();
-                ans.append(temp.character);
-                if (temp.count - 1 > 0) {
-                    pq.add(new Pair(temp.count - 1, temp.character));
-                }
-            } else {
-                count--;
-                ans.append(character);
-            }
-
-            if (count > 0) {
-                pq.add(new Pair(count, character));
+                answer.append('a');
+                a--;
+                x++;
+                y = 0;
+                z = 0;
+            } else if (
+                (b >= a && b >= c && y != 2) ||
+                    (b > 0 && (z == 2 || x == 2))
+            ) {
+                answer.append('b');
+                b--;
+                y++;
+                x = 0;
+                z = 0;
+            } else if (
+                (c >= a && c >= b && z != 2) ||
+                    (c > 0 && (x == 2 || y == 2))
+            ) {
+                answer.append('c');
+                c--;
+                z++;
+                x = 0;
+                y = 0;
             }
         }
-        return ans.toString();
-    }
-
-    static class Pair {
-        int count;
-        char character;
-
-        Pair(int count, char character) {
-            this.count = count;
-            this.character = character;
-        }
+        return answer.toString();
     }
 }
