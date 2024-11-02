@@ -1,15 +1,7 @@
-class Solution {
+public class Solution {
     public boolean isCircularSentence(String sentence) {
-        String[] words = sentence.split(" ");
-        int n = words.length;
-
-        char last = words[n - 1].charAt(words[n - 1].length() - 1);
-
-        for (String word : words) {
-            if (word.charAt(0) != last) return false;
-            last = word.charAt(word.length() - 1);
-        }
-
-        return true;
+        for (int i = 0; i < sentence.length(); ++i)
+            if (sentence.charAt(i) == ' ' && sentence.charAt(i - 1) != sentence.charAt(i + 1)) return false;
+        return sentence.charAt(0) == sentence.charAt(sentence.length() - 1);
     }
 }
