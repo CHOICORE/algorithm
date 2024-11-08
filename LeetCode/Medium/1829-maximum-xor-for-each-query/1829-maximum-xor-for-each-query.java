@@ -1,17 +1,16 @@
 class Solution {
     public int[] getMaximumXor(int[] nums, int maximumBit) {
-        int[] prefixXOR = new int[nums.length];
-        prefixXOR[0] = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            prefixXOR[i] = prefixXOR[i - 1] ^ nums[i];
+        int xorProduct = 0;
+        for (int num : nums) {
+            xorProduct = xorProduct ^ num;
         }
         int[] ans = new int[nums.length];
 
         int mask = (1 << maximumBit) - 1;
 
         for (int i = 0; i < nums.length; i++) {
-            int currentXOR = prefixXOR[prefixXOR.length - 1 - i];
-            ans[i] = currentXOR ^ mask;
+            ans[i] = xorProduct ^ mask;
+            xorProduct = xorProduct ^ nums[nums.length - 1 - i];
         }
 
         return ans;
