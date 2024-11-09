@@ -1,4 +1,4 @@
-public class Solution {
+class Solution {
     public long minEnd(int n, int x) {
         long result = 0, bit;
         --n;
