@@ -1,36 +1,46 @@
 class Solution {
-    public boolean checkPrime(int x) {
-        for (int i = 2; i <= Math.sqrt(x); i++) {
-            if (x % i == 0) {
+    public boolean primeSubOperation(int[] nums) {
+        int maxElement = getMaxElement(nums);
+
+        boolean[] sieve = new boolean[maxElement + 1];
+        fill(sieve);
+        sieve[1] = false;
+        for (int i = 2; i <= Math.sqrt(maxElement + 1); i++) {
+            if (sieve[i]) {
+                for (int j = i * i; j <= maxElement; j += i) {
+                    sieve[j] = false;
+                }
+            }
+        }
+
+        int currValue = 1;
+        int i = 0;
+        while (i < nums.length) {
+            int difference = nums[i] - currValue;
+
+            if (difference < 0) {
                 return false;
             }
+
+            if (sieve[difference] || difference == 0) {
+                i++;
+            }
+            currValue++;
         }
         return true;
     }
 
-    public boolean primeSubOperation(int[] nums) {
-        for (int i = 0; i < nums.length; i++) {
-            int bound;
-            if (i == 0) {
-                bound = nums[0];
-            } else {
-                bound = nums[i] - nums[i - 1];
+    private int getMaxElement(int[] nums) {
+        int max = -1;
+        for (int num : nums) {
+            if (num > max) {
+                max = num;
             }
-
-            if (bound <= 0) {
-                return false;
-            }
-
-            int largestPrime = 0;
-            for (int j = bound - 1; j >= 2; j--) {
-                if (checkPrime(j)) {
-                    largestPrime = j;
-                    break;
-                }
-            }
-
-            nums[i] = nums[i] - largestPrime;
         }
-        return true;
+        return max;
+    }
+
+    private void fill(boolean[] arr) {
+        Arrays.fill(arr, true);
     }
 }
