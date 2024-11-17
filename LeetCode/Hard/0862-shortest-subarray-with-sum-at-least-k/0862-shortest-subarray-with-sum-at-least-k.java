@@ -1,36 +1,37 @@
 class Solution {
-    public int shortestSubarray(int[] nums, int k) {
+    public int shortestSubarray(int[] nums, int targetSum) {
         int n = nums.length;
+
+        long[] prefixSums = new long[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            prefixSums[i] = prefixSums[i - 1] + nums[i - 1];
+        }
+
+        Deque<Integer> candidateIndices = new ArrayDeque<>();
 
         int shortestSubarrayLength = Integer.MAX_VALUE;
 
-        long cumulativeSum = 0;
-
-        PriorityQueue<Pair<Long, Integer>> prefixSumHeap = new PriorityQueue<>(
-                (a, b) -> Long.compare(a.getKey(), b.getKey())
-        );
-
-        for (int i = 0; i < n; i++) {
-            cumulativeSum += nums[i];
-
-            if (cumulativeSum >= k) {
+        for (int i = 0; i <= n; i++) {
+            while (
+                    !candidateIndices.isEmpty() &&
+                            prefixSums[i] - prefixSums[candidateIndices.peekFirst()] >=
+                                    targetSum
+            ) {
                 shortestSubarrayLength = Math.min(
                         shortestSubarrayLength,
-                        i + 1
+                        i - candidateIndices.pollFirst()
                 );
             }
 
             while (
-                    !prefixSumHeap.isEmpty() &&
-                            cumulativeSum - prefixSumHeap.peek().getKey() >= k
+                    !candidateIndices.isEmpty() &&
+                            prefixSums[i] <= prefixSums[candidateIndices.peekLast()]
             ) {
-                shortestSubarrayLength = Math.min(
-                        shortestSubarrayLength,
-                        i - prefixSumHeap.poll().getValue()
-                );
+                candidateIndices.pollLast();
             }
 
-            prefixSumHeap.offer(new Pair<>(cumulativeSum, i));
+            candidateIndices.offerLast(i);
         }
         
         return shortestSubarrayLength == Integer.MAX_VALUE
