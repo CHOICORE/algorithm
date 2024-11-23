@@ -1,52 +1,29 @@
 class Solution {
-
     public char[][] rotateTheBox(char[][] box) {
         int m = box.length;
         int n = box[0].length;
-        char[][] result = new char[n][m];
+        char[][] res = new char[n][m];
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                result[i][j] = box[j][i];
+        for (int r = 0; r < m; r++) {
+            for (int c = 0; c < n; c++) {
+                res[c][m - 1 - r] = box[r][c];
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            reverse(result[i]);
-        }
-
-        for (int j = 0; j < m; j++) {
-            for (int i = n - 1; i >= 0; i--) {
-                if (result[i][j] == '.') {
-                    int nextRowWithStone = -1;
-
-                    for (int k = i - 1; k >= 0; k--) {
-                        if (result[k][j] == '*') break;
-                        if (result[k][j] == '#') {
-                            nextRowWithStone = k;
-                            break;
-                        }
+        for (int c = 0; c < m; c++) {
+            for (int r = n - 1; r >= 0; r--) {
+                if (res[r][c] == '#') {
+                    int curRow = r;
+                    while (curRow + 1 < n && res[curRow + 1][c] == '.') {
+                        curRow++;
                     }
-
-                    if (nextRowWithStone != -1) {
-                        result[nextRowWithStone][j] = '.';
-                        result[i][j] = '#';
+                    if (curRow != r) {
+                        res[curRow][c] = '#';
+                        res[r][c] = '.';
                     }
                 }
             }
         }
-        return result;
-    }
-    
-    private void reverse(char[] row) {
-        int left = 0;
-        int right = row.length - 1;
-        while (left < right) {
-            char temp = row[left];
-            row[left] = row[right];
-            row[right] = temp;
-            left++;
-            right--;
-        }
+        return res;
     }
 }
