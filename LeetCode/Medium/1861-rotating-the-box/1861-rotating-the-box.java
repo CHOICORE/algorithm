@@ -2,28 +2,35 @@ class Solution {
     public char[][] rotateTheBox(char[][] box) {
         int m = box.length;
         int n = box[0].length;
-        char[][] res = new char[n][m];
+        char[][] result = new char[n][m];
 
-        for (int r = 0; r < m; r++) {
-            for (int c = 0; c < n; c++) {
-                res[c][m - 1 - r] = box[r][c];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                result[i][j] = box[j][i];
             }
         }
 
-        for (int c = 0; c < m; c++) {
-            for (int r = n - 1; r >= 0; r--) {
-                if (res[r][c] == '#') {
-                    int curRow = r;
-                    while (curRow + 1 < n && res[curRow + 1][c] == '.') {
-                        curRow++;
-                    }
-                    if (curRow != r) {
-                        res[curRow][c] = '#';
-                        res[r][c] = '.';
-                    }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m / 2; j++) {
+                char temp = result[i][j];
+                result[i][j] = result[i][m - 1 - j];
+                result[i][m - 1 - j] = temp;
+            }
+        }
+
+        for (int j = 0; j < m; j++) {
+            int lowestRowWithEmptyCell = n - 1;
+            for (int i = n - 1; i >= 0; i--) {
+                if (result[i][j] == '#') {
+                    result[i][j] = '.';
+                    result[lowestRowWithEmptyCell][j] = '#';
+                    lowestRowWithEmptyCell--;
+                }
+                if (result[i][j] == '*') {
+                    lowestRowWithEmptyCell = i - 1;
                 }
             }
         }
-        return res;
+        return result;
     }
 }
