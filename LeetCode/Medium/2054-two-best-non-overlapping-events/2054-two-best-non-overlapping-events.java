@@ -16,8 +16,7 @@ class Solution {
                 if (events[mid][0] > end) hi = mid;
                 else lo = mid + 1;
             }
-            int include =
-                    events[idx][2] + (lo < events.length && events[lo][0] > end ? find(events, lo, cnt + 1, dp) : 0);
+            int include = events[idx][2] + (lo < events.length && events[lo][0] > end ? find(events, lo, cnt + 1, dp) : 0);
             int exclude = find(events, idx + 1, cnt, dp);
             dp[idx][cnt] = Math.max(include, exclude);
         }
