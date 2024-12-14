@@ -1,24 +1,31 @@
 class Solution {
     public long continuousSubarrays(int[] nums) {
-        TreeMap<Integer, Integer> freq = new TreeMap<>();
         int left = 0, right = 0;
-        int n = nums.length;
         long count = 0;
 
-        while (right < n) {
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>(
+                (a, b) -> nums[a] - nums[b]
+        );
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
+                (a, b) -> nums[b] - nums[a]
+        );
 
-            freq.put(nums[right], freq.getOrDefault(nums[right], 0) + 1);
+        while (right < nums.length) {
+            minHeap.add(right);
+            maxHeap.add(right);
 
-
-            while (freq.lastEntry().getKey() - freq.firstEntry().getKey() > 2) {
-
-                freq.put(nums[left], freq.get(nums[left]) - 1);
-                if (freq.get(nums[left]) == 0) {
-                    freq.remove(nums[left]);
-                }
+            while (
+                    left < right && nums[maxHeap.peek()] - nums[minHeap.peek()] > 2
+            ) {
                 left++;
-            }
 
+                while (!maxHeap.isEmpty() && maxHeap.peek() < left) {
+                    maxHeap.poll();
+                }
+                while (!minHeap.isEmpty() && minHeap.peek() < left) {
+                    minHeap.poll();
+                }
+            }
             
             count += right - left + 1;
             right++;
