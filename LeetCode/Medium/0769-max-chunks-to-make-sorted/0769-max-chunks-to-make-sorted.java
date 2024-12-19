@@ -1,17 +1,22 @@
-class Solution {
+public class Solution {
 
     public int maxChunksToSorted(int[] arr) {
         int n = arr.length;
-        int chunks = 0, prefixSum = 0, sortedPrefixSum = 0;
+        Stack<Integer> monotonicStack = new Stack<>();
 
-        for (int i = 0; i < n; i++) {
-            prefixSum += arr[i];
-            sortedPrefixSum += i;
-            
-            if (prefixSum == sortedPrefixSum) {
-                chunks++;
+        for (int j : arr) {
+            if (monotonicStack.isEmpty() || j > monotonicStack.peek()) {
+                monotonicStack.push(j);
+            } else {
+                int maxElement = monotonicStack.peek();
+                while (
+                        !monotonicStack.isEmpty() && j < monotonicStack.peek()
+                ) {
+                    monotonicStack.pop();
+                }
+                monotonicStack.push(maxElement);
             }
         }
-        return chunks;
+        return monotonicStack.size();
     }
 }
