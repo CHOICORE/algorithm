@@ -9,54 +9,55 @@ class Solution {
         if (n < 2) return 1;
 
         int componentCount = 0;
-        Map<Integer, Set<Integer>> graph = new HashMap<>();
+        List<List<Integer>> graph = new ArrayList<>();
+        int[] inDegree = new int[n];
 
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<>());
+        }
         for (int[] edge : edges) {
             int node1 = edge[0], node2 = edge[1];
-            graph.computeIfAbsent(node1, key -> new HashSet<>()).add(node2);
-            graph.computeIfAbsent(node2, key -> new HashSet<>()).add(node1);
+            graph.get(node1).add(node2);
+            graph.get(node2).add(node1);
+            inDegree[node1]++;
+            inDegree[node2]++;
         }
 
-        long[] longValues = new long[values.length];
-        for (int i = 0; i < values.length; i++) {
+        long[] longValues = new long[n];
+        for (int i = 0; i < n; i++) {
             longValues[i] = values[i];
         }
 
         Queue<Integer> queue = new LinkedList<>();
-        for (Map.Entry<Integer, Set<Integer>> entry : graph.entrySet()) {
-            if (entry.getValue().size() == 1) {
-                queue.add(entry.getKey());
+        for (int node = 0; node < n; node++) {
+            if (inDegree[node] == 1) {
+                queue.offer(node);
             }
         }
 
         while (!queue.isEmpty()) {
             int currentNode = queue.poll();
+            inDegree[currentNode]--;
 
-            int neighborNode = -1;
-            if (
-                    graph.get(currentNode) != null &&
-                            !graph.get(currentNode).isEmpty()
-            ) {
-                neighborNode = graph.get(currentNode).iterator().next();
-            }
-
-            if (neighborNode >= 0) {
-                graph.get(neighborNode).remove(currentNode);
-                graph.get(currentNode).remove(neighborNode);
-            }
+            long addValue = 0;
 
             if (longValues[currentNode] % k == 0) {
                 componentCount++;
-            } else if (neighborNode >= 0) {
-                longValues[neighborNode] += longValues[currentNode];
+            } else {
+                addValue = longValues[currentNode];
             }
-            
-            if (
-                    neighborNode >= 0 &&
-                            graph.get(neighborNode) != null &&
-                            graph.get(neighborNode).size() == 1
-            ) {
-                queue.add(neighborNode);
+
+            for (int neighborNode : graph.get(currentNode)) {
+                if (inDegree[neighborNode] == 0) {
+                    continue;
+                }
+
+                inDegree[neighborNode]--;
+                longValues[neighborNode] += addValue;
+                
+                if (inDegree[neighborNode] == 1) {
+                    queue.offer(neighborNode);
+                }
             }
         }
 
