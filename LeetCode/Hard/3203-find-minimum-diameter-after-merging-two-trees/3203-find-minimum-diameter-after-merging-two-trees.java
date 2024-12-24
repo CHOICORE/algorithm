@@ -31,59 +31,38 @@ class Solution {
     }
 
     private int findDiameter(int n, List<List<Integer>> adjList) {
-        Pair firstBFS = findFarthestNode(n, adjList, 0);
-        int farthestNode = firstBFS.getFirst();
+        Queue<Integer> leavesQueue = new LinkedList<>();
+        int[] degrees = new int[n];
 
-        Pair secondBFS = findFarthestNode(n, adjList, farthestNode);
-        return secondBFS.getSecond();
-    }
+        for (int node = 0; node < n; node++) {
+            degrees[node] = adjList.get(node).size();
+            if (degrees[node] == 1) {
+                leavesQueue.offer(node);
+            }
+        }
 
-    private Pair findFarthestNode(
-            int n,
-            List<List<Integer>> adjList,
-            int sourceNode
-    ) {
-        Queue<Integer> queue = new LinkedList<>();
-        boolean[] visited = new boolean[n];
-        queue.add(sourceNode);
-        visited[sourceNode] = true;
+        int remainingNodes = n;
+        int leavesLayersRemoved = 0;
 
-        int maximumDistance = 0, farthestNode = sourceNode;
+        while (remainingNodes > 2) {
+            int size = leavesQueue.size();
+            remainingNodes -= size;
+            leavesLayersRemoved++;
 
-        while (!queue.isEmpty()) {
-            int size = queue.size();
             for (int i = 0; i < size; i++) {
-                int currentNode = queue.poll();
-                farthestNode = currentNode;
+                int currentNode = leavesQueue.poll();
 
                 for (int neighbor : adjList.get(currentNode)) {
-                    if (!visited[neighbor]) {
-                        visited[neighbor] = true;
-                        queue.add(neighbor);
+                    degrees[neighbor]--;
+                    if (degrees[neighbor] == 1) {
+                        leavesQueue.offer(neighbor);
                     }
                 }
             }
-            if (!queue.isEmpty()) maximumDistance++;
         }
-        return new Pair(farthestNode, maximumDistance);
-    }
-    
-    class Pair {
+        
+        if (remainingNodes == 2) return 2 * leavesLayersRemoved + 1;
 
-        private int first;
-        private int second;
-
-        public Pair(int first, int second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public int getFirst() {
-            return first;
-        }
-
-        public int getSecond() {
-            return second;
-        }
+        return 2 * leavesLayersRemoved;
     }
 }
