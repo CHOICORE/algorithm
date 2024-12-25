@@ -15,27 +15,34 @@
  */
 class Solution {
     public List<Integer> largestValues(TreeNode root) {
-        List<Integer> max = new ArrayList<Integer>();
-
-        if (root == null) return max;
-        
-        calc(root, max, 0);
-        return max;
-    }
-
-    public void calc(TreeNode root, List<Integer> max, int depth) {
-
         if (root == null) {
-            return;
+            return new ArrayList<Integer>();
         }
 
-        if (max.size() <= depth) {
-            max.add(root.val);
-        } else if (max.get(depth) < root.val) {
-            max.set(depth, root.val);
+        List<Integer> ans = new ArrayList<Integer>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int currentLength = queue.size();
+            int currMax = Integer.MIN_VALUE;
+
+            for (int i = 0; i < currentLength; i++) {
+                TreeNode node = queue.remove();
+                currMax = Math.max(currMax, node.val);
+
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+
+            ans.add(currMax);
         }
 
-        calc(root.left, max, depth + 1);
-        calc(root.right, max, depth + 1);
+        return ans;
     }
 }
