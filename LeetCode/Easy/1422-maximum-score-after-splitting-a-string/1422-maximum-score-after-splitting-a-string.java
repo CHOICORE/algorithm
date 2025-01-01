@@ -1,24 +1,24 @@
 class Solution {
     public int maxScore(String s) {
-        int ones = 0;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '1') {
-                ones++;
-            }
-        }
+        int ans = 0;
 
-        int answer = 0;
-        int zeros = 0;
         for (int i = 0; i < s.length() - 1; i++) {
-            if (s.charAt(i) == '1') {
-                ones--;
-            } else {
-                zeros++;
+            int curr = 0;
+            for (int j = 0; j <= i; j++) {
+                if (s.charAt(j) == '0') {
+                    curr++;
+                }
             }
 
-            answer = Math.max(answer, zeros + ones);
+            for (int j = i + 1; j < s.length(); j++) {
+                if (s.charAt(j) == '1') {
+                    curr++;
+                }
+            }
+
+            ans = Math.max(ans, curr);
         }
 
-        return answer;
+        return ans;
     }
 }
