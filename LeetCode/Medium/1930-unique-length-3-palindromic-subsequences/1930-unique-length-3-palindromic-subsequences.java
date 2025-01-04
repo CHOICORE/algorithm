@@ -1,35 +1,33 @@
 class Solution {
     public int countPalindromicSubsequence(String s) {
-        final int[][] start = new int[26][];
-        final int[] freq = new int[26];
-        final char[] str = s.toCharArray();
-        int nonFinishCnt = 0;
-        for (final char c : str) {
-            final int index = c - 'a';
-            freq[index]++;
-            if (start[index] == null) {
-                nonFinishCnt++;
-                start[index] = Arrays.copyOf(freq, freq.length);
-            }
+        Set<Character> letters = new HashSet();
+        for (Character c : s.toCharArray()) {
+            letters.add(c);
         }
-        final boolean[] finish = new boolean[26];
-        int answer = 0;
-        for (int i = str.length - 1; i >= 0; i--) {
-            final int index = str[i] - 'a';
-            freq[index]--;
-            if (!finish[index]) {
-                for (int j = 0; j < 26; j++) {
-                    if (freq[j] - start[index][j] > 0) {
-                        answer++;
-                    }
-                }
 
-                finish[index] = true;
-                if (--nonFinishCnt == 0) {
-                    return answer;
+        int ans = 0;
+        for (Character letter : letters) {
+            int i = -1;
+            int j = 0;
+
+            for (int k = 0; k < s.length(); k++) {
+                if (s.charAt(k) == letter) {
+                    if (i == -1) {
+                        i = k;
+                    }
+
+                    j = k;
                 }
             }
+
+            Set<Character> between = new HashSet();
+            for (int k = i + 1; k < j; k++) {
+                between.add(s.charAt(k));
+            }
+
+            ans += between.size();
         }
-        return answer;
+
+        return ans;
     }
 }
