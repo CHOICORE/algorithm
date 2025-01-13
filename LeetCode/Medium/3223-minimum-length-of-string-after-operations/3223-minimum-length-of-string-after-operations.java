@@ -1,23 +1,22 @@
 class Solution {
 
     public int minimumLength(String s) {
-        HashMap<Character, Integer> charFrequencyMap = new HashMap<>();
+        int[] charFrequency = new int[26];
+        int totalLength = 0;
+
         for (char currentChar : s.toCharArray()) {
-            charFrequencyMap.put(
-                    currentChar,
-                    charFrequencyMap.getOrDefault(currentChar, 0) + 1
-            );
+            charFrequency[currentChar - 'a']++;
         }
 
-        int deleteCount = 0;
-        for (int frequency : charFrequencyMap.values()) {
-            if (frequency % 2 == 1) {
-                deleteCount += frequency - 1;
+        for (int frequency : charFrequency) {
+            if (frequency == 0) continue;
+            if (frequency % 2 == 0) {
+                totalLength += 2;
             } else {
-                deleteCount += frequency - 2;
+                totalLength += 1;
             }
         }
         
-        return s.length() - deleteCount;
+        return totalLength;
     }
 }
