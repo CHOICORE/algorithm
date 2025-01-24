@@ -1,42 +1,46 @@
 class Solution {
     public List<Integer> eventualSafeNodes(int[][] graph) {
-        int V = graph.length;
+        int n = graph.length;
+        int[] indegree = new int[n];
+        List<List<Integer>> adj = new ArrayList<>();
 
-        boolean[] visited = new boolean[V];
-        boolean[] pathVisited = new boolean[V];
-        boolean[] isSafe = new boolean[V];
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int node : graph[i]) {
+                adj.get(node).add(i);
+                indegree[i]++;
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        boolean[] safe = new boolean[n];
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            safe[node] = true;
+
+            for (int neighbor : adj.get(node)) {
+                indegree[neighbor]--;
+                if (indegree[neighbor] == 0) {
+                    q.add(neighbor);
+                }
+            }
+        }
 
         List<Integer> safeNodes = new ArrayList<>();
-
-        for (int i = 0; i < V; i++) {
-            if (!visited[i]) {
-                dfs(graph, i, visited, pathVisited, isSafe);
+        for (int i = 0; i < n; i++) {
+            if (safe[i]) {
+                safeNodes.add(i);
             }
         }
-
-        for (int i = 0; i < V; i++) {
-            if (isSafe[i]) safeNodes.add(i);
-        }
-
         return safeNodes;
-    }
-
-    public boolean dfs(int[][] adj, int node, boolean[] visited,
-                       boolean[] pathVisited, boolean[] isSafe) {
-        visited[node] = true;
-        pathVisited[node] = true;
-
-        for (int it : adj[node]) {
-            if (!visited[it]) {
-                if (dfs(adj, it, visited, pathVisited, isSafe)) {
-                    return true;
-                }
-            } else if (pathVisited[it]) {
-                return true;
-            }
-        }
-        isSafe[node] = true;
-        pathVisited[node] = false;
-        return false;
     }
 }
