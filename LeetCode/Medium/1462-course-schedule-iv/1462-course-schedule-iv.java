@@ -1,46 +1,40 @@
 class Solution {
-    private boolean isPrerequisite(
-            Map<Integer, List<Integer>> adjList,
-            boolean[] visited,
-            int src,
-            int target
-    ) {
-        visited[src] = true;
-
-        if (src == target) {
-            return true;
+    public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
+        int n = prerequisites.length, m = queries.length;
+        if (n == 0) {
+            List<Boolean> res = new ArrayList<>(m);
+            for (int i = 0; i < m; i++) res.add(false);
+            return res;
         }
-
-        boolean answer = false;
-        List<Integer> neighbors = adjList.getOrDefault(src, new ArrayList<>());
-        for (int adj : neighbors) {
-            if (!visited[adj]) {
-                answer =
-                        answer || isPrerequisite(adjList, visited, adj, target);
+        List<Integer>[] graph = new ArrayList[numCourses];
+        for (int i = 0; i < numCourses; i++) graph[i] = new ArrayList<>();
+        for (int[] p : prerequisites) {
+            graph[p[0]].add(p[1]);
+        }
+        boolean[][] isReachable = new boolean[numCourses][numCourses];
+        for (int i = 0; i < numCourses; i++) {
+            if (!isReachable[i][i]) {
+                dfs(i, graph, isReachable);
             }
         }
-        return answer;
+        List<Boolean> res = new ArrayList<>(m);
+        for (int[] q : queries) {
+            res.add(isReachable[q[0]][q[1]]);
+        }
+        return res;
     }
 
-    public List<Boolean> checkIfPrerequisite(
-            int numCourses,
-            int[][] prerequisites,
-            int[][] queries
-    ) {
-        Map<Integer, List<Integer>> adjList = new HashMap<>();
+    private void dfs(int curr, List<Integer>[] graph, boolean[][] isReachable) {
+        isReachable[curr][curr] = true;
+        for (int neighbor : graph[curr]) {
+            if (!isReachable[curr][neighbor]) {
+                isReachable[curr][neighbor] = true;
+                dfs(neighbor, graph, isReachable);
+                for (int i = 0; i < isReachable.length; i++) {
+                    isReachable[curr][i] |= isReachable[neighbor][i];
 
-        for (int[] edge : prerequisites) {
-            adjList
-                    .computeIfAbsent(edge[0], k -> new ArrayList<>())
-                    .add(edge[1]);
+                }
+            }
         }
-
-        List<Boolean> result = new ArrayList<>();
-        for (int[] query : queries) {
-            boolean[] visited = new boolean[numCourses];
-            result.add(isPrerequisite(adjList, visited, query[0], query[1]));
-        }
-
-        return result;
     }
 }
