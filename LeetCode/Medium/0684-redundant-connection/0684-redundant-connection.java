@@ -1,46 +1,33 @@
 class Solution {
-    private boolean isConnected(
-            int src,
-            int target,
-            boolean[] visited,
-            List<Integer>[] adjList
-    ) {
-        visited[src] = true;
-
-        if (src == target) {
-            return true;
-        }
-
-        boolean isFound = false;
-        for (int adj : adjList[src]) {
-            if (!visited[adj]) {
-                isFound = isFound || isConnected(adj, target, visited, adjList);
-            }
-        }
-
-        return isFound;
-    }
-
     public int[] findRedundantConnection(int[][] edges) {
-        int N = edges.length;
 
-        List<Integer>[] adjList = new ArrayList[N];
-        for (int i = 0; i < N; i++) {
-            adjList[i] = new ArrayList<>();
-        }
+        int n = edges.length;
+        int[] p = new int[n + 1];
+
+        for (int i = 1; i < n + 1; i++) p[i] = i;
+
+        int[] result = {0, 0};
 
         for (int[] edge : edges) {
-            boolean[] visited = new boolean[N];
+            int p1 = p[edge[0]];
+            int p2 = p[edge[1]];
 
-
-            if (isConnected(edge[0] - 1, edge[1] - 1, visited, adjList)) {
-                return new int[]{edge[0], edge[1]};
+            while (p1 != p[p1]) {
+                p1 = p[p1];
+            }
+            while (p2 != p[p2]) {
+                p2 = p[p2];
+            }
+            
+            if (p1 == p2) {
+                result[0] = edge[0];
+                result[1] = edge[1];
+            } else {
+                p[p2] = p1;
             }
 
-            adjList[edge[0] - 1].add(edge[1] - 1);
-            adjList[edge[1] - 1].add(edge[0] - 1);
         }
-
-        return new int[]{};
+        
+        return result;
     }
 }
