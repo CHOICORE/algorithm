@@ -1,115 +1,124 @@
-class Solution {
-    public int largestIsland(int[][] grid) {
-        Map<Integer, Integer> islandSizes = new HashMap<>();
-        int islandId = 2;
+class DisjointSet {
+    public int[] parent;
+    public int[] islandSize;
 
-        for (int currentRow = 0; currentRow < grid.length; ++currentRow) {
+    public DisjointSet(int n) {
+        parent = new int[n];
+        islandSize = new int[n];
+        for (int node = 0; node < n; node++) {
+            parent[node] = node;
+            islandSize[node] = 1;
+        }
+    }
+
+    public int findRoot(int node) {
+        if (parent[node] == node) return node;
+        return parent[node] = findRoot(parent[node]);
+    }
+
+    public void unionNodes(int nodeA, int nodeB) {
+        int rootA = findRoot(nodeA);
+        int rootB = findRoot(nodeB);
+
+        if (rootA == rootB) return;
+
+        if (islandSize[rootA] < islandSize[rootB]) {
+            parent[rootA] = rootB;
+            islandSize[rootB] += islandSize[rootA];
+        } else {
+            parent[rootB] = rootA;
+            islandSize[rootA] += islandSize[rootB];
+        }
+    }
+}
+
+class Solution {
+
+    public int largestIsland(int[][] grid) {
+        int rows = grid.length;
+        int columns = grid[0].length;
+
+        DisjointSet ds = new DisjointSet(rows * columns);
+
+        int[] rowDirections = {1, -1, 0, 0};
+        int[] columnDirections = {0, 0, 1, -1};
+
+        for (int currentRow = 0; currentRow < rows; currentRow++) {
             for (
                     int currentColumn = 0;
-                    currentColumn < grid[0].length;
-                    ++currentColumn
+                    currentColumn < columns;
+                    currentColumn++
             ) {
                 if (grid[currentRow][currentColumn] == 1) {
-                    islandSizes.put(
-                            islandId,
-                            exploreIsland(grid, islandId, currentRow, currentColumn)
-                    );
-                    ++islandId;
+                    int currentNode = (columns * currentRow) + currentColumn;
+
+                    for (int direction = 0; direction < 4; direction++) {
+                        int neighborRow = currentRow + rowDirections[direction];
+                        int neighborColumn =
+                                currentColumn + columnDirections[direction];
+
+                        if (
+                                neighborRow >= 0 &&
+                                        neighborRow < rows &&
+                                        neighborColumn >= 0 &&
+                                        neighborColumn < columns &&
+                                        grid[neighborRow][neighborColumn] == 1
+                        ) {
+                            int neighborNode =
+                                    columns * neighborRow + neighborColumn;
+                            ds.unionNodes(currentNode, neighborNode);
+                        }
+                    }
                 }
             }
         }
 
-        if (islandSizes.isEmpty()) {
-            return 1;
-        }
-        if (islandSizes.size() == 1) {
-            --islandId;
-            return (islandSizes.get(islandId) == grid.length * grid[0].length)
-                    ? islandSizes.get(islandId)
-                    : islandSizes.get(islandId) + 1;
-        }
+        int maxIslandSize = 0;
+        boolean hasZero = false;
+        Set<Integer> uniqueRoots = new HashSet<>();
 
-        int maxIslandSize = 1;
-
-        for (int currentRow = 0; currentRow < grid.length; ++currentRow) {
+        for (int currentRow = 0; currentRow < rows; currentRow++) {
             for (
                     int currentColumn = 0;
-                    currentColumn < grid[0].length;
-                    ++currentColumn
+                    currentColumn < columns;
+                    currentColumn++
             ) {
                 if (grid[currentRow][currentColumn] == 0) {
+                    hasZero = true;
                     int currentIslandSize = 1;
-                    Set<Integer> neighboringIslands = new HashSet<>();
 
-                    if (
-                            currentRow + 1 < grid.length &&
-                                    grid[currentRow + 1][currentColumn] > 1
-                    ) {
-                        neighboringIslands.add(
-                                grid[currentRow + 1][currentColumn]
-                        );
-                    }
+                    for (int direction = 0; direction < 4; direction++) {
+                        int neighborRow = currentRow + rowDirections[direction];
+                        int neighborColumn =
+                                currentColumn + columnDirections[direction];
 
-                    if (
-                            currentRow - 1 >= 0 &&
-                                    grid[currentRow - 1][currentColumn] > 1
-                    ) {
-                        neighboringIslands.add(
-                                grid[currentRow - 1][currentColumn]
-                        );
-                    }
-
-                    if (
-                            currentColumn + 1 < grid[0].length &&
-                                    grid[currentRow][currentColumn + 1] > 1
-                    ) {
-                        neighboringIslands.add(
-                                grid[currentRow][currentColumn + 1]
-                        );
+                        if (
+                                neighborRow >= 0 &&
+                                        neighborRow < rows &&
+                                        neighborColumn >= 0 &&
+                                        neighborColumn < columns &&
+                                        grid[neighborRow][neighborColumn] == 1
+                        ) {
+                            int neighborNode =
+                                    columns * neighborRow + neighborColumn;
+                            int root = ds.findRoot(neighborNode);
+                            uniqueRoots.add(root);
+                        }
                     }
 
-                    if (
-                            currentColumn - 1 >= 0 &&
-                                    grid[currentRow][currentColumn - 1] > 1
-                    ) {
-                        neighboringIslands.add(
-                                grid[currentRow][currentColumn - 1]
-                        );
+                    for (int root : uniqueRoots) {
+                        currentIslandSize += ds.islandSize[root];
                     }
-                    
-                    for (int id : neighboringIslands) {
-                        currentIslandSize += islandSizes.get(id);
-                    }
+
+                    uniqueRoots.clear();
 
                     maxIslandSize = Math.max(maxIslandSize, currentIslandSize);
                 }
             }
         }
+        
+        if (!hasZero) return rows * columns;
 
         return maxIslandSize;
-    }
-
-    private int exploreIsland(
-            int[][] grid,
-            int islandId,
-            int currentRow,
-            int currentColumn
-    ) {
-        if (
-                currentRow < 0 ||
-                        currentRow >= grid.length ||
-                        currentColumn < 0 ||
-                        currentColumn >= grid[0].length ||
-                        grid[currentRow][currentColumn] != 1
-        ) return 0;
-
-        grid[currentRow][currentColumn] = islandId;
-        return (
-                1 +
-                        exploreIsland(grid, islandId, currentRow + 1, currentColumn) +
-                        exploreIsland(grid, islandId, currentRow - 1, currentColumn) +
-                        exploreIsland(grid, islandId, currentRow, currentColumn + 1) +
-                        exploreIsland(grid, islandId, currentRow, currentColumn - 1)
-        );
     }
 }
