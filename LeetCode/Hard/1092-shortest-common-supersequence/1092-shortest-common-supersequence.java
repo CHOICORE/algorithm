@@ -1,32 +1,64 @@
 class Solution {
     public String shortestCommonSupersequence(String str1, String str2) {
-        int str1Length = str1.length();
-        int str2Length = str2.length();
+        String res = "";
+        try {
+            Callable<String> task = () -> generateLCS(str1, str2);
+            FutureTask<String> future = new FutureTask<>(task);
+            new Thread(future).start();
+            res = future.get();
+        } catch (Exception e) {
 
-        String[] prevRow = new String[str2Length + 1];
-        for (int col = 0; col <= str2Length; col++) {
-            prevRow[col] = str2.substring(0, col);
         }
+        return res;
+    }
 
-        for (int row = 1; row <= str1Length; row++) {
-            String[] currRow = new String[str2Length + 1];
-            currRow[0] = str1.substring(0, row);
+    public String generateLCS(String str1, String str2) {
+        int l1 = str1.length();
+        int l2 = str2.length();
 
-            for (int col = 1; col <= str2Length; col++) {
-                if (str1.charAt(row - 1) == str2.charAt(col - 1)) {
-                    currRow[col] = prevRow[col - 1] + str1.charAt(row - 1);
+        int[][] lcsMatrix = new int[l1 + 1][l2 + 1];
+
+        for (int i = 1; i <= l1; i++) {
+            for (int j = 1; j <= l2; j++) {
+                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                    lcsMatrix[i][j] = lcsMatrix[i - 1][j - 1] + 1;
                 } else {
-                    String pickS1 = prevRow[col];
-                    String pickS2 = currRow[col - 1];
-
-                    currRow[col] = (pickS1.length() < pickS2.length())
-                            ? pickS1 + str1.charAt(row - 1)
-                            : pickS2 + str2.charAt(col - 1);
+                    lcsMatrix[i][j] = Math.max(lcsMatrix[i - 1][j], lcsMatrix[i][j - 1]);
                 }
             }
-            prevRow = currRow;
         }
-        
-        return prevRow[str2Length];
+
+        int row = l1;
+        int col = l2;
+
+
+        StringBuilder ans = new StringBuilder();
+        while (row != 0 && col != 0) {
+            if (str1.charAt(row - 1) == str2.charAt(col - 1)) {
+                ans.append(str1.charAt(row - 1));
+                row--;
+                col--;
+            } else if (lcsMatrix[row - 1][col] > lcsMatrix[row][col - 1]) {
+                ans.append(str1.charAt(row - 1));
+                row--;
+            } else {
+                ans.append(str2.charAt(col - 1));
+                col--;
+            }
+        }
+
+        for (int i = l1 - row; i < l1; i++) {
+            ans.append(str1.charAt(row - 1));
+            row--;
+        }
+
+
+        for (int i = l2 - col; i < l2; i++) {
+            ans.append(str2.charAt(col - 1));
+            col--;
+        }
+
+        return ans.reverse().toString();
     }
 }
+
