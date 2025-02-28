@@ -31,7 +31,6 @@ class Solution {
         int row = l1;
         int col = l2;
 
-
         StringBuilder ans = new StringBuilder();
         while (row != 0 && col != 0) {
             if (str1.charAt(row - 1) == str2.charAt(col - 1)) {
