@@ -1,62 +1,66 @@
 class Solution {
+    public static class UnionFind {
+        public int[] p;
+        public int[] val; // & of all
+        public int[] d;
 
-    int[] parent;
-    int[] depth;
-
-    public int[] minimumCost(int n, int[][] edges, int[][] queries) {
-        parent = new int[n];
-        for (int i = 0; i < n; i++) parent[i] = -1;
-
-        depth = new int[n];
-
-        int[] componentCost = new int[n];
-        Arrays.fill(componentCost, Integer.MAX_VALUE);
-
-        for (int[] edge : edges) {
-            union(edge[0], edge[1]);
+        UnionFind(int n) {
+            p = new int[n];
+            val = new int[n];
+            d = new int[n];
+            Arrays.fill(p, -1);
+            Arrays.fill(val, 0xFFFFFFF);
+            Arrays.fill(d, 0);
         }
 
-        for (int[] edge : edges) {
-            int root = find(edge[0]);
-            componentCost[root] &= edge[2];
+        public int dp(int u) {
+            while (p[u] != -1) u = p[u];
+            return u;
         }
 
-        int[] answer = new int[queries.length];
-        for (int i = 0; i < queries.length; i++) {
-            int start = queries[i][0];
-            int end = queries[i][1];
+        public void union(int u, int v, int wt) {
+            u = dp(u);
+            v = dp(v);
 
-            if (find(start) != find(end)) {
-                answer[i] = -1;
+            if (u == v) {
+                val[u] &= wt;
+                return;
+            }
+
+            if (d[u] > d[v]) {
+                p[v] = u;
+                val[u] &= wt;
+                val[u] &= val[v];
+            } else if (d[v] > d[u]) {
+                p[u] = v;
+                val[v] &= wt;
+                val[v] &= val[u];
             } else {
-                int root = find(start);
-                answer[i] = componentCost[root];
+                p[v] = u;
+                val[u] &= wt;
+                val[u] &= val[v];
+                d[u]++;
             }
         }
-        return answer;
     }
 
-    private int find(int node) {
-        if (parent[node] == -1) return node;
-        return parent[node] = find(parent[node]);
-    }
+    public int[] minimumCost(int n, int[][] edges, int[][] query) {
+        UnionFind uf = new UnionFind(n);
 
-    private void union(int node1, int node2) {
-        int root1 = find(node1);
-        int root2 = find(node2);
+        for (int[] e : edges) uf.union(e[0], e[1], e[2]);
 
-        if (root1 == root2) return;
 
-        if (depth[root1] < depth[root2]) {
-            int temp = root1;
-            root1 = root2;
-            root2 = temp;
+        int[] ans = new int[query.length];
+        int id = 0;
+
+        for (int[] q : query) {
+            int p1 = uf.dp(q[0]);
+            int p2 = uf.dp(q[1]);
+            if (p1 == p2) {
+                ans[id++] = uf.val[p1];
+            } else ans[id++] = -1;
         }
 
-        parent[root2] = root1;
-        
-        if (depth[root1] == depth[root2]) {
-            depth[root1]++;
-        }
+        return ans;
     }
 }
