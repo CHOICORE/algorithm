@@ -1,7 +1,7 @@
 class Solution {
     public int minOperations(int[][] grid, int x) {
         List<Integer> numsArray = new ArrayList<>();
-        int result = Integer.MAX_VALUE;
+        int result = 0;
 
         for (int[] ints : grid) {
             for (int col = 0; col < grid[0].length; col++) {
@@ -13,25 +13,27 @@ class Solution {
         Collections.sort(numsArray);
 
         int length = numsArray.size();
-        int[] prefixSum = new int[length];
-        int[] suffixSum = new int[length];
+        int prefixIndex = 0;
+        int suffixIndex = length - 1;
 
-        for (int index = 1; index < length; index++) {
-            prefixSum[index] = prefixSum[index - 1] + numsArray.get(index - 1);
-        }
-
-        for (int index = length - 2; index >= 0; index--) {
-            suffixSum[index] = suffixSum[index + 1] + numsArray.get(index + 1);
-        }
-
-        for (int index = 0; index < length; index++) {
-            int leftOperations =
-                    (numsArray.get(index) * index - prefixSum[index]) / x;
-            int rightOperations =
-                    (suffixSum[index] -
-                            numsArray.get(index) * (length - index - 1)) /
-                            x;
-            result = Math.min(result, leftOperations + rightOperations);
+        while (prefixIndex < suffixIndex) {
+            if (prefixIndex < length - suffixIndex - 1) {
+                int prefixOperations =
+                        ((prefixIndex + 1) *
+                                (numsArray.get(prefixIndex + 1) -
+                                        numsArray.get(prefixIndex))) /
+                                x;
+                result += prefixOperations;
+                prefixIndex++;
+            } else {
+                int suffixOperations =
+                        ((length - suffixIndex) *
+                                (numsArray.get(suffixIndex) -
+                                        numsArray.get(suffixIndex - 1))) /
+                                x;
+                result += suffixOperations;
+                suffixIndex--;
+            }
         }
 
         return result;
