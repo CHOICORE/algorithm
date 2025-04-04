@@ -14,24 +14,24 @@
  * }
  */
 class Solution {
+    TreeNode answer;
+    int maxDepth = -1;
+
     public TreeNode lcaDeepestLeaves(TreeNode root) {
-        return dfs(root).getKey();
+        // time o(n), space o(n)
+        dfs(root, 0);
+        return answer;
     }
 
-    private Pair<TreeNode, Integer> dfs(TreeNode root) {
-        if (root == null) {
-            return new Pair<>(null, 0);
+    private int dfs(TreeNode node, int depth) {
+        if (node == null) {
+            maxDepth = Math.max(maxDepth, depth);
+            return depth;
         }
 
-        Pair<TreeNode, Integer> left = dfs(root.left);
-        Pair<TreeNode, Integer> right = dfs(root.right);
-
-        if (left.getValue() > right.getValue()) {
-            return new Pair<>(left.getKey(), left.getValue() + 1);
-        }
-        if (left.getValue() < right.getValue()) {
-            return new Pair<>(right.getKey(), right.getValue() + 1);
-        }
-        return new Pair<>(root, left.getValue() + 1);
+        int left = dfs(node.left, depth + 1);
+        int right = dfs(node.right, depth + 1);
+        if (left == right && left == maxDepth) answer = node;
+        return Math.max(left, right);
     }
 }
