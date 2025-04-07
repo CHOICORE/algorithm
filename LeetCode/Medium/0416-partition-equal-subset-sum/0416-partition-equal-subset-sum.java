@@ -1,22 +1,35 @@
 class Solution {
-    public static boolean canPartition(int[] nums){
-        if (nums == null || nums.length == 0){
+    Boolean canPartition(Boolean[] memo, int s, int index, int[] nums) {
+        if (s == 0)
             return true;
-        }
 
-        int sum = 0;
-        for (int num : nums){
-            sum += num;
-        }
-        if ((sum & 1) == 1){
+        if (s < 0)
             return false;
-        }
-        sum >>>= 1;
-        java.math.BigInteger map = new java.math.BigInteger("1");
-        map = map.shiftLeft(sum);
-        for (int num : nums){
-            map = map.or(map.shiftRight(num));
-        }
-        return map.testBit(0);
+
+        if (index == 0)
+            return s == nums[0];
+
+        if (memo[s] != null)
+            return memo[s];
+
+        return memo[s] = canPartition(memo, s - nums[index], index - 1, nums) || canPartition(memo, s, index - 1, nums);
+    }
+
+    public boolean canPartition(int[] nums) {
+
+        int s = 0;
+
+        for (int num : nums) s += num;
+
+        if (s % 2 != 0)
+            return false;
+
+        int n = nums.length;
+
+        s /= 2;
+
+        Boolean[] memo = new Boolean[s + 1];
+
+        return canPartition(memo, s, n - 1, nums);
     }
 }
