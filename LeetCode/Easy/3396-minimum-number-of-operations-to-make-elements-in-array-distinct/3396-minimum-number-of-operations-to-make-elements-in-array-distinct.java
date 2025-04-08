@@ -1,22 +1,12 @@
 class Solution {
     public int minimumOperations(int[] nums) {
-        int answer = 0;
-        for (int i = 0; i < nums.length; i += 3, answer++) {
-            if (checkUnique(nums, i)) {
-                return answer;
+        boolean[] seen = new boolean[128];
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (seen[nums[i]]) {
+                return i / 3 + 1;
             }
+            seen[nums[i]] = true;
         }
-        return answer;
-    }
-
-    private boolean checkUnique(int[] nums, int start) {
-        Set<Integer> count = new HashSet<>();
-        for (int i = start; i < nums.length; i++) {
-            if (count.contains(nums[i])) {
-                return false;
-            }
-            count.add(nums[i]);
-        }
-        return true;
+        return 0;
     }
 }
