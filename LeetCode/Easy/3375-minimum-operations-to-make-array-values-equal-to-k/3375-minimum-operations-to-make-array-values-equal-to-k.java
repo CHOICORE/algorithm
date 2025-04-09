@@ -1,13 +1,19 @@
 class Solution {
     public int minOperations(int[] nums, int k) {
-        Set<Integer> st = new HashSet<>();
-        for (int x : nums) {
-            if (x < k) {
-                return -1;
-            } else if (x > k) {
-                st.add(x);
-            }
+        boolean[] has = new boolean[101];
+
+        for (int num : nums) {
+            has[num] = true;
         }
-        return st.size();
+        int cnt = 0;
+        for (int i = 0; i < has.length; i++) {
+            if (!has[i]) continue;
+
+            if (has[i] && i < k)
+                return -1;
+            else if (has[i] && i > k)
+                cnt++;
+        }
+        return cnt;
     }
 }
