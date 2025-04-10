@@ -5,70 +5,35 @@ class Solution {
             int limit,
             String s
     ) {
-        String low = Long.toString(start);
-        String high = Long.toString(finish);
-        int n = high.length();
-        low = String.format("%" + n + "s", low).replace(' ', '0');
-        long[] memo = new long[n];
-        Arrays.fill(memo, -1);
-
-        return dfs(0, true, true, low, high, limit, s, n - s.length(), memo);
+        String _s = Long.toString(start - 1);
+        String _f = Long.toString(finish);
+        return calculate(_f, s, limit) - calculate(_s, s, limit);
     }
 
-    private long dfs(
-            int i,
-            boolean maxLow,
-            boolean maxHigh,
-            String low,
-            String high,
-            int limit,
-            String s,
-            int previousLength,
-            long[] memo
-    ) {
-        if (i == low.length()) {
-            return 1;
+    private long calculate(String x, String s, int limit) {
+        if (x.length() < s.length()) {
+            return 0;
         }
-        if (!maxLow && !maxHigh && memo[i] != -1) {
-            return memo[i];
+        if (x.length() == s.length()) {
+            return x.compareTo(s) >= 0 ? 1 : 0;
         }
 
-        int l = maxLow ? low.charAt(i) - '0' : 0;
-        int h = maxHigh ? high.charAt(i) - '0' : 9;
-        long res = 0;
-        if (i < previousLength) {
-            for (int digit = l; digit <= Math.min(h, limit); digit++) {
-                res += dfs(
-                        i + 1,
-                        maxLow && digit == l,
-                        maxHigh && digit == h,
-                        low,
-                        high,
-                        limit,
-                        s,
-                        previousLength,
-                        memo
-                );
+        String suffix = x.substring(x.length() - s.length());
+        long count = 0;
+        int preLen = x.length() - s.length();
+
+        for (int i = 0; i < preLen; i++) {
+            int digit = x.charAt(i) - '0';
+            if (limit < digit) {
+                count += (long) Math.pow(limit + 1, preLen - i);
+                return count;
             }
-        } else {
-            int x = s.charAt(i - previousLength) - '0';
-            if (l <= x && x <= Math.min(h, limit)) {
-                res = dfs(
-                        i + 1,
-                        maxLow && x == l,
-                        maxHigh && x == h,
-                        low,
-                        high,
-                        limit,
-                        s,
-                        previousLength,
-                        memo
-                );
-            }
+            count +=
+                    (long) (digit) * (long) Math.pow(limit + 1, preLen - 1 - i);
         }
-        if (!maxLow && !maxHigh) {
-            memo[i] = res;
+        if (suffix.compareTo(s) >= 0) {
+            count++;
         }
-        return res;
+        return count;
     }
 }
