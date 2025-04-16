@@ -1,21 +1,43 @@
-class Solution {
+public class Solution {
     public long countGood(int[] nums, int k) {
-        int n = nums.length;
-        int same = 0, right = -1;
-        Map<Integer, Integer> cnt = new HashMap<>();
-        long answer = 0;
-        for (int num : nums) {
-            while (same < k && right + 1 < n) {
-                ++right;
-                same += cnt.getOrDefault(nums[right], 0);
-                cnt.put(nums[right], cnt.getOrDefault(nums[right], 0) + 1);
+        if (nums.length < 2) return 0L;
+        Map<Integer, Integer> countMap = new HashMap<>(nums.length, 0.99f);
+        long goodSubArrays = 0L;
+        long current = 0L;
+        int left = 0;
+        int right = -1;
+        while (left < nums.length) {
+            if (current < k) {
+                if (++right == nums.length) {
+                    break;
+                }
+
+                Integer num = nums[right];
+                Integer count = countMap.get(num);
+                if (count == null) {
+                    count = 1;
+                } else {
+                    current += count;
+                    if (current >= k) {
+                        goodSubArrays += nums.length - right;
+                    }
+                    count = count + 1;
+                }
+                countMap.put(num, count);
+            } else {
+                Integer num = nums[left++];
+                int count = countMap.get(num) - 1;
+                if (count > 0) {
+                    countMap.put(num, count);
+                    current -= count;
+                } else {
+                    countMap.remove(num);
+                }
+                if (current >= k) {
+                    goodSubArrays += nums.length - right;
+                }
             }
-            if (same >= k) {
-                answer += n - right;
-            }
-            cnt.put(num, cnt.get(num) - 1);
-            same -= cnt.get(num);
         }
-        return answer;
+        return goodSubArrays;
     }
 }
