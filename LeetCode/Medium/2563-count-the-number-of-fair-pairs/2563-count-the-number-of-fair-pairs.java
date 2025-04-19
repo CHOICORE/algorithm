@@ -13,7 +13,7 @@ class Solution {
 
     long countFairPairs(int[] nums, int lower, int upper) {
         Arrays.sort(nums);
-        long ans = 0;
+        long answer = 0;
         for (int i = 0; i < nums.length; i++) {
 
             long low = lowerBound(
@@ -29,9 +29,9 @@ class Solution {
                     nums.length - 1,
                     upper - nums[i] + 1
             );
-
-            ans += (high - low);
+            
+            answer += (high - low);
         }
-        return ans;
+        return answer;
     }
 }
