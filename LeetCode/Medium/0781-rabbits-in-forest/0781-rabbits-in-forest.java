@@ -1,12 +1,17 @@
 class Solution {
     public int numRabbits(int[] answers) {
-        Map<Integer, Integer> mpp = new HashMap<>();
-        for (int i : answers) mpp.put(i, mpp.getOrDefault(i, 0) + 1);
 
-        int total = 0;
-        for (Map.Entry<Integer, Integer> p : mpp.entrySet())
-            total += Math.ceil((double) p.getValue() / (p.getKey() + 1)) * (p.getKey() + 1);
+        int n = answers.length;
+        int[] count = new int[1000];
 
-        return total;
+        int answer = 0;
+        for (int x : answers) {
+            if (++count[x] == 1)
+                answer += x + 1;
+            if (count[x] == x + 1)
+                count[x] = 0;
+        }
+
+        return answer;
     }
 }
