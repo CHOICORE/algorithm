@@ -1,14 +1,12 @@
 class Solution {
     public int numberOfArrays(int[] differences, int lower, int upper) {
-        int x = 0, y = 0, cur = 0;
-        for (int d : differences) {
-            cur += d;
-            x = Math.min(x, cur);
-            y = Math.max(y, cur);
-            if (y - x > upper - lower) {
-                return 0;
-            }
+        long start = 0, max = 0, min = 0;
+        for (int diff : differences) {
+            start += diff;
+            max = Math.max(max, start);
+            min = Math.min(min, start);
         }
-        return (upper - lower) - (y - x) + 1;
+        
+        return (int) Math.max(0, (upper - lower) - (max - min) + 1);
     }
 }
