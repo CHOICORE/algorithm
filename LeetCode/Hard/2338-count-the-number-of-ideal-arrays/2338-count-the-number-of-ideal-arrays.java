@@ -1,60 +1,43 @@
+import java.math.BigInteger;
+
 class Solution {
-    static int MOD = 1000000007;
-    static int MAX_N = 10010;
-    static int MAX_P = 15;
-    static int[][] c = new int[MAX_N + MAX_P][MAX_P + 1];
-    static int[] sieve = new int[MAX_N];
-    static List<Integer>[] ps = new List[MAX_N];
+    public static final int MOD = (int) 1e9 + 7;
 
-    public Solution() {
-        if (c[0][0] == 1) {
-            return;
+    public static int idealArrays(int n, int maxValue) {
+        int[] minDivisor = new int[maxValue + 1];
+        for (int p = 2; p <= maxValue; p++) {
+            if (minDivisor[p] != 0)
+                continue;
+            for (int i = p; i <= maxValue; i += p)
+                if (minDivisor[i] == 0)
+                    minDivisor[i] = p;
         }
 
-        for (int i = 0; i < MAX_N; i++) {
-            ps[i] = new ArrayList<>();
+        int maxPow = (int) (Math.log(maxValue) / Math.log(2));
+        int[] tmp = new int[maxPow + 1];
+        BigInteger b = BigInteger.ONE;
+        BigInteger bigMod = BigInteger.valueOf(MOD);
+        for (int i = 1; i <= maxPow; i++) {
+            b = b.multiply(BigInteger.valueOf(n + i - 1));
+            b = b.divide(BigInteger.valueOf(i));
+            tmp[i] = b.mod(bigMod).intValue();
         }
 
-        for (int i = 2; i < MAX_N; i++) {
-            if (sieve[i] == 0) {
-                for (int j = i; j < MAX_N; j += i) {
-                    if (sieve[j] == 0) {
-                        sieve[j] = i;
-                    }
-                }
-            }
-        }
-
-        for (int i = 2; i < MAX_N; i++) {
+        int s = 0;
+        for (int i = 1; i <= maxValue; i++) {
             int x = i;
+            long prodBin = 1;
             while (x > 1) {
-                int p = sieve[x], cnt = 0;
-                while (x % p == 0) {
+                int p = minDivisor[x];
+                int w = 0;
+                do {
+                    w++;
                     x /= p;
-                    cnt++;
-                }
-                ps[i].add(cnt);
+                } while (x % p == 0);
+                prodBin = prodBin * tmp[w] % MOD;
             }
+            s = (s + (int) prodBin) % MOD;
         }
-
-        c[0][0] = 1;
-        for (int i = 1; i < MAX_N + MAX_P; i++) {
-            c[i][0] = 1;
-            for (int j = 1; j <= Math.min(i, MAX_P); j++) {
-                c[i][j] = (c[i - 1][j] + c[i - 1][j - 1]) % MOD;
-            }
-        }
-    }
-
-    public int idealArrays(int n, int maxValue) {
-        long ans = 0;
-        for (int x = 1; x <= maxValue; x++) {
-            long mul = 1;
-            for (int p : ps[x]) {
-                mul = (mul * c[n + p - 1][p]) % MOD;
-            }
-            ans = (ans + mul) % MOD;
-        }
-        return (int) ans;
+        return s;
     }
 }
