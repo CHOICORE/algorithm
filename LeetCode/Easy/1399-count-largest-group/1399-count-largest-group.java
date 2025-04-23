@@ -1,23 +1,20 @@
 class Solution {
-
     public int countLargestGroup(int n) {
-        Map<Integer, Integer> bucket = new HashMap<Integer, Integer>();
-        int max = 0;
+        int[] counts = new int[40];
+        int answer = 0, mx = 0;
         for (int i = 1; i <= n; ++i) {
-            int key = 0, i0 = i;
-            while (i0 != 0) {
-                key += i0 % 10;
-                i0 /= 10;
+            int s = 0;
+            for (int x = i; x > 0; x /= 10) {
+                s += x % 10;
             }
-            bucket.put(key, bucket.getOrDefault(key, 0) + 1);
-            max = Math.max(max, bucket.get(key));
-        }
-        int count = 0;
-        for (Map.Entry<Integer, Integer> pair : bucket.entrySet()) {
-            if (pair.getValue() == max) {
-                ++count;
+            ++counts[s];
+            if (mx < counts[s]) {
+                mx = counts[s];
+                answer = 1;
+            } else if (mx == counts[s]) {
+                ++answer;
             }
         }
-        return count;
+        return answer;
     }
 }
