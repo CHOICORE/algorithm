@@ -1,28 +1,23 @@
 class Solution {
     public int countCompleteSubarrays(int[] nums) {
+        boolean[] exists = new boolean[2_001];
+        int distinct = 0;
+        for (int n : nums) {
+            if (!exists[n]) {
+                exists[n] = true;
+                distinct++;
+            }
+        }
+        int[] freq = new int[2001];
+        int count = 0, n = nums.length;
         int answer = 0;
-        Map<Integer, Integer> cnt = new HashMap<>();
-        int n = nums.length;
-        int right = 0;
-        int distinct = new HashSet<>(
-                Arrays.asList(Arrays.stream(nums).boxed().toArray(Integer[]::new))
-        ).size();
-
-        for (int left = 0; left < n; left++) {
-            if (left > 0) {
-                int remove = nums[left - 1];
-                cnt.put(remove, cnt.get(remove) - 1);
-                if (cnt.get(remove) == 0) {
-                    cnt.remove(remove);
-                }
-            }
-            while (right < n && cnt.size() < distinct) {
-                int add = nums[right];
-                cnt.put(add, cnt.getOrDefault(add, 0) + 1);
-                right++;
-            }
-            if (cnt.size() == distinct) {
-                answer += (n - right + 1);
+        for (int start = 0, end = 0; end < n; end++) {
+            if (freq[nums[end]]++ == 0)
+                count++;
+            while (count == distinct) {
+                answer += n - end;
+                if (freq[nums[start++]]-- == 1)
+                    count--;
             }
         }
         return answer;
