@@ -1,18 +1,26 @@
 class Solution {
     public long countSubarrays(int[] nums, int minK, int maxK) {
-        int min = -1, max = -1, left = -1, right = 0;
-        long answer = 0;
-        while (right < nums.length) {
-            if (nums[right] < minK || nums[right] > maxK) {
-                min = right;
-                max = right;
-                left = right;
+        long count = 0;
+        int left = 0;
+        Deque<Integer> min = new ArrayDeque<>();
+        Deque<Integer> max = new ArrayDeque<>();
+        int length = nums.length;
+        for (int i = 0; i < length; ++i) {
+            if (nums[i] < minK || nums[i] > maxK) {
+                min.clear();
+                max.clear();
+                left = i + 1;
+                continue;
             }
-            min = nums[right] == minK ? right : min;
-            max = nums[right] == maxK ? right : max;
-            answer += Math.min(min, max) - left;
-            right++;
+            while (!min.isEmpty() && nums[min.peekLast()] >= nums[i]) min.pollLast();
+            min.offerLast(i);
+            while (!max.isEmpty() && nums[max.peekLast()] <= nums[i]) max.pollLast();
+            max.offerLast(i);
+            if (nums[min.peekFirst()] == minK && nums[max.peekFirst()] == maxK) {
+                int start = Math.min(min.peekFirst(), max.peekFirst());
+                count += (start - left + 1);
+            }
         }
-        return answer;
+        return count;
     }
 }
