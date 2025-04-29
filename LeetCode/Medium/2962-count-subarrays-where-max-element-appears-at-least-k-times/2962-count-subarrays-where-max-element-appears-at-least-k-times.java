@@ -1,20 +1,21 @@
 class Solution {
     public long countSubarrays(int[] nums, int k) {
-        long ans = 0;
-        int max = 0, count = 0, n = nums.length;
-        for (int num : nums)
-            max = Math.max(max, num);
-        int l = 0;
-        for (int r = 0; r < n; r++) {
-            if (nums[r] == max)
-                count++;
-            while (count >= k) {
-                ans += n - r;
-                if (nums[l] == max)
-                    count--;
-                l++;
+        int maxElement = Arrays.stream(nums).max().getAsInt();
+        long answer = 0, start = 0;
+        int maxElementsInWindow = 0;
+
+        for (int num : nums) {
+            if (num == maxElement) {
+                maxElementsInWindow++;
             }
+            while (maxElementsInWindow == k) {
+                if (nums[(int) start] == maxElement) {
+                    maxElementsInWindow--;
+                }
+                start++;
+            }
+            answer += start;
         }
-        return ans;
+        return answer;
     }
 }
