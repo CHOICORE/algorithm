@@ -5,9 +5,9 @@ class Solution {
             int pills,
             int strength
     ) {
+        int n = tasks.length, m = workers.length;
         Arrays.sort(tasks);
         Arrays.sort(workers);
-        int n = tasks.length, m = workers.length;
         int left = 1, right = Math.min(m, n), ans = 0;
         while (left <= right) {
             int mid = (left + right) / 2;
@@ -29,30 +29,24 @@ class Solution {
             int mid
     ) {
         int p = pills;
-        TreeMap<Integer, Integer> ws = new TreeMap<>();
-        for (int i = workers.length - mid; i < workers.length; ++i) {
-            ws.put(workers[i], ws.getOrDefault(workers[i], 0) + 1);
-        }
+        int m = workers.length;
+        Deque<Integer> ws = new ArrayDeque<>();
+        int ptr = m - 1;
         for (int i = mid - 1; i >= 0; --i) {
-            Integer key = ws.lastKey();
-            if (key >= tasks[i]) {
-                ws.put(key, ws.get(key) - 1);
-                if (ws.get(key) == 0) {
-                    ws.remove(key);
-                }
+            while (ptr >= m - mid && workers[ptr] + strength >= tasks[i]) {
+                ws.addFirst(workers[ptr]);
+                --ptr;
+            }
+            if (ws.isEmpty()) {
+                return false;
+            } else if (ws.getLast() >= tasks[i]) {
+                ws.pollLast();
             } else {
                 if (p == 0) {
                     return false;
                 }
-                key = ws.ceilingKey(tasks[i] - strength);
-                if (key == null) {
-                    return false;
-                }
-                ws.put(key, ws.get(key) - 1);
-                if (ws.get(key) == 0) {
-                    ws.remove(key);
-                }
                 --p;
+                ws.pollFirst();
             }
         }
         return true;
