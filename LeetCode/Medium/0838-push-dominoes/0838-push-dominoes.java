@@ -1,28 +1,45 @@
 class Solution {
     public String pushDominoes(String dominoes) {
+        int n = dominoes.length();
         char[] charArray = dominoes.toCharArray();
-        int length = charArray.length;
-        int[] forces = new int[length];
-
-        int force = 0;
-        for (int i = 0; i < length; ++i) {
-            if (charArray[i] == 'R') force = length;
-            else if (charArray[i] == 'L') force = 0;
-            else force = Math.max(force - 1, 0);
-            forces[i] += force;
+        int i = 0;
+        while (i < n) {
+            if (charArray[i] != '.') {
+                i++;
+                continue;
+            }
+            int j = i;
+            while (j < n && charArray[j] == '.')
+                j++;
+            if (i - 1 >= 0 && j < n) {
+                if (charArray[i - 1] == charArray[j]) {
+                    int k = i;
+                    while (k < j)
+                        charArray[k++] = charArray[i - 1];
+                } else {
+                    if (charArray[i - 1] == 'R') {
+                        int u = i, v = j - 1;
+                        while (u < v) {
+                            charArray[u++] = 'R';
+                            charArray[v--] = 'L';
+                        }
+                    }
+                }
+            } else if (i - 1 >= 0) {
+                if (charArray[i - 1] == 'R') {
+                    int k = i;
+                    while (k < j)
+                        charArray[k++] = 'R';
+                }
+            } else if (j < n) {
+                if (charArray[j] == 'L') {
+                    int k = i;
+                    while (k < j)
+                        charArray[k++] = 'L';
+                }
+            }
+            i = j;
         }
-
-        force = 0;
-        for (int i = length - 1; i >= 0; --i) {
-            if (charArray[i] == 'L') force = length;
-            else if (charArray[i] == 'R') force = 0;
-            else force = Math.max(force - 1, 0);
-            forces[i] -= force;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int f : forces)
-            sb.append(f > 0 ? 'R' : f < 0 ? 'L' : '.');
-        return sb.toString();
+        return String.valueOf(charArray);
     }
 }
