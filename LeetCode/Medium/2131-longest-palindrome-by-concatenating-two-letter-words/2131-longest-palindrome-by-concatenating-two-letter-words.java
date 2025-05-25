@@ -1,33 +1,22 @@
 class Solution {
     public int longestPalindrome(String[] words) {
-        int[][] dp = new int[26][26];
-        boolean odd = false;
-        int ans = 0;
+        Map<String, Integer> mpp = new HashMap<>();
+        for (String w : words)
+            mpp.put(w, mpp.getOrDefault(w, 0) + 1);
 
-        for (String s : words) {
-            dp[s.charAt(0) - 'a'][s.charAt(1) - 'a']++;
-        }
-
-        for (int i = 0; i < 26; i++) {
-            for (int j = 0; j < 26; j++) {
-                if (dp[i][j] > 0) {
-                    if (i == j) {
-                        if (dp[i][j] % 2 != 0) {
-                            odd = true;
-                            dp[i][j]--;
-                        }
-                        ans += dp[i][j] * 2;
-                    } else {
-                        int minCount = Math.min(dp[i][j], dp[j][i]);
-                        if (minCount >= 1) {
-                            ans += 4 * minCount;
-                            dp[i][j] -= minCount;
-                            dp[j][i] -= minCount;
-                        }
-                    }
-                }
+        int count = 0, alreadyPalindrome = 0;
+        for (Map.Entry<String, Integer> e : mpp.entrySet()) {
+            String w = e.getKey();
+            int freq = e.getValue();
+            String s = new StringBuilder(w).reverse().toString();
+            if (w.equals(s)) {
+                count += (freq / 2) * 4;
+                if (freq % 2 == 1)
+                    alreadyPalindrome = 1;
+            } else if (w.compareTo(s) < 0 && mpp.containsKey(s)) {
+                count += Math.min(freq, mpp.get(s)) * 4;
             }
         }
-        return odd ? ans + 2 : ans;
+        return count + alreadyPalindrome * 2;
     }
 }
