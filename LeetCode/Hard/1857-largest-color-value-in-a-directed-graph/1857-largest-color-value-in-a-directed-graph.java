@@ -1,59 +1,43 @@
 class Solution {
-    
-    static final int[] q = new int[100000];
-
+    private static final int INF = Integer.MAX_VALUE;
     public int largestPathValue(String colors, int[][] edges) {
-        final int n = colors.length();
-        final char[] cs = colors.toCharArray();
-        final int[][] best = new int[n][];
-        final int[][] nexts = next(n, edges, 0);
-        final int[][] prevs = next(n, edges, 1);
-        final int[] counts = new int[n];
-        int len = 0;
-        for (int i = 0; i < n; i++) {
-            if ((counts[i] = nexts[i].length) == 0) {
-                q[len++] = i;
-            }
+        int n = colors.length();
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            adj.add(new ArrayList<>());
+        for (int[] e : edges)
+            adj.get(e[0]).add(e[1]);
+
+        int[][] count = new int[n][26];
+        int[] vis = new int[n];
+        int ans = 0;
+
+        for (int i = 0; i < n && ans != INF; i++) {
+            ans = Math.max(ans, dfs(i, colors, adj, count, vis));
         }
-        for (int i = 0; i < len; i++) {
-            final int node = q[i];
-            final int[] max = new int[26];
-            for (int next : nexts[node]) {
-                final int[] other = best[next];
-                for (int j = 0; j < 26; j++) {
-                    max[j] = Math.max(max[j], other[j]);
-                }
-            }
-            max[cs[node] - 'a']++;
-            best[node] = max;
-            for (int prev : prevs[node]) {
-                if (--counts[prev] == 0) {
-                    q[len++] = prev;
-                }
-            }
-        }
-        if (len < n) return -1;
-        int max = 0;
-        for (int[] b : best) {
-            for (int b1 : b) {
-                max = Math.max(max, b1);
-            }
-        }
-        return max;
+        return ans == INF ? -1 : ans;
     }
 
-    static final int[] counts = new int[100000];
+    private int dfs(int node, String colors, List<List<Integer>> adj, int[][] count, int[] vis) {
+        if (vis[node] == 1)
+            return INF;
+        if (vis[node] == 2) {
+            return count[node][colors.charAt(node) - 'a'];
+        }
 
-    static int[][] next(final int n, final int[][] edges, final int idx) {
-        for (int[] e : edges) {
-            counts[e[idx]]++;
+        vis[node] = 1;
+        for (int nxt : adj.get(node)) {
+            int res = dfs(nxt, colors, adj, count, vis);
+            if (res == INF)
+                return INF;
+            for (int c = 0; c < 26; c++) {
+                count[node][c] = Math.max(count[node][c], count[nxt][c]);
+            }
         }
-        final int[][] r = new int[n][];
-        for (int i = 0; i < n; i++) r[i] = new int[counts[i]];
-        for (int[] e : edges) {
-            final int n1 = e[idx];
-            r[n1][--counts[n1]] = e[1 - idx];
-        }
-        return r;
+        int col = colors.charAt(node) - 'a';
+        count[node][col]++;
+        vis[node] = 2;
+
+        return count[node][col];
     }
 }
