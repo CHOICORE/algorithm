@@ -11,6 +11,7 @@ class Solution {
                 r = Math.max(r, i - j + 1);
             }
         }
+        
         return r;
     }
 }
