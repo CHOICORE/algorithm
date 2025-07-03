@@ -4,10 +4,10 @@ class Solution {
         int t;
         while (k != 1) {
             t = 31 - Integer.numberOfLeadingZeros(k);
-            if ((1 < < t) == k) {
+            if ((1 << t) == k) {
                 t--;
             }
-            k = k - (1 < < t);
+            k = k - (1 << t);
             ans++;
         }
         return (char) ('a' + ans);
