@@ -1,34 +1,57 @@
 class FindSumPairs {
-    private int[] n;
-    private int[] m;
-    private Map<Integer, Integer> c;
+    int[] nums1;
+    int[] nums2;
+
+    Map<Integer, Integer> mp1;
+    Map<Integer, Integer> mp2;
+    List<Integer> sortedKeys1;
 
     public FindSumPairs(int[] nums1, int[] nums2) {
-        this.n = nums1;
-        this.m = nums2;
-        this.c = new HashMap<>();
-        for (int num : nums2) {
-            c.put(num, c.getOrDefault(num, 0) + 1);
+        this.nums1 = nums1;
+        this.nums2 = nums2;
+
+        mp1 = new HashMap<>();
+        mp2 = new HashMap<>();
+
+        for (int x : nums1) {
+            mp1.put(x, mp1.getOrDefault(x, 0) + 1);
+        }
+        sortedKeys1 = new ArrayList<>(mp1.keySet());
+        Collections.sort(sortedKeys1);
+
+        for (int x : nums2) {
+            mp2.put(x, mp2.getOrDefault(x, 0) + 1);
         }
     }
 
     public void add(int index, int val) {
-        int oldVal = m[index];
-        c.put(oldVal, c.get(oldVal) - 1);
-        m[index] += val;
-        c.put(m[index], c.getOrDefault(m[index], 0) + 1);
+        int oldVal = nums2[index];
+        int newVal = oldVal + val;
+
+        int countOld = mp2.get(oldVal);
+        if (countOld == 1) {
+            mp2.remove(oldVal);
+        } else {
+            mp2.put(oldVal, countOld - 1);
+        }
+
+        mp2.put(newVal, mp2.getOrDefault(newVal, 0) + 1);
+
+        nums2[index] = newVal;
     }
 
     public int count(int tot) {
-        int ans = 0;
-        for (int num : n) {
-            int rest = tot - num;
-            ans += c.getOrDefault(rest, 0);
+        int res = 0;
+        for (int k : sortedKeys1) {
+            if (k > tot) break;
+            Integer c2 = mp2.get(tot - k);
+            if (c2 != null) {
+                res += mp1.get(k) * c2;
+            }
         }
-        return ans;
+        return res;
     }
 }
-
 /**
  * Your FindSumPairs object will be instantiated and called as such:
  * FindSumPairs obj = new FindSumPairs(nums1, nums2);
