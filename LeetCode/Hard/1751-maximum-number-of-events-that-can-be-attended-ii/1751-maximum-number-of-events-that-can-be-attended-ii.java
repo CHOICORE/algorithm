@@ -1,37 +1,40 @@
 class Solution {
-    public int maxValue(int[][] events, int k) {
-        int max = 0;
-        if (k == 1) {
-            for (int[] event : events)
-                max = Math.max(max, event[2]);
+    private int[][] dp;
 
-            return max;
-        }
-
-        Arrays.sort(events, Comparator.comparingInt(a -> a[0]));
-        int size = events.length;
-
-        int[][] cache = new int[size + 1][k + 1];
-
-        for (int i = size - 1; i >= 0; i--) {
-            int next = binarySearch(events, events[i][1], i + 1, size);
-
-            for (int j = 1; j <= k; j++) {
-                cache[i][j] = Math.max(cache[i + 1][j], cache[next][j - 1] + events[i][2]);
+    public static int bisectRight(int[][] events, int target) {
+        int left = 0, right = events.length;
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (events[mid][0] <= target) {
+                left = mid + 1;
+            } else {
+                right = mid;
             }
         }
-        return cache[0][k];
+        return left;
     }
 
-    private int binarySearch(int[][] events, int targetEnd, int lo, int hi) {
-        while (lo < hi) {
-            int mid = (hi - lo) / 2 + lo;
-            if (targetEnd >= events[mid][0]) {
-                lo = mid + 1;
-            } else {
-                hi = mid;
-            }
+    public int maxValue(int[][] events, int k) {
+        Arrays.sort(events, (a, b) -> a[0] - b[0]);
+        int n = events.length;
+
+        dp = new int[k + 1][n];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
         }
-        return lo;
+
+        return dfs(0, k, events);
+    }
+
+    private int dfs(int curIndex, int count, int[][] events) {
+        if (count == 0 || curIndex == events.length) {
+            return 0;
+        }
+        if (dp[count][curIndex] != -1) {
+            return dp[count][curIndex];
+        }
+        int nextIndex = bisectRight(events, events[curIndex][1]);
+        dp[count][curIndex] = Math.max(dfs(curIndex + 1, count, events), events[curIndex][2] + dfs(nextIndex, count - 1, events));
+        return dp[count][curIndex];
     }
 }
