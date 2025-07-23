@@ -1,34 +1,44 @@
 class Solution {
     public int maximumGain(String s, int x, int y) {
-        if (x < y) {
-            int temp = x;
-            x = y;
-            y = temp;
-            s = new StringBuilder(s).reverse().toString();
-        }
+        int totalScore = 0;
+        String highPriorityPair = x > y ? "ab" : "ba";
+        String lowPriorityPair = highPriorityPair.equals("ab") ? "ba" : "ab";
 
-        int aCount = 0, bCount = 0, totalPoints = 0;
+        String stringAfterFirstPass = removeSubstring(s, highPriorityPair);
+        int removedPairsCount = (s.length() - stringAfterFirstPass.length()) / 2;
 
-        for (int i = 0; i < s.length(); i++) {
-            char currentChar = s.charAt(i);
+        totalScore += removedPairsCount * Math.max(x, y);
 
-            if (currentChar == 'a') {
-                aCount++;
-            } else if (currentChar == 'b') {
-                if (aCount > 0) {
-                    aCount--;
-                    totalPoints += x;
-                } else {
-                    bCount++;
-                }
+        String stringAfterSecondPass = removeSubstring(
+                stringAfterFirstPass,
+                lowPriorityPair
+        );
+        removedPairsCount = (stringAfterFirstPass.length() -
+                stringAfterSecondPass.length()) /
+                2;
+
+        totalScore += removedPairsCount * Math.min(x, y);
+
+        return totalScore;
+    }
+
+    private String removeSubstring(String input, String targetPair) {
+        Stack<Character> charStack = new Stack<>();
+
+        for (int i = 0; i < input.length(); i++) {
+            char currentChar = input.charAt(i);
+
+            if (currentChar == targetPair.charAt(1) && !charStack.isEmpty() && charStack.peek() == targetPair.charAt(0)) {
+                charStack.pop();
             } else {
-                totalPoints += Math.min(bCount, aCount) * y;
-                aCount = bCount = 0;
+                charStack.push(currentChar);
             }
         }
 
-        totalPoints += Math.min(bCount, aCount) * y;
-
-        return totalPoints;
+        StringBuilder remainingChars = new StringBuilder();
+        while (!charStack.isEmpty()) {
+            remainingChars.append(charStack.pop());
+        }
+        return remainingChars.reverse().toString();
     }
 }
