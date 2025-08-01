@@ -1,23 +1,25 @@
 class Solution {
-    public static List<Integer> rowGen(int r) {
-        List<Integer> rowList = new ArrayList<>();
-        int ans = 1;
-        rowList.add(1);
-        for (int i = 1; i < r; i++) {
-            ans = ans * (r - i);
-            ans = ans / i;
-            rowList.add(ans);
-        }
-        return rowList;
-    }
-
     public List<List<Integer>> generate(int numRows) {
-        List<List<Integer>> result = new ArrayList<>();
-        List<Integer> l1;
-        for (int i = 1; i <= numRows; i++) {
-            l1 = rowGen(i);
-            result.add(l1);
+        List<List<Integer>> triangle = new ArrayList<List<Integer>>();
+
+        triangle.add(new ArrayList<>());
+        triangle.get(0).add(1);
+
+        for (int rowNum = 1; rowNum < numRows; rowNum++) {
+            List<Integer> row = new ArrayList<>();
+            List<Integer> prevRow = triangle.get(rowNum - 1);
+
+            row.add(1);
+
+            for (int j = 1; j < rowNum; j++) {
+                row.add(prevRow.get(j - 1) + prevRow.get(j));
+            }
+            
+            row.add(1);
+
+            triangle.add(row);
         }
-        return result;
+
+        return triangle;
     }
 }
