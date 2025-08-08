@@ -1,28 +1,30 @@
 class Solution {
     public double soupServings(int n) {
+        int m = (int) Math.ceil(n / 25.0);
+        Map<Integer, Map<Integer, Double>> dp = new HashMap<>();
+        dp.put(0, new HashMap<>());
+        dp.get(0).put(0, 0.5);
 
-        if (n >= 4_800) {
-            return 1.0;
+        for (int k = 1; k <= m; k++) {
+            dp.put(k, new HashMap<>());
+            dp.get(0).put(k, 1.0);
+            dp.get(k).put(0, 0.0);
+            for (int j = 1; j <= k; j++) {
+                dp.get(j).put(k, calc(j, k, dp));
+                dp.get(k).put(j, calc(k, j, dp));
+            }
+            if (dp.get(k).get(k) > 1 - 1e-5) {
+                return 1;
+            }
         }
-        int N = (n + 24) / 25;
-        double[][] dp = new double[N + 1][N + 1];
-        return helper(dp, N, N);
+
+        return dp.get(m).get(m);
     }
 
-    private double helper(double[][] dp, int A, int B) {
-        if (A <= 0 && B <= 0) {
-            return 0.5;
-        }
-        if (A <= 0) {
-            return 1.0;
-        }
-        if (B <= 0) {
-            return 0.0;
-        }
-        if (dp[A][B] > 0) {
-            return dp[A][B];
-        }
-        dp[A][B] = 0.25 * (helper(dp, A - 4, B) + helper(dp, A - 3, B - 1) + helper(dp, A - 2, B - 2) + helper(dp, A - 1, B - 3));
-        return dp[A][B];
+    private double calc(int i, int j, Map<Integer, Map<Integer, Double>> dp) {
+        return (dp.get(Math.max(0, i - 4)).get(j)
+                + dp.get(Math.max(0, i - 3)).get(j - 1)
+                + dp.get(Math.max(0, i - 2)).get(Math.max(0, j - 2))
+                + dp.get(i - 1).get(Math.max(0, j - 3))) / 4;
     }
 }
