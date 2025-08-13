@@ -1,6 +1,11 @@
 class Solution {
     public boolean isPowerOfThree(int n) {
-        int maxPowerOf3 = 1_162_261_467;
-        return n > 0 && maxPowerOf3 % n == 0;
+        if (n <= 0) {
+            return false;
+        }
+        while (n % 3 == 0) {
+            n /= 3;
+        }
+        return n == 1;
     }
 }
