@@ -1,15 +1,27 @@
 class Solution {
-    public String largestGoodInteger(String num) {
-        int result = -1;
-        for (int i = 0; i + 2 < num.length(); i++) {
-            if (num.charAt(i) == num.charAt(i + 1) && num.charAt(i) == num.charAt(i + 2)) {
-                result = Math.max(result, num.charAt(i) - '0');
+    private final List<String> sameDigitNumbers = List.of("999", "888", "777", "666", "555", "444", "333", "222", "111", "000");
+
+    private boolean contains(String sameDigitNumber, String num) {
+        for (int index = 0; index <= num.length() - 3; ++index) {
+            if (num.charAt(index) == sameDigitNumber.charAt(0) &&
+                    num.charAt(index + 1) == sameDigitNumber.charAt(1) &&
+                    num.charAt(index + 2) == sameDigitNumber.charAt(2)) {
+                return true;
             }
         }
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
-            builder.append((char) (48 + result));
+        return false;
+    }
+
+    public String largestGoodInteger(String num) {
+
+        for (String sameDigitNumber : sameDigitNumbers) {
+            if (contains(sameDigitNumber, num)) {
+
+                return sameDigitNumber;
+            }
         }
-        return result == -1 ? "" : builder.toString();
+
+        return "";
     }
 }
+
