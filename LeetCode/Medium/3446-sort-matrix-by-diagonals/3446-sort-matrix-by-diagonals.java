@@ -1,30 +1,49 @@
 class Solution {
+    public int[][] sortMatrix(int[][] mat) {
+        int rows = mat.length;
+        int cols = mat[0].length;
 
-    public int[][] sortMatrix(int[][] grid) {
-        int n = grid.length;
-
-        for (int i = 0; i < n; i++) {
-            List<Integer> tmp = new ArrayList<>();
-            for (int j = 0; i + j < n; j++) {
-                tmp.add(grid[i + j][j]);
-            }
-            tmp.sort(Collections.reverseOrder());
-            for (int j = 0; i + j < n; j++) {
-                grid[i + j][j] = tmp.get(j);
-            }
+        for (int row = 0; row < rows; row++) {
+            sortDiagonal(mat, row, 0, false);
         }
 
-        for (int j = 1; j < n; j++) {
-            List<Integer> tmp = new ArrayList<>();
-            for (int i = 0; j + i < n; i++) {
-                tmp.add(grid[i][j + i]);
-            }
-            Collections.sort(tmp);
-            for (int i = 0; j + i < n; i++) {
-                grid[i][j + i] = tmp.get(i);
-            }
+        for (int col = 1; col < cols; col++) {
+            sortDiagonal(mat, 0, col, true);
         }
 
-        return grid;
+        return mat;
+    }
+
+    private void sortDiagonal(int[][] mat, int row, int col, boolean increasing) {
+        int rows = mat.length;
+        int cols = mat[0].length;
+
+        int len = Math.min(rows - row, cols - col);
+        int[] diagonal = new int[len];
+
+        for (int i = 0; i < len; i++) {
+            diagonal[i] = mat[row + i][col + i];
+        }
+
+        Arrays.sort(diagonal);
+
+        if (!increasing) {
+            reverse(diagonal);
+        }
+
+        for (int i = 0; i < len; i++) {
+            mat[row + i][col + i] = diagonal[i];
+        }
+    }
+
+    private void reverse(int[] arr) {
+        int i = 0, j = arr.length - 1;
+        while (i < j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
     }
 }
