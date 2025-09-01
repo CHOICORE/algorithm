@@ -1,53 +1,56 @@
 class Solution {
+
     public double maxAverageRatio(int[][] classes, int extraStudents) {
-        PriorityQueue<Classroom> classrooms = new PriorityQueue<>(
-            (a, b) -> Double.compare(b.getPassingIncrease(), a.getPassingIncrease())
-        );
-        
-        Arrays.stream(classes)
-              .map(Classroom::new)
-              .forEach(classrooms::offer);
-        
-        for (int i = 0; i < extraStudents; i++) {
-            Classroom classroom = classrooms.poll();
-            classrooms.offer(classroom.addStudent());
+        List<Double> passRatios = new ArrayList<>();
+
+        for (int[] aClass : classes) {
+            double initialRatio =
+                    (double) aClass[0] / aClass[1];
+            passRatios.add(initialRatio);
+        }
+
+        while (extraStudents > 0) {
+            List<Double> updatedRatios = new ArrayList<>();
+
+            for (
+                    int classIndex = 0;
+                    classIndex < classes.length;
+                    classIndex++
+            ) {
+                double newRatio =
+                        (double) (classes[classIndex][0] + 1) /
+                                (classes[classIndex][1] + 1);
+                updatedRatios.add(newRatio);
+            }
+
+            int bestClassIndex = 0;
+            double maximumGain = 0;
+
+            for (
+                    int classIndex = 0;
+                    classIndex < updatedRatios.size();
+                    classIndex++
+            ) {
+                double gain =
+                        updatedRatios.get(classIndex) - passRatios.get(classIndex);
+                if (gain > maximumGain) {
+                    bestClassIndex = classIndex;
+                    maximumGain = gain;
+                }
+            }
+
+            passRatios.set(bestClassIndex, updatedRatios.get(bestClassIndex));
+            classes[bestClassIndex][0]++;
+            classes[bestClassIndex][1]++;
+
+            extraStudents--;
         }
         
-        return classrooms.stream()
-                        .mapToDouble(Classroom::getPassingRatio)
-                        .average()
-                        .orElse(0.0);
-    }
-}
+        double totalPassRatio = 0;
+        for (double passRatio : passRatios) {
+            totalPassRatio += passRatio;
+        }
 
-class Classroom {
-    private final int passingStudents;
-    private final int totalStudents;
-    private final double passingIncrease;
-    
-    public Classroom(int[] classData) {
-        this(classData[0], classData[1]);
-    }
-    
-    private Classroom(int passingStudents, int totalStudents) {
-        this.passingStudents = passingStudents;
-        this.totalStudents = totalStudents;
-        this.passingIncrease = calculatePassingIncrease();
-    }
-    
-    public Classroom addStudent() {
-        return new Classroom(passingStudents + 1, totalStudents + 1);
-    }
-    
-    public double getPassingIncrease() {
-        return passingIncrease;
-    }
-    
-    public double getPassingRatio() {
-        return (double) passingStudents / totalStudents;
-    }
-    
-    private double calculatePassingIncrease() {
-        return (passingStudents + 1.0) / (totalStudents + 1) - getPassingRatio();
+        return totalPassRatio / classes.length;
     }
 }
