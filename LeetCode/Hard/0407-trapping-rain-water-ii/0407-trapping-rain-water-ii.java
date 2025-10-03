@@ -87,7 +87,7 @@ class Solution {
             return Integer.compare(this.height, other.height);
         }
     }
-    
+
     private boolean isValidCell(
             int row,
             int col,
