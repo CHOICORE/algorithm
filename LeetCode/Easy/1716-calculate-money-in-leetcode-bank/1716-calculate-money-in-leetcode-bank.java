@@ -1,13 +1,16 @@
 class Solution {
     public int totalMoney(int n) {
-        final int weeks = n / 7;
-        final int firstWeek = trapezoid(1, 7);
-        final int lastFullWeek = trapezoid(1 + weeks - 1, 7 + weeks - 1);
-        final int remainingDays = trapezoid(1 + weeks, n % 7 + weeks);
-        return (firstWeek + lastFullWeek) * weeks / 2 + remainingDays;
-    }
+        int k = n / 7;
+        int F = 28;
+        int L = 28 + (k - 1) * 7;
+        int arithmeticSum = k * (F + L) / 2;
 
-    private int trapezoid(int a, int b) {
-        return (a + b) * (b - a + 1) / 2;
+        int monday = 1 + k;
+        int finalWeek = 0;
+        for (int day = 0; day < n % 7; day++) {
+            finalWeek += monday + day;
+        }
+
+        return arithmeticSum + finalWeek;
     }
 }
