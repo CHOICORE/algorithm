@@ -9,34 +9,29 @@
  * }
  */
 class Solution {
-    
     public ListNode modifiedList(int[] nums, ListNode head) {
-        int max = 0;
-        for (int n : nums) {
-            if (n > max) {
-                max = n;
-            }
+        Set<Integer> valuesToRemove = new HashSet<>();
+        for (int num : nums) {
+            valuesToRemove.add(num);
         }
-        boolean[] seen = new boolean[max + 1];
 
-        for (int n : nums) {
-            seen[n] = true;
-        }
-        while (head != null && head.val <= max && seen[head.val]) {
+        while (head != null && valuesToRemove.contains(head.val)) {
             head = head.next;
         }
+
         if (head == null) {
-            return head;
+            return null;
         }
-        ListNode curr = head.next, prev = head;
-        while (curr != null) {
-            if (curr.val <= max && seen[curr.val]) {
-                prev.next = curr.next;
+
+        ListNode current = head;
+        while (current.next != null) {
+            if (valuesToRemove.contains(current.next.val)) {
+                current.next = current.next.next;
             } else {
-                prev = curr;
+                current = current.next;
             }
-            curr = curr.next;
         }
+
         return head;
     }
 }
