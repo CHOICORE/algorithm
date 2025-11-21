@@ -5,7 +5,7 @@ class Solution {
             letters.add(c);
         }
 
-        int ans = 0;
+        int r = 0;
         for (Character letter : letters) {
             int i = -1;
             int j = 0;
@@ -25,9 +25,9 @@ class Solution {
                 between.add(s.charAt(k));
             }
 
-            ans += between.size();
+            r += between.size();
         }
 
-        return ans;
+        return r;
     }
 }
