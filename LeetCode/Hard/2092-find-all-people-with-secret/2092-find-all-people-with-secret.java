@@ -1,78 +1,88 @@
 class Solution {
-    public static List<Integer> findAllPeople(int n, int[][] meetings, int firstPerson) {
+    public List<Integer> findAllPeople(
+            int n,
+            int[][] meetings,
+            int firstPerson
+    ) {
+        Arrays.sort(meetings, (a, b) -> a[2] - b[2]);
 
-        int maxMeetTime = 0;
-
-        for (int[] meeting : meetings) maxMeetTime = Math.max(maxMeetTime, meeting[2]);
-
-
-        List<List<int[]>> list = new ArrayList<>();
-        for (int i = 0; i <= maxMeetTime; i++) {
-            list.add(new ArrayList<>());
-        }
-
+        Map<Integer, List<int[]>> sameTimeMeetings = new TreeMap<>();
         for (int[] meeting : meetings) {
-            int time = meeting[2];
-            int a = meeting[0];
-            int b = meeting[1];
-
-            list.get(time).add(new int[]{a, b});
+            int x = meeting[0], y = meeting[1], t = meeting[2];
+            sameTimeMeetings
+                    .computeIfAbsent(t, k -> new ArrayList<>())
+                    .add(new int[]{x, y});
         }
 
+        UnionFind graph = new UnionFind(n);
+        graph.unite(firstPerson, 0);
 
-        int[] parent = new int[n];
-        for (int i = 0; i < parent.length; i++) parent[i] = i;
-        parent[firstPerson] = 0;
-
-        for (List<int[]> intArray : list) {
-            if (intArray.isEmpty()) continue;
-
-            for (int[] i : intArray) {
-                int a = i[0];
-                int b = i[1];
-
-                union(a, b, parent);
+        for (int t : sameTimeMeetings.keySet()) {
+            for (int[] meeting : sameTimeMeetings.get(t)) {
+                int x = meeting[0], y = meeting[1];
+                graph.unite(x, y);
             }
 
-            for (int[] i : intArray) {
-                int a = i[0];
-                int b = i[1];
-                find(a, parent);
-                find(b, parent);
-
-                if (parent[a] != 0) parent[a] = a;
-                if (parent[b] != 0) parent[b] = b;
+            for (int[] meeting : sameTimeMeetings.get(t)) {
+                int x = meeting[0], y = meeting[1];
+                if (!graph.connected(x, 0)) {
+                    graph.reset(x);
+                    graph.reset(y);
+                }
             }
-
-
         }
 
-        List<Integer> result = new ArrayList<Integer>();
-        for (int i = 0; i < parent.length; i++) {
-            find(i, parent);
-
-            if (parent[i] == 0) result.add(i);
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; ++i) {
+            if (graph.connected(i, 0)) {
+                ans.add(i);
+            }
         }
+        return ans;
+    }
+}
 
-        return result;
+class UnionFind {
+
+    private int[] parent;
+    private int[] rank;
+
+    public UnionFind(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
     }
 
-
-    private static int find(int a, int[] parent) {
-        if (a == parent[a]) return a;
-        return parent[a] = find(parent[a], parent);
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
     }
 
-    private static void union(int a, int b, int[] parent) {
-        a = find(a, parent);
-        b = find(b, parent);
-
-        if (a != b) {
-            if (a <= b) {
-                parent[b] = a;
+    public void unite(int x, int y) {
+        int px = find(x);
+        int py = find(y);
+        if (px != py) {
+            if (rank[px] > rank[py]) {
+                parent[py] = px;
+            } else if (rank[px] < rank[py]) {
+                parent[px] = py;
             } else {
-                parent[a] = b;
+                parent[py] = px;
+                rank[px] += 1;
             }
         }
+    }
+
+    public boolean connected(int x, int y) {
+        return find(x) == find(y);
+    }
+
+    public void reset(int x) {
+        parent[x] = x;
+        rank[x] = 0;
     }
 }
