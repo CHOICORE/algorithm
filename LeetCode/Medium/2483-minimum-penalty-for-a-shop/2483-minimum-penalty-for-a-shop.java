@@ -1,14 +1,17 @@
 class Solution {
     public int bestClosingTime(String customers) {
-        int j = -1, score = 0, maxScore = 0;
-        char[] a = customers.toCharArray();
-        for (int i = 0; i < a.length; i++) {
-            score += a[i] == 'Y' ? 1 : -1;
-            if (score > maxScore) {
-                j = i;
-                maxScore = score;
+        int max = 0;
+        int score = 0;
+        int best = 0;
+
+        for (int i = 0; i < customers.length(); i++) {
+            score += (customers.charAt(i) == 'Y') ? 1 : -1;
+
+            if (score > max) {
+                max = score;
+                best = i + 1;
             }
         }
-        return j + 1;
+        return best;
     }
 }
