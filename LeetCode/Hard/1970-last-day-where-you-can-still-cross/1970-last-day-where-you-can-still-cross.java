@@ -1,80 +1,53 @@
 class Solution {
     public int latestDayToCross(int row, int col, int[][] cells) {
-        UnionFind DSU = new UnionFind(row * col + 2);
-        int[][] arr = new int[row][col];
-        for (int[] cell : cells) {
-            arr[cell[0] - 1][cell[1] - 1] = 1;
-        }
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (arr[i][j] == 1) continue;
-                int current = i * col + j;
-                if (i == 0) DSU.union(current, row * col);
-                else if (i == row - 1) DSU.union(current, row * col + 1);
-                for (int k = 0; k < 4; k++) {
-                    int newx = i + dirs[k][0];
-                    int newy = j + dirs[k][1];
-                    if (newx < 0 || newx >= row || newy < 0 || newy >= col || arr[newx][newy] == 1) continue;
-                    int newnumber = newx * col + newy;
-                    if (!DSU.connect(newnumber, current)) DSU.union(newnumber, current);
+        int top = row * col;
+        int bottom = top + 1;
+
+        int[] parent = new int[top + 2];
+        int[] rank = new int[top + 2];
+        boolean[][] grid = new boolean[row][col];
+
+        for (int i = 0; i < top + 2; i++) parent[i] = i;
+
+        int[] dr = {1, -1, 0, 0};
+        int[] dc = {0, 0, 1, -1};
+
+        for (int d = top - 1; d >= 0; d--) {
+            int r = cells[d][0] - 1;
+            int c = cells[d][1] - 1;
+            grid[r][c] = true;
+            int id = r * col + c;
+
+            if (r == 0) union(id, top, parent, rank);
+            if (r == row - 1) union(id, bottom, parent, rank);
+
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+                if (nr >= 0 && nr < row && nc >= 0 && nc < col && grid[nr][nc]) {
+                    union(id, nr * col + nc, parent, rank);
                 }
             }
-        }
-        for (int i = cells.length - 1; i >= 0; i--) {
-            int curx = cells[i][0] - 1;
-            int cury = cells[i][1] - 1;
-            int curnumber = curx * col + cury;
-            if (curx == 0) DSU.union(col * row, curnumber);
-            else if (curx == row - 1) DSU.union(col * row + 1, curnumber);
-            if (DSU.connect(col * row, col * row + 1)) return i + 1;
-            for (int k = 0; k < 4; k++) {
-                int newx = curx + dirs[k][0];
-                int newy = cury + dirs[k][1];
-                if (newx < 0 || newx >= row || newy < 0 || newy >= col || arr[newx][newy] == 1) continue;
-                int newnumber = newx * col + newy;
-                if (!DSU.connect(newnumber, curnumber)) DSU.union(newnumber, curnumber);
-            }
-            arr[curx][cury] = 0;
+
+            if (find(top, parent) == find(bottom, parent)) return d;
         }
         return 0;
     }
 
-    class UnionFind {
-        int[] parent;
-        int[] size;
+    private int find(int x, int[] parent) {
+        if (parent[x] != x) parent[x] = find(parent[x], parent);
+        return parent[x];
+    }
 
-        public UnionFind(int n) {
-            this.parent = new int[n];
-            this.size = new int[n];
-            for (int i = 0; i < n; i++) {
-                parent[i] = i;
-                size[i] = 1;
-            }
-        }
-
-        public int find(int x) {
-            if (x != parent[x]) {
-                parent[x] = find(parent[x]);
-            }
-            return parent[x];
-        }
-
-        public void union(int x, int y) {
-            int rootx = find(x);
-            int rooty = find(y);
-            if (rootx == rooty) return;
-            if (size[rootx] > size[rooty]) {
-                parent[rooty] = rootx;
-                size[rootx] += size[rooty];
-            } else {
-                parent[rootx] = rooty;
-                size[rooty] += size[rootx];
-            }
-        }
-
-        public boolean connect(int x, int y) {
-            return find(x) == find(y);
+    private void union(int a, int b, int[] parent, int[] rank) {
+        a = find(a, parent);
+        b = find(b, parent);
+        if (a == b) return;
+        if (rank[a] < rank[b]) {
+            parent[a] = b;
+        } else {
+            parent[b] = a;
+            if (rank[a] == rank[b]) rank[a]++;
         }
     }
 }
