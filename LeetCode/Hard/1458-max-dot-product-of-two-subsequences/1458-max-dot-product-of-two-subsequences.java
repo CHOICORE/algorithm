@@ -1,42 +1,21 @@
 class Solution {
-    public int maxDotProduct(int[] nums1, int[] nums2) {
-        int firstMax = Integer.MIN_VALUE;
-        int secondMax = Integer.MIN_VALUE;
-        int firstMin = Integer.MAX_VALUE;
-        int secondMin = Integer.MAX_VALUE;
+    static final int NEGATIVE = (int) -1e9;
 
-        for (int num : nums1) {
-            firstMax = Math.max(firstMax, num);
-            firstMin = Math.min(firstMin, num);
-        }
+    public int maxDotProduct(int[] a, int[] b) {
+        int n = a.length, m = b.length;
+        int[][] dp = new int[n + 1][m + 1];
 
-        for (int num : nums2) {
-            secondMax = Math.max(secondMax, num);
-            secondMin = Math.min(secondMin, num);
-        }
+        for (int i = 0; i <= n; i++)
+            for (int j = 0; j <= m; j++)
+                dp[i][j] = NEGATIVE;
 
-        if (firstMax < 0 && secondMin > 0) {
-            return firstMax * secondMin;
-        }
-
-        if (firstMin > 0 && secondMax < 0) {
-            return firstMin * secondMax;
-        }
-
-        int m = nums2.length + 1;
-        int[] dp = new int[m];
-        int[] prev = new int[m];
-
-        for (int i = nums1.length - 1; i >= 0; i--) {
-            dp = new int[m];
-            for (int j = nums2.length - 1; j >= 0; j--) {
-                int use = nums1[i] * nums2[j] + prev[j + 1];
-                dp[j] = Math.max(use, Math.max(prev[j], dp[j + 1]));
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                int take = a[i - 1] * b[j - 1] + Math.max(0, dp[i - 1][j - 1]);
+                dp[i][j] = Math.max(take, Math.max(dp[i - 1][j], dp[i][j - 1]));
             }
-
-            prev = dp;
         }
-
-        return dp[0];
+        
+        return dp[n][m];
     }
 }
