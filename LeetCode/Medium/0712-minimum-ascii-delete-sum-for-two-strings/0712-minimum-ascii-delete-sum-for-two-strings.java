@@ -1,30 +1,21 @@
 class Solution {
-    public int minimumDeleteSum(String string1, String string2) {
-        if (string1.length() < string2.length()) return minimumDeleteSum(string2, string1);
-        char[] s1 = string1.toCharArray(), s2 = string2.toCharArray();
-        int[] memo = getData(s2), ps = getData(s1);
+    public int minimumDeleteSum(String s1, String s2) {
+        int n = s1.length(), m = s2.length();
+        int[][] dp = new int[n + 1][m + 1];
 
-        int i = s1.length - 1;
-        while (i > -1) {
-            int last = ps[i], prevLast = i < s1.length - 1 ? ps[i + 1] : 0;
-            for (int j = s2.length - 1; j > -1; j--) {
-                int tmp = memo[j];
-                if (s1[i] == s2[j]) last = memo[j] = prevLast;
-                else last = memo[j] = Math.min(memo[j] + s1[i], last + s2[j]);
-                prevLast = tmp;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (s1.charAt(i) == s2.charAt(j))
+                    dp[i + 1][j + 1] = dp[i][j] + s1.charAt(i);
+                else
+                    dp[i + 1][j + 1] = Math.max(dp[i][j + 1], dp[i + 1][j]);
             }
-            i--;
         }
-        return memo[0];
-    }
 
-    private int[] getData(char[] str) {
-        int strLen = str.length;
-        int[] data = new int[strLen];
-        data[data.length - 1] = str[strLen - 1];
-        for (int i = data.length - 2; i > -1; i--) {
-            data[i] += data[i + 1] + str[i];
-        }
-        return data;
+        int total = 0;
+        for (char c : s1.toCharArray()) total += c;
+        for (char c : s2.toCharArray()) total += c;
+
+        return total - 2 * dp[n][m];
     }
 }
