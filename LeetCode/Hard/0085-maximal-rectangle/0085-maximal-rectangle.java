@@ -1,46 +1,49 @@
 class Solution {
     public int maximalRectangle(char[][] matrix) {
-        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0)
             return 0;
+
+        int M = matrix.length;
+        int N = matrix[0].length;
+
+        int[][] mat = new int[M][N];
+
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                mat[i][j] = matrix[i][j] - '0';
+            }
         }
 
-        int rows = matrix.length;
-        int cols = matrix[0].length;
-
-        int[] heights = new int[cols];
-        int maxArea = 0;
-
-        for (char[] chars : matrix) {
-            for (int j = 0; j < cols; j++) {
-                if (chars[j] == '1') {
-                    heights[j] += 1;
-                } else {
-                    heights[j] = 0;
+        for (int i = 0; i < M; i++) {
+            for (int j = 1; j < N; j++) {
+                if (mat[i][j] == 1) {
+                    mat[i][j] += mat[i][j - 1];
                 }
             }
-
-            maxArea = Math.max(maxArea, largestRectangleArea(heights));
         }
 
-        return maxArea;
-    }
+        int r = 0;
+        for (int j = 0; j < N; j++) {
+            for (int i = 0; i < M; i++) {
+                int width = mat[i][j];
+                if (width == 0) continue;
 
-    private int largestRectangleArea(int[] heights) {
-        int maxArea = 0;
-        int n = heights.length;
-        int[] stack = new int[n + 1];
-        int top = -1;
+                int currWidth = width;
+                for (int k = i; k < M && mat[k][j] > 0; k++) {
+                    currWidth = Math.min(currWidth, mat[k][j]);
+                    int height = k - i + 1;
+                    r = Math.max(r, currWidth * height);
+                }
 
-        for (int i = 0; i <= n; i++) {
-            int h = (i == n) ? 0 : heights[i];
-            while (top != -1 && h < heights[stack[top]]) {
-                int height = heights[stack[top--]];
-                int width = (top == -1) ? i : (i - stack[top] - 1);
-                maxArea = Math.max(maxArea, height * width);
+                currWidth = width;
+                for (int k = i; k >= 0 && mat[k][j] > 0; k--) {
+                    currWidth = Math.min(currWidth, mat[k][j]);
+                    int height = i - k + 1;
+                    r = Math.max(r, currWidth * height);
+                }
             }
-            stack[++top] = i;
         }
 
-        return maxArea;
+        return r;
     }
 }
