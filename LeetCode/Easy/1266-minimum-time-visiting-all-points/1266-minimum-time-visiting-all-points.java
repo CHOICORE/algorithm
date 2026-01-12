@@ -1,19 +1,15 @@
 class Solution {
-
-    public int toTime(int[] from, int[] to) {
-        int xDiff = Math.abs(from[0] - to[0]);
-        int yDiff = Math.abs(from[1] - to[1]);
-
-        return Math.max(xDiff, yDiff);
-    }
-
     public int minTimeToVisitAllPoints(int[][] points) {
-        int time = 0;
+        int r = 0;
 
-        for (int i = 1; i < points.length; i++) {
-            time += toTime(points[i - 1], points[i]);
+        for (int i = 0; i < points.length - 1; i++) {
+            int x = points[i][0];
+            int y = points[i][1];
+            int n = points[i + 1][0];
+            int m = points[i + 1][1];
+            r += Math.max(Math.abs(n - x), Math.abs(m - y));
         }
 
-        return time;
+        return r;
     }
 }
