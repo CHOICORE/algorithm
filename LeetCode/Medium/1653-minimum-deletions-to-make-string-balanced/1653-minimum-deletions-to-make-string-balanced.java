@@ -1,19 +1,27 @@
 class Solution {
+
     public int minimumDeletions(String s) {
-        char[] letters = s.toCharArray();
-        int a = 0;
-        int b = 0;
-        int output = Integer.MAX_VALUE;
-        for (char letter : letters) {
-            a += ('b' - letter);
+        int n = s.length();
+        int[] countA = new int[n];
+        int[] countB = new int[n];
+        int bCount = 0;
+
+        for (int i = 0; i < n; i++) {
+            countB[i] = bCount;
+            if (s.charAt(i) == 'b') bCount++;
         }
 
-        for (int i = 0; i < s.length(); i++) {
-            output = Math.min(output, a + b);
-            a -= ('b' - letters[i]);
-            b += (letters[i] - 'a');
+        int aCount = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            countA[i] = aCount;
+            if (s.charAt(i) == 'a') aCount++;
         }
-        
-        return Math.min(output, a + b);
+
+        int minDeletions = n;
+        for (int i = 0; i < n; i++) {
+            minDeletions = Math.min(minDeletions, countA[i] + countB[i]);
+        }
+
+        return minDeletions;
     }
 }
