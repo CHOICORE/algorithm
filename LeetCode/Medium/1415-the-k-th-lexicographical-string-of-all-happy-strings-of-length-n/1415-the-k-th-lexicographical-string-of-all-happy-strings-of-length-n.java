@@ -1,12 +1,11 @@
 class Solution {
     List<String> happyStrings = new ArrayList<>();
+
     public String getHappyString(int n, int k) {
         String currentString = "";
         generateHappyStrings(n, currentString);
 
         if (happyStrings.size() < k) return "";
-
-        Collections.sort(happyStrings);
 
         return happyStrings.get(k - 1);
     }
