@@ -1,11 +1,10 @@
 class Solution {
     public int minOperations(int[][] grid, int x) {
-        List<Integer> numsArray = new ArrayList<>();
+        ArrayList<Integer> numsArray = new ArrayList<>();
         int result = 0;
 
         for (int[] ints : grid) {
             for (int col = 0; col < grid[0].length; col++) {
-                if (ints[col] % x != grid[0][0] % x) return -1;
                 numsArray.add(ints[col]);
             }
         }
@@ -13,27 +12,13 @@ class Solution {
         Collections.sort(numsArray);
 
         int length = numsArray.size();
-        int prefixIndex = 0;
-        int suffixIndex = length - 1;
+        int finalCommonNumber = numsArray.get(length / 2);
 
-        while (prefixIndex < suffixIndex) {
-            if (prefixIndex < length - suffixIndex - 1) {
-                int prefixOperations =
-                        ((prefixIndex + 1) *
-                                (numsArray.get(prefixIndex + 1) -
-                                        numsArray.get(prefixIndex))) /
-                                x;
-                result += prefixOperations;
-                prefixIndex++;
-            } else {
-                int suffixOperations =
-                        ((length - suffixIndex) *
-                                (numsArray.get(suffixIndex) -
-                                        numsArray.get(suffixIndex - 1))) /
-                                x;
-                result += suffixOperations;
-                suffixIndex--;
+        for (int number : numsArray) {
+            if (number % x != finalCommonNumber % x) {
+                return -1;
             }
+            result += Math.abs(finalCommonNumber - number) / x;
         }
 
         return result;
