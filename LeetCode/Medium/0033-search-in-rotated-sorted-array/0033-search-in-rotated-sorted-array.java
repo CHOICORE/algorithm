@@ -1,36 +1,27 @@
 class Solution {
     public int search(int[] nums, int target) {
-        int n = nums.length;
-        int left = 0, right = n - 1;
-
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (nums[mid] > nums[n - 1]) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
+        if (nums[0] == target) {
+            return 0;
         }
-
-        return shiftedBinarySearch(nums, left, target);
-    }
-
-    private int shiftedBinarySearch(int[] nums, int pivot, int target) {
-        int n = nums.length;
-        int shift = n - pivot;
-        int left = (pivot + shift) % n;
-        int right = (pivot - 1 + shift) % n;
-
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (nums[(mid - shift + n) % n] == target) {
-                return (mid - shift + n) % n;
-            } else if (nums[(mid - shift + n) % n] > target) {
-                right = mid - 1;
-            } else {
-                left = mid + 1;
-            }
+        if (nums[nums.length - 1] == target) {
+            return nums.length - 1;
         }
-        return -1;
+        int start = 0;
+        int end = nums.length - 1;
+        int mid = (start + end) / 2;
+        while (target != nums[mid]) {
+            if ((nums[mid] < nums[end] && (target > nums[end] || target < nums[mid])) || (nums[mid] > nums[end] && target < nums[mid] && target > nums[end])) {
+                end = mid;
+            } else {
+                start = mid;
+            }
+            if (mid == (start + end) / 2) {
+                mid = -1;
+                break;
+            }
+            mid = (start + end) / 2;
+        }
+        return mid;
+
     }
 }
