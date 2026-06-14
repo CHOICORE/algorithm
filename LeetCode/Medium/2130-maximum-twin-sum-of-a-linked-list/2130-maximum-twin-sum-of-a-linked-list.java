@@ -10,20 +10,23 @@
  */
 class Solution {
     public int pairSum(ListNode head) {
-        ArrayDeque<Integer> stack = new ArrayDeque<>();
-        ListNode slow = head, fast = head.next;
-        stack.push(slow.val);
-        while (fast.next != null) {
-            slow = slow.next;
+        ListNode slow = head, fast = head, prev = null;
+
+        while (fast != null && fast.next != null) {
             fast = fast.next.next;
-            stack.push(slow.val);
+            ListNode temp = slow.next;
+            slow.next = prev;
+            prev = slow;
+            slow = temp;
         }
-        slow = slow.next;
-        int maxSum = 0;
+
+        int res = 0;
         while (slow != null) {
-            maxSum = Math.max(maxSum, slow.val + stack.pop());
+            res = Math.max(res, prev.val + slow.val);
+            prev = prev.next;
             slow = slow.next;
         }
-        return maxSum;
+
+        return res;
     }
 }
