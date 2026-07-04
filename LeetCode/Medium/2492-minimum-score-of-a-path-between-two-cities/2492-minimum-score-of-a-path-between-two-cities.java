@@ -1,21 +1,23 @@
 class Solution {
-    private int search(int i, int[] route) {
-        return route[i] == i ? i : (route[i] = search(route[i], route));
+    int find(int[] root, int i) {
+        if (root[i] == i)
+            return i;
+        return root[i] = find(root, root[i]);
     }
 
     public int minScore(int n, int[][] roads) {
-        int[] route = IntStream.rangeClosed(0, n).toArray();
-        int[] answer = new int[n + 1];
-        Arrays.fill(answer, Integer.MAX_VALUE);
+        int[] root = new int[n + 1];
+        for (int i = 0; i <= n; i++)
+            root[i] = i;
 
-        for (int[] road : roads) {
-            int start = search(road[0], route);
-            int end = search(road[1], route);
-            route[start] = end;
-            answer[start] = Math.min(road[2], Math.min(answer[start], answer[end]));
-            answer[end] = answer[start];
-        }
+        for (int[] r : roads)
+            root[find(root, r[0])] = find(root, r[1]);
 
-        return answer[search(1, route)];
+        int res = 10001;
+        for (int[] r : roads)
+            if (find(root, r[0]) == find(root, 1))
+                res = Math.min(res, r[2]);
+
+        return res;
     }
 }
