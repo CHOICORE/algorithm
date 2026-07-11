@@ -1,4 +1,5 @@
-class Solution {
+public class Solution {
+
     public int countCompleteComponents(int n, int[][] edges) {
         List<Integer>[] graph = new ArrayList[n];
         Map<List<Integer>, Integer> componentFreq = new HashMap<>();
@@ -23,10 +24,7 @@ class Solution {
         }
         
         int completeCount = 0;
-        for (Map.Entry<
-                List<Integer>,
-                Integer
-                > entry : componentFreq.entrySet()) {
+        for (Map.Entry<List<Integer>, Integer> entry : componentFreq.entrySet()) {
             if (entry.getKey().size() == entry.getValue()) {
                 completeCount++;
             }
