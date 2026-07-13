@@ -1,21 +1,20 @@
 class Solution {
     public List<Integer> sequentialDigits(int low, int high) {
-        
-        List<Integer> answer = new ArrayList<>();
-        
-        for (int digit = 1; digit < 9; ++digit) {
-            
-            int next = digit, n = next;
-            
-            while (n <= high && next < 10) {
-                
-                if (n >= low) {
-                    answer.add(n);
+        List<Integer> ans = new ArrayList<>();
+
+        String s = "123456789";
+        String l = String.valueOf(low);
+        String h = String.valueOf(high);
+
+        for (int len = l.length(); len <= h.length(); len++) {
+            for (int start = 0; start <= 9 - len; start++) {
+                int num = Integer.parseInt(s.substring(start, start + len));
+                if (num >= low && num <= high) {
+                    ans.add(num);
                 }
-                n = n * 10 + ++next;
             }
         }
-        Collections.sort(answer);
-        return answer;
+
+        return ans;
     }
 }
