@@ -1,23 +1,22 @@
 class Solution {
     public int minimumPushes(String word) {
-        int[] frequency = new int[26];
-        
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+
         for (char c : word.toCharArray()) {
-            frequency[c - 'a']++;
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
         }
-        
-        Arrays.sort(frequency);
-        
-        int[] sortedFrequency = new int[26];
-        for (int i = 0; i < 26; i++) {
-            sortedFrequency[i] = frequency[25 - i];
-        }
+
+        PriorityQueue<Integer> frequencyQueue = new PriorityQueue<>(
+                (a, b) -> b - a
+        );
+        frequencyQueue.addAll(frequencyMap.values());
 
         int totalPushes = 0;
-
-        for (int i = 0; i < 26; i++) {
-            if (sortedFrequency[i] == 0) break;
-            totalPushes += (i / 8 + 1) * sortedFrequency[i];
+        int index = 0;
+        
+        while (!frequencyQueue.isEmpty()) {
+            totalPushes += (index / 8 + 1) * frequencyQueue.poll();
+            index++;
         }
 
         return totalPushes;
