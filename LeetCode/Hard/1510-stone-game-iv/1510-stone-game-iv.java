@@ -1,27 +1,17 @@
 class Solution {
     public boolean winnerSquareGame(int n) {
+        boolean[] dp = new boolean[n + 1];
 
-        int[] ar = new int[n + 1];
-        ar[1] = 1;
-        int i;
-        for(i = 2; i <= n; i++){
-            if(ar[i - 1] == 0){
-                ar[i] = 1;
-                continue;
-            }
-    
-            int ind;
-            ind = (int)Math.sqrt(i);
-            
-            while(ind > 0){
-                if(ar[i - ind*ind] == 0){
-                    ar[i] = 1;
-                    break;
+        for(int i = 0; i <= n; i++) {
+            if(!dp[i]) {
+                for(int j = 1; i + j * j <= n; j++) {
+                    dp[i + j * j] = true;
                 }
-                ind--;
+                if(dp[n]) {
+                    return true;
+                }
             }
-
         }
-        return ar[n] == 1;
+        return false;
     }
 }
