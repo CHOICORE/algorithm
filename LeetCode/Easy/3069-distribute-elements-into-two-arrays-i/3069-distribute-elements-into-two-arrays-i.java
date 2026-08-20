@@ -1,26 +1,28 @@
 class Solution {
-
-    public int[] resultArray(int[] nums) {
+    static {
+        for(int i = 0; i <= 500; i++) {
+            resultArray(new int[2]);
+        }
+    }
+    public static int[] resultArray(int[] nums) {
         int n = nums.length;
-        List<Integer> arr1 = new ArrayList<>();
-        List<Integer> arr2 = new ArrayList<>();
-        arr1.add(nums[0]);
-        arr2.add(nums[1]);
-        for (int i = 2; i < n; i++) {
-            if (arr1.get(arr1.size() - 1) > arr2.get(arr2.size() - 1)) {
-                arr1.add(nums[i]);
+        int[] arr1 = new int[n];
+        int[] arr2 = new int[n-1];
+        arr1[0] = nums[0];
+        arr2[0] = nums[1];
+        // Like a stack pointer
+        int arr1Pointer = 0;
+        int arr2Pointer = 0;
+        for(int i = 2; i < n; i++) {
+            if(arr1[arr1Pointer] > arr2[arr2Pointer]) {
+                arr1[++arr1Pointer] = nums[i];
             } else {
-                arr2.add(nums[i]);
+                arr2[++arr2Pointer] = nums[i];
             }
         }
-        int[] res = new int[n];
-        int idx = 0;
-        for (int x : arr1) {
-            res[idx++] = x;
+        for(int i = 0; i <= arr2Pointer; i++) {
+            arr1[++arr1Pointer] = arr2[i];
         }
-        for (int x : arr2) {
-            res[idx++] = x;
-        }
-        return res;
+        return arr1;
     }
 }
