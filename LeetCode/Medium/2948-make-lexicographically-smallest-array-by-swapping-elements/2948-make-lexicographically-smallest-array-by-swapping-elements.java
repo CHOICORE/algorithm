@@ -2,7 +2,7 @@ class Solution {
 
     public int[] lexicographicallySmallestArray(int[] nums, int limit) {
         int[] numsSorted = new int[nums.length];
-        System.arraycopy(nums, 0, numsSorted, 0, nums.length);
+        for (int i = 0; i < nums.length; i++) numsSorted[i] = nums[i];
         Arrays.sort(numsSorted);
 
         int currGroup = 0;
