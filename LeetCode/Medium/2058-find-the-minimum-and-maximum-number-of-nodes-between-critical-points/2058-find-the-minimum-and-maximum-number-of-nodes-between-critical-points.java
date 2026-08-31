@@ -10,48 +10,45 @@
  */
 class Solution {
     public int[] nodesBetweenCriticalPoints(ListNode head) {
-        ListNode prev = head;
-        ListNode curr = head.next;
+        int[] result = {-1, -1};
 
-        int first = -1;
-        int last;
-        int index = 1;
-        int previous = -1;
-        int min = Integer.MAX_VALUE;
+        int minDistance = Integer.MAX_VALUE;
 
-        while (curr.next != null) {
-            if (prev.val > curr.val && curr.val < curr.next.val || prev.val < curr.val && curr.val > curr.next.val) {
+        ListNode previousNode = head;
+        ListNode currentNode = head.next;
+        int currentIndex = 1;
+        int previousCriticalIndex = 0;
+        int firstCriticalIndex = 0;
 
-                if (previous == -1) {
-                    first = index;
-                    previous = index;
+        while (currentNode.next != null) {
+            if (
+                    (currentNode.val < previousNode.val &&
+                            currentNode.val < currentNode.next.val) ||
+                            (currentNode.val > previousNode.val &&
+                                    currentNode.val > currentNode.next.val)
+            ) {
+                if (previousCriticalIndex == 0) {
+                    previousCriticalIndex = currentIndex;
+                    firstCriticalIndex = currentIndex;
                 } else {
-                    if (min > index - previous) {
-                        min = index - previous;
-                    }
-
-                    previous = index;
+                    minDistance = Math.min(
+                            minDistance,
+                            currentIndex - previousCriticalIndex
+                    );
+                    previousCriticalIndex = currentIndex;
                 }
-
             }
 
-            index++;
-
-
-            curr = curr.next;
-            prev = prev.next;
-
+            currentIndex++;
+            previousNode = currentNode;
+            currentNode = currentNode.next;
+        }
+        
+        if (minDistance != Integer.MAX_VALUE) {
+            int maxDistance = previousCriticalIndex - firstCriticalIndex;
+            result = new int[]{minDistance, maxDistance};
         }
 
-        last = previous;
-
-        int max;
-        if (min == Integer.MAX_VALUE) {
-            return new int[]{-1, -1};
-        } else {
-            max = last - first;
-            return new int[]{min, max};
-        }
-
+        return result;
     }
 }
