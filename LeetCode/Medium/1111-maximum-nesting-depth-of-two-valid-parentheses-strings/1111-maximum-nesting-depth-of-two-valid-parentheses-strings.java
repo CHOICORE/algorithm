@@ -3,9 +3,10 @@ class Solution {
         int n = seq.length();
         int[] res = new int[n];
         
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             res[i] = (i ^ seq.charAt(i)) & 1;
-            
+        }
+
         return res;
     }
 }
