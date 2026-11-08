@@ -1,4 +1,5 @@
 class Solution {
+
     public int countServers(int[][] grid) {
         int numRows = grid.length;
         int numCols = numRows > 0 ? grid[0].length : 0;
@@ -25,7 +26,7 @@ class Solution {
                                 break;
                             }
                         }
-                        
+
                         if (canCommunicate) {
                             communicableServersCount++;
                         }
