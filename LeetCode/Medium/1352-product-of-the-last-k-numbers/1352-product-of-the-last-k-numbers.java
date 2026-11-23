@@ -1,4 +1,5 @@
 class ProductOfNumbers {
+
     private ArrayList<Integer> prefixProduct = new ArrayList<>();
     private int size = 0;
 
