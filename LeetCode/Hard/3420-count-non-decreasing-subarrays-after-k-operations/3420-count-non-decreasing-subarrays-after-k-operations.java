@@ -23,14 +23,14 @@ class Solution {
             }
             st.push(right);
 
-            q.offer(new int[] { nums[right], right });
+            q.offer(new int[]{nums[right], right});
             operations += Math.max(0, q.peek()[0] - nums[right]);
 
             while (operations > k) {
                 for (int i : cnt.get(left)) {
                     operations -=
-                        (long) (nums[left] - nums[i]) *
-                        (Math.min(pos[i], right + 1) - i);
+                            (long) (nums[left] - nums[i]) *
+                                    (Math.min(pos[i], right + 1) - i);
                 }
                 left++;
             }
@@ -38,7 +38,7 @@ class Solution {
             while (!q.isEmpty() && q.peek()[1] < left) {
                 q.poll();
             }
-
+            
             ans += right - left + 1;
         }
 
